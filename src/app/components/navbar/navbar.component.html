@@ -1,1 +1,46 @@
-<p>navbar works!</p>
+<nav class="navbar sticky-top">
+  <div class="container">
+
+    <!-- Logo -->
+    <a class="navbar-brand" routerLink="/">
+      <span class="brand-icon">◈</span>
+      <span class="brand-name">ReMarket</span>
+    </a>
+
+    <!-- Hamburguesa: solo visible en mobile -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-label="Toggle navigation">
+      <span class="toggler-bar"></span>
+      <span class="toggler-bar"></span>
+      <span class="toggler-bar"></span>
+    </button>
+
+    <!-- Links -->
+    <div class="navbar-menu" [class.open]="isMenuOpen">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/articulos" routerLinkActive="active">Artículos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/descubre" routerLinkActive="active">Descubre</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/nosotros" routerLinkActive="active">Nosotros</a>
+        </li>
+        <li class="nav-item">
+          <button class="btn-login" (click)="openLoginModal()">
+            <i class="bi bi-person"></i> Login
+          </button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>

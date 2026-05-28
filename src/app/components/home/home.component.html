@@ -1,1 +1,100 @@
-<p>home works!</p>
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-tag">Plataforma de segunda mano</span>
+            <h1 class="hero-title">Dale una segunda<br>oportunidad a las cosas.</h1>
+            <p class="hero-subtitle">
+            Compra y vende artículos de segunda mano de forma segura, rápida y sin complicaciones.
+            </p>
+            
+            <div class="hero-actions">
+                <button class="btn-hero-primary">Explorar artículos</button>
+                <button class="btn-hero-secondary">Vender ahora</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATEGORÍAS -->
+<section class="section-categories">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Explora por categoría</h2>
+            <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
+        </div>
+        <!-- TODO: renderizar categorías dinámicamente desde el backend -->
+        <div class="categories-grid">
+            <div class="category-card placeholder-item" *ngFor="let i of [1,2,3,4,5,6]">
+                <div class="category-icon-placeholder"></div>
+                <span class="category-label">Categoría</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ARTÍCULOS DESTACADOS -->
+<section class="section-articles">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Artículos recientes</h2>
+            <a href="#" class="section-link">Ver todos <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <!-- TODO: cargar artículos desde ArticleService -->
+        <div class="articles-grid">
+            <div class="article-card placeholder-item" *ngFor="let i of [1,2,3,4,5,6,7,8]">
+                <div class="article-image-placeholder"></div>
+                
+                <div class="article-info">
+                    <div class="placeholder-line long"></div>
+                    <div class="placeholder-line short"></div>
+                    <div class="placeholder-line price"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="section-how">
+    <div class="container">
+
+        <div class="section-header centered">
+            <h2 class="section-title">¿Cómo funciona?</h2>
+            <p class="section-subtitle">En tres pasos sencillos.</p>
+        </div>
+        
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">01</div>
+                <h3 class="step-title">Regístrate</h3>
+                <p class="step-desc">Crea tu cuenta gratuita en segundos y accede a toda la plataforma.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">02</div>
+            <h3 class="step-title">Publica o compra</h3>
+            <p class="step-desc">Sube tus artículos con fotos y precio, o busca lo que necesitas.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">03</div>
+            <h3 class="step-title">Conecta y cierra</h3>
+            <p class="step-desc">Usa el chat interno para acordar los detalles sin compartir tu contacto.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- BANNER CTA -->
+<section class="section-cta">
+    <div class="container">
+        <div class="cta-box">
+            <h2 class="cta-title">¿Tienes algo que ya no usas?</h2>
+            <p class="cta-subtitle">Publícalo gratis en menos de 2 minutos.</p>
+            <button class="btn-cta">Publicar artículo</button>
+        </div>
+    </div>
+</section>
