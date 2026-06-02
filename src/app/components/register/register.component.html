@@ -65,13 +65,18 @@
                 Localización <span class="optional-tag">opcional</span>
                 </label>
                 
-                <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    class="form-control"
-                    [(ngModel)]="registerData.location"
-                    placeholder="Ciudad o provincia">
+                <div class="d-flex gap-2">
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        class="form-control"
+                        [(ngModel)]="registerData.location"
+                        placeholder="Ciudad o provincia">
+                    <button type="button" class="btn btn-outline-secondary" (click)="detectLocation()" [disabled]="isDetectingLocation">
+                        <i class="bi bi-geo-alt"></i>
+                    </button>
+                </div>
             </div>
 
 

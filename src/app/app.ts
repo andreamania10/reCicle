@@ -4,11 +4,12 @@ import { NavbarComponent } from "./components/navbar/navbar.component";
 import { LoginModalComponent } from './components/login-modal/login-modal.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from "./components/home/home.component";
+import { RegisterComponent } from './components/register/register.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, LoginModalComponent, FooterComponent, HomeComponent],
+  imports: [RouterOutlet, NavbarComponent, LoginModalComponent, FooterComponent, HomeComponent, RegisterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
