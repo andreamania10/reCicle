@@ -1,0 +1,43 @@
+<div class="container py-5">
+
+  <!-- Botón volver -->
+  <a [routerLink]="['/articles']" class="btn btn-outline-secondary mb-4">
+    ← Volver a artículos
+  </a>
+
+  <!-- Si existe el artículo -->
+  @if (article) {
+    <div class="row g-4">
+
+      <!-- Imagen -->
+      <div class="col-md-6">
+        <img [src]="article.image" [alt]="article.title" class="img-fluid rounded shadow-sm w-100" style="max-height: 400px; object-fit: cover;">
+      </div>
+
+      <!-- Info -->
+      <div class="col-md-6">
+        <span class="badge bg-secondary mb-2">{{ article.category }}</span>
+        <h2 class="fw-bold">{{ article.title }}</h2>
+        <p class="text-success fw-bold fs-3">{{ article.price }} €</p>
+        <hr>
+        <p class="text-muted">{{ article.description }}</p>
+        <hr>
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-dark flex-grow-1">Contactar vendedor</button>
+          <button class="btn btn-outline-danger">❤ Guardar</button>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- Si no existe el artículo -->
+  @if (!article) {
+    <div class="text-center py-5">
+      <p class="fs-1">😕</p>
+      <p class="text-muted">Artículo no encontrado.</p>
+      <a [routerLink]="['/articles']" class="btn btn-dark mt-3">Ver todos los artículos</a>
+    </div>
+  }
+
+</div>
