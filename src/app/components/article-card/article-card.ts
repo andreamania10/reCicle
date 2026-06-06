@@ -1,15 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-article-card',
-  imports: [],
+  standalone: true,
   templateUrl: './article-card.html',
-  styleUrl: './article-card.css',
+  styleUrl: './article-card.css'
 })
-<<<<<<< HEAD
-export class ArticleCard {
-
+export class ArticleCardComponent {
+  @Input() item: any;
 }
-=======
-export class ArticleCard {}
->>>>>>> eceaf3fb56c22d45fa9891f308eec445eaee60a2

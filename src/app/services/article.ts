@@ -1,6 +1,18 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class Article {}
+export class ArticleService {
+
+  private articles: any[] = [];
+
+  getArticles() {
+    return this.articles;
+  }
+
+  createArticle(article: any) {
+    this.articles.push(article);
+  }
+}
+``

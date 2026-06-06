@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Article } from '../../interfaces/article';
+import { Article } from '../../../interfaces/article';
 import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-article-list',

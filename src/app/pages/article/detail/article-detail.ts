@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
-import { Article } from '../../interfaces/article';
+import { Article } from '../../../interfaces/article';
 
 @Component({
   selector: 'app-article-detail',

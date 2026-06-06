@@ -1,1 +1,18 @@
-<p>filter-bar works!</p>
+<div class="filter-bar">
+
+    <input type="text" placeholder="Buscar artículos..." [(ngModel)]="search" />
+
+    <select [(ngModel)]="category">
+      <option value="">Todas</option>
+      <option value="tecnologia">Tecnología</option>
+      <option value="ropa">Ropa</option>
+      <option value="hogar">Hogar</option>
+    </select>
+
+    <input type="number" placeholder="Precio max" [(ngModel)]="maxPrice" />
+
+    <button (click)="applyFilter()">
+      Filtrar
+    </button>
+
+</div>
