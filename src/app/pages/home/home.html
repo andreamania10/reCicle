@@ -1,33 +1,60 @@
-<section class="home-page">
-    <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar>
-    <section class="section-categories">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Explora por categoría</h2>
-                <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
-            </div>
+<div class="home-container">
 
-            <div class="categories-grid">
-                <div class="category-card">Tecnología</div>
-                <div class="category-card">Electrónica</div>
-                <div class="category-card">Ropa</div>
-                <div class="category-card">Hogar</div>
-                <div class="category-card">Deporte</div>
-                <div class="category-card">Vehículos</div>
-            </div>
+    <!-- HERO / BUSCADOR -->
+    <section class="hero">
+        <h1>Encuentra exactamente lo que buscas</h1>
+        <p>Compra y vende artículos fácilmente</p>
+    </section>
+
+    <!-- LO MÁS BUSCADO -->
+    <section class="section">
+        <h2>Lo más buscado</h2>
+
+        <div class="tags">
+            <span class="tag">Móviles</span>
+            <span class="tag">Coches</span>
+            <span class="tag">Ropa</span>
+            <span class="tag">Electrónica</span>
+            <span class="tag">Gaming</span>
         </div>
     </section>
 
-    <section class="section-articles">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Artículos recientes</h2>
-            </div>
+    <!-- CATEGORÍAS -->
+    <section class="section">
+        <h2>Explora por categoría</h2>
 
-            <div class="articles-grid">
-                <app-article-card *ngFor="let item of items" [item]="item">
-                </app-article-card>
-            </div>
+        <div class="categories">
+            <div class="category-card">Tecnología</div>
+            <div class="category-card">Electrónica</div>
+            <div class="category-card">Ropa</div>
+            <div class="category-card">Hogar</div>
+            <div class="category-card">Deporte</div>
+            <div class="category-card">Vehículos</div>
         </div>
     </section>
-</section>
+
+    <!-- DESTACADOS -->
+    <section class="section">
+        <h2>Destacados</h2>
+
+        <div class="horizontal-cards">
+            <div class="product-card"></div>
+            <div class="product-card"></div>
+            <div class="product-card"></div>
+            <div class="product-card"></div>
+        </div>
+    </section>
+
+    <!-- RECIENTES -->
+    <section class="section">
+        <h2>Subidos recientemente</h2>
+
+        <div class="grid">
+            <div class="product-card big"></div>
+            <div class="product-card big"></div>
+            <div class="product-card big"></div>
+            <div class="product-card big"></div>
+        </div>
+    </section>
+
+</div>
