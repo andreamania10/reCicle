@@ -1,67 +1,101 @@
-.home-page {
-    background: #f6f8fb;
-    min-height: 100vh;
-    padding: 24px 0 40px;
+.home-container {
+    padding: 40px;
+    background: #f7f8fa;
 }
 
-.container {
-    width: min(1200px, 92%);
-    margin: 0 auto;
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
-.section-categories,
-.section-articles {
-    margin-top: 28px;
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    margin-bottom: 18px;
-}
-
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0;
-}
-
-.section-subtitle {
+.hero p {
     color: #6b7280;
-    margin: 6px 0 0;
 }
 
-.categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+
+/* SECCIONES */
+
+.section {
+    margin-bottom: 40px;
+}
+
+.section h2 {
+    margin-bottom: 20px;
+}
+
+
+/* TAGS */
+
+.tags {
+    display: flex;
+    gap: 10px;
+}
+
+.tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #e5e7eb;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+/* CATEGORÍAS */
+
+.categories {
+    display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .category-card {
-    background: linear-gradient(135deg, #00a082, #00c2a8);
+    background: linear-gradient(135deg, #00c7ae, #00a892);
     color: white;
+    padding: 16px 24px;
     border-radius: 16px;
-    padding: 26px 18px;
-    text-align: center;
-    font-weight: 600;
-    box-shadow: 0 8px 20px rgba(0, 160, 130, 0.18);
+    font-weight: 500;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: 0.2s;
 }
 
 .category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0, 160, 130, 0.25);
+    transform: translateY(-3px);
 }
 
-.articles-grid {
+
+/* CARDS */
+
+.horizontal-cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+}
+
+.product-card {
+    min-width: 160px;
+    height: 120px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+.product-card.big {
+    height: 200px;
+}
+
+
+/* GRID */
+
+.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 20px;
-}
-
-app-article-card {
-    display: block;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 }

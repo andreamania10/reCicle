@@ -1,31 +1,21 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-declare var bootstrap: any;
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+  styleUrl: './navbar.component.css'
 })
-
-export class NavbarComponent  {
+export class NavbarComponent {
+  @Input() variant: 'public' | 'private' = 'public';
 
   isMenuOpen = false;
 
-
-  openLoginModal(): void {
-    const modalEl = document.getElementById('loginModal');
-    if (modalEl) {
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-    }
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+  openLoginModal() {
+    console.log('Abrir modal login');
   }
 }

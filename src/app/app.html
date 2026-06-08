@@ -1,3 +1,5 @@
-<app-navbar></app-navbar>
+<app-navbar [variant]="isPublicPage ? 'public' : 'private'"></app-navbar>
+
 <router-outlet></router-outlet>
+
 <app-footer></app-footer>
