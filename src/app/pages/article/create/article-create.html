@@ -1,0 +1,15 @@
+<div class="form">
+    <input type="text" placeholder="Título" [(ngModel)]="title" />
+    <input type="number" placeholder="Precio" [(ngModel)]="price" />
+
+    <select [(ngModel)]="category">
+    <option value="">Selecciona categoría</option>
+    <option value="tecnologia">Tecnología</option>
+    <option value="ropa">Ropa</option>
+    <option value="hogar">Hogar</option>
+    <option value="deporte">Deporte</option>
+    <option value="vehiculos">Vehículos</option>
+  </select>
+
+    <button (click)="save()">Guardar</button>
+</div>
