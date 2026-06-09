@@ -1,21 +1,23 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  @Input() variant: 'public' | 'private' = 'public';
 
-  isMenuOpen = false;
+  constructor(private router: Router) {}
 
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+  get homeLink(): string {
+    return localStorage.getItem('user') ? '/home' : '/';
   }
 
-  openLoginModal() {
-    console.log('Abrir modal login');
+  openLoginModal(): void {
+    this.router.navigate(['/login']);
+    // Si luego hacéis modal, aquí lo cambiáis
   }
 }

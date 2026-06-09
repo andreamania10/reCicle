@@ -1,1 +1,16 @@
-<p>categories works!</p>
+<div class="categories-page">
+    <div class="categories">
+
+        <app-article-card *ngFor="let item of items" [item]="item">
+        </app-article-card>
+
+    </div>
+
+</div>
+``
+
+<h2>Artículos</h2>
+
+<p *ngIf="selectedCategory">
+    Categoría: {{ selectedCategory }}
+</p>
