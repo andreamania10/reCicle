@@ -39,7 +39,7 @@ export class LoginModalComponent {
       const modal = bootstrap.Modal.getInstance(modalEl);
       modal?.hide();
     }
-    this.router.navigate(['/registro']);
+    this.router.navigate(['/register']);
   }
 
   resetForm(): void {
