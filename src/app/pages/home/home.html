@@ -1,63 +1,162 @@
-<div class="home-container">
+<div class="home-page bg-body-tertiary min-vh-100">
+    <div class="container-fluid px-3 px-lg-4 py-3">
+        <div class="row g-3 g-lg-4">
 
-    <!-- HERO / BUSCADOR -->
-    <section class="hero">
-        <h1>Encuentra exactamente lo que buscas</h1>
-        <p>Compra y vende artículos fácilmente</p>
-    </section>
+            <!-- SIDEBAR (solo escritorio) -->
+            <aside class="col-lg-3 col-xl-2 d-none d-lg-block">
+                <div class="bg-white rounded-4 border p-2 sticky-sidebar">
+                    <ul class="nav flex-column">
+                        @for (item of menuItems; track item.label) {
+                        <li class="nav-item">
+                            <a class="nav-link side-link d-flex align-items-center gap-2 rounded-3"
+                               [class.active]="item.label === 'Inicio'"
+                               [routerLink]="item.link">
+                                <i class="bi" [class]="'bi ' + item.icon"></i>
+                                <span class="flex-grow-1">{{ item.label }}</span>
+                                @if (item.badge) {
+                                <span class="badge rounded-pill text-bg-success">{{ item.badge }}</span>
+                                }
+                            </a>
+                        </li>
+                        }
+                    </ul>
 
-    <!-- CATEGORÍAS -->
-    <section class="categoriesSection">
-        <h2>Explora por categoría</h2>
+                    <hr class="my-2">
 
-        <div class="categories">
+                    <p class="text-secondary small fw-semibold px-3 mb-1">Categorías</p>
+                    <ul class="nav flex-column">
+                        @for (cat of categories(); track cat.id) {
+                        <li class="nav-item">
+                            <a class="nav-link side-link d-flex align-items-center gap-2 rounded-3"
+                               role="button" (click)="goToCategory(cat.id)">
+                                <i class="bi" [class]="'bi ' + iconFor(cat)"></i>
+                                <span>{{ cat.name }}</span>
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                </div>
+            </aside>
 
-            <div class="category-card" id="technology" (click)="goToCategory( 'technology') ">
-                Tecnología
-            </div>
+            <!-- CONTENIDO PRINCIPAL -->
+            <main class="col-12 col-lg-9 col-xl-10">
 
-            <div class="category-card" id="electronic" (click)="goToCategory( 'electronic') ">
-                Electrónica
-            </div>
+                <!-- HERO -->
+                <section class="hero rounded-4 overflow-hidden mb-4">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-md-7 p-4 p-lg-5">
+                            <h1 class="fw-bold mb-3 hero-title">
+                                Encuentra lo que necesitas,<br>
+                                <span class="text-success">da una segunda vida</span>
+                            </h1>
+                            <p class="text-secondary mb-4">
+                                Compra y vende artículos de segunda mano de forma fácil, rápida y segura.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a routerLink="/articles" class="btn btn-success fw-semibold px-4">Explorar ahora</a>
+                                <a routerLink="/articles/create" class="btn btn-outline-success fw-semibold px-4 bg-white">
+                                    <i class="bi bi-plus-lg me-1"></i> Vender un artículo
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-none d-md-flex justify-content-center align-items-center hero-art">
+                            <i class="bi bi-recycle"></i>
+                        </div>
+                    </div>
+                </section>
 
-            <div class="category-card" id="clothes" (click)="goToCategory( 'clothes') ">
-                Ropa
-            </div>
+                <!-- CATEGORÍAS POPULARES -->
+                <section class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 fw-bold mb-0">Listado de Categorías</h2>
+                    </div>
 
-            <div class="category-card" id="homeAccesories" (click)="goToCategory( 'homeAccesories') ">
-                Hogar
-            </div>
-            <div class="category-card" id="sports" (click)="goToCategory( 'sports') ">
-                Deporte
-            </div>
-            <div class="category-card" id="transport" (click)="goToCategory( 'transport') ">
-                Vehículos
-            </div>
+                    @if (loadingCategories()) {
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                    </div>
+                    } @else {
+                    <div class="d-flex flex-wrap justify-content-center justify-content-lg-between gap-3">
+                        @for (cat of categories(); track cat.id) {
+                        <button type="button" class="btn border-0 bg-transparent text-center category-item" (click)="goToCategory(cat.id)">
+                            <span class="category-circle d-flex align-items-center justify-content-center rounded-circle mx-auto mb-2">
+                                <i class="bi fs-4" [class]="'bi fs-4 ' + iconFor(cat)"></i>
+                            </span>
+                            <span class="small d-block text-body">{{ cat.name }}</span>
+                        </button>
+                        }
+                    </div>
+                    }
+                </section>
+
+                <!-- ARTÍCULOS DESTACADOS -->
+                <section class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 fw-bold mb-0">Artículos destacados</h2>
+                        <span class="small text-secondary">Más recientes <i class="bi bi-chevron-down"></i></span>
+                    </div>
+
+                    @if (loadingArticles()) {
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-success" role="status"></div>
+                        <p class="text-secondary small mt-2">Cargando artículos...</p>
+                    </div>
+                    } @else if (errorArticles()) {
+                    <div class="alert alert-warning rounded-4">
+                        No se pudieron cargar los artículos. Inténtalo de nuevo más tarde.
+                    </div>
+                    } @else {
+                    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xxl-4">
+                        @for (article of articles(); track article.id) {
+                        <div class="col">
+                            <div class="card h-100 border rounded-4 overflow-hidden article-card"
+                                 [routerLink]="['/articles', article.id]">
+                                <div class="position-relative">
+                                    <img [src]="article.main_photo || 'https://placehold.co/600x450?text=Sin+foto'"
+                                         class="card-img-top article-img" [alt]="article.title" loading="lazy">
+                                    @if (article.condition) {
+                                    <span class="badge position-absolute top-0 start-0 m-2"
+                                          [class]="'badge position-absolute top-0 start-0 m-2 ' + badgeClass(article.condition)">
+                                        {{ article.condition }}
+                                    </span>
+                                    }
+                                    <button type="button" class="btn btn-light btn-sm rounded-circle position-absolute top-0 end-0 m-2 fav-btn"
+                                            aria-label="Añadir a favoritos" (click)="$event.stopPropagation()">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="h6 fw-semibold text-truncate mb-1">{{ article.title }}</h3>
+                                    <p class="text-success fw-bold mb-2">{{ +article.price | currency:'EUR':'symbol':'1.0-2' }}</p>
+                                    <p class="small text-secondary mb-1">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ article.location }}
+                                    </p>
+                                    <p class="small text-secondary mb-0">{{ timeAgo(article.created_at) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
+                </section>
+
+                <!-- BANNER DE CONFIANZA -->
+                <section class="trust-banner rounded-4 p-3 p-lg-4 d-flex flex-wrap align-items-center gap-3">
+                    <span class="trust-icon d-flex align-items-center justify-content-center rounded-circle flex-shrink-0">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </span>
+                    <div class="flex-grow-1">
+                        <p class="fw-semibold mb-0">Compra seguro, vende tranquilo</p>
+                        <p class="small text-secondary mb-0">
+                            Nuestro sistema de calificaciones y reportes te brinda confianza en cada transacción.
+                        </p>
+                    </div>
+                    <a routerLink="/register" class="small fw-semibold text-success text-decoration-none ms-auto">
+                        Conocer más <i class="bi bi-arrow-right"></i>
+                    </a>
+                </section>
+
+            </main>
         </div>
-    </section>
-
-    <!-- DESTACADOS -->
-    <section class="section ">
-        <h2>Destacados</h2>
-
-        <div class="horizontal-cards ">
-            <div class="product-card "></div>
-            <div class="product-card "></div>
-            <div class="product-card "></div>
-            <div class="product-card "></div>
-        </div>
-    </section>
-
-    <!-- RECIENTES -->
-    <section class="section ">
-        <h2>Subidos recientemente</h2>
-
-        <div class="grid ">
-            <div class="product-card big "></div>
-            <div class="product-card big "></div>
-            <div class="product-card big "></div>
-            <div class="product-card big "></div>
-        </div>
-    </section>
-
+    </div>
 </div>

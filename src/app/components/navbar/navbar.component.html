@@ -1,16 +1,39 @@
-<nav class="navbar">
-    <div class="navbar-inner">
-        <a class="navbar-brand" [routerLink]="homeLink">
-            <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="ReMarket" />
-            <span class="brand-name">ReMarket</span>
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top app-navbar">
+    <div class="container-fluid px-3 px-lg-4">
+
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center gap-2 me-lg-4" [routerLink]="homeLink">
+            <img class="brand-logo" src="logo.png" alt="ReCircle" />
+            <span class="brand-name d-none d-sm-inline">ReCircle</span>
         </a>
-        <div class="navbar-search">
-            <input type="text" placeholder="Buscar artículos..." />
+
+        <!-- Acciones (siempre visibles a la derecha en móvil) -->
+        <div class="d-flex align-items-center gap-2 gap-lg-3 order-lg-3">
+            <span class="navbar-location d-none d-md-flex align-items-center text-secondary small">
+                <i class="bi bi-geo-alt me-1"></i> Pereira, Risaralda
+            </span>
+
+            <button type="button" class="btn btn-light rounded-circle position-relative icon-btn" aria-label="Notificaciones">
+                <i class="bi bi-bell"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-success notif-badge">3</span>
+            </button>
+
+            <button type="button" class="btn btn-success rounded-pill px-3 fw-semibold btn-login" (click)="openLoginModal()">
+                <i class="bi bi-person me-1"></i> Login
+            </button>
         </div>
-        <button class="btn-login" (click)="openLoginModal()">
-      Login
-    </button>
+
+        <!-- Buscador -->
+        <div class="flex-grow-1 order-lg-2 navbar-search mt-2 mt-lg-0 me-lg-3 w-100 w-lg-auto">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-0 rounded-start-pill">
+                    <i class="bi bi-search text-secondary"></i>
+                </span>
+                <input type="search" class="form-control bg-light border-0 rounded-end-pill"
+                       placeholder="Buscar artículos, categorías o usuarios..."
+                       aria-label="Buscar" />
+            </div>
+        </div>
 
     </div>
 </nav>
-``

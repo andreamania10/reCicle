@@ -1,87 +1,43 @@
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: #ffffff;
-    border-bottom: 1px solid #e8e8e8;
-}
-
-.navbar-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    flex-shrink: 0;
+.app-navbar {
+    z-index: 1030;
 }
 
 .brand-logo {
-    width: 34px;
-    height: 34px;
+    width: 42px;
+    height: 42px;
     object-fit: contain;
 }
 
 .brand-name {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
-    color: #1f2937;
+    color: #0f766e;
 }
 
-.navbar-search {
-    flex: 1;
-    display: flex;
+.navbar-search .form-control:focus {
+    box-shadow: none;
 }
 
-.navbar-search input {
-    width: 1000px;
-    height: 44px;
-    border: 1px solid #dcdfe4;
+.navbar-search .input-group:focus-within {
+    outline: 2px solid #14b8a6;
     border-radius: 999px;
-    padding: 0 18px;
-    font-size: 14px;
-    background: #f8fafc;
-    outline: none;
 }
 
-.navbar-search input:focus {
-    border-color: #00bfa5;
-    background: #ffffff;
-}
-
-.btn-login {
+.icon-btn {
+    width: 40px;
     height: 40px;
-    padding: 0 18px;
-    border: none;
-    border-radius: 10px;
-    background: #111827;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-login:hover {
-    background: #1f2937;
+.notif-badge {
+    font-size: 0.6rem;
 }
 
-@media (max-width: 768px) {
-    .navbar-inner {
-        padding: 10px 16px;
-        gap: 12px;
-    }
-    .brand-name {
-        display: none;
-    }
-    .btn-login {
-        padding: 0 14px;
+/* En escritorio el buscador no ocupa todo el ancho */
+@media (min-width: 992px) {
+    .navbar-search {
+        max-width: 560px;
     }
 }
