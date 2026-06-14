@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 declare var bootstrap: any;
@@ -12,8 +12,9 @@ declare var bootstrap: any;
   styleUrl: './navbar.component.css',
 })
 
-export class NavbarComponent  {
+export class NavbarComponent {
 
+  @Input() showLoginButton = false;
   isMenuOpen = false;
 
 

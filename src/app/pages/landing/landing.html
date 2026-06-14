@@ -1,0 +1,36 @@
+<section class="home-page">
+    <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar>
+    <section class="section-categories">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Explora por categoría</h2>
+                <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
+            </div>
+
+            <div class="categories-grid">
+                <div class="category-card">Tecnología</div>
+                <div class="category-card">Electrónica</div>
+                <div class="category-card">Ropa</div>
+                <div class="category-card">Hogar</div>
+                <div class="category-card">Deporte</div>
+                <div class="category-card">Vehículos</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-articles">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Artículos recientes</h2>
+            </div>
+
+            <div class="articles-grid">
+                <app-article-card *ngFor="let item of items" [item]="item">
+                </app-article-card>
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- Login Modal: se activa desde el botón Login del navbar -->
+<app-login-modal></app-login-modal>

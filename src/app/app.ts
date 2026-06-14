@@ -1,22 +1,35 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
-<<<<<<< HEAD
-import { HomeComponent } from "./components/home/home.component";
-import { RegisterComponent } from './components/register/register.component';
-=======
->>>>>>> origin/main
 
 @Component({
   selector: 'app-root',
   standalone: true,
-<<<<<<< HEAD
-  imports: [RouterOutlet, NavbarComponent, LoginModalComponent, FooterComponent, HomeComponent, RegisterComponent],
-=======
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
->>>>>>> origin/main
+  imports: [RouterOutlet, CommonModule, NavbarComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {}
+export class App {
+  isPublicPage = true;
+
+  constructor(private router: Router) {
+    this.checkRoute(this.router.url);
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          this.checkRoute(event.urlAfterRedirects);
+        }
+      });
+  }
+
+  private checkRoute(url: string) {
+    // Landing (/) y register son páginas públicas — muestran el botón Login
+    const publicRoutes = ['/', '/register'];
+    this.isPublicPage = publicRoutes.some(r => url === r || url.startsWith(r + '?'));
+  }
+}

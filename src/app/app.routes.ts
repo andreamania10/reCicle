@@ -1,16 +1,7 @@
 import { Routes } from '@angular/router';
-<<<<<<< HEAD
-import { HomeComponent } from './components/home/home.component';
-import { RegisterComponent } from './components/register/register.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'registro', component: RegisterComponent },
-];
-=======
-
-export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', loadComponent: () => import('./pages/landing/landing').then(m => m.Landing) },
   { path: 'home', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
   { path: 'login', loadComponent: () => import('./pages/login/login').then(m => m.Login) },
   { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) },
@@ -24,6 +15,5 @@ export const routes: Routes = [
   { path: 'favorites', loadComponent: () => import('./pages/favorites/favorites').then(m => m.Favorites) },
   { path: 'moderator', loadComponent: () => import('./pages/moderator-panel/moderator-panel').then(m => m.ModeratorPanel) },
   { path: 'admin', loadComponent: () => import('./pages/admin-panel/admin-panel').then(m => m.AdminPanel) },
-  { path: '**', redirectTo: 'home' }
+  { path: '**', redirectTo: '' }
 ];
->>>>>>> origin/main

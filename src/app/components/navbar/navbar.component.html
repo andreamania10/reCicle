@@ -34,7 +34,7 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/nosotros" routerLinkActive="active">Nosotros</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="showLoginButton">
           <button class="btn-login" (click)="openLoginModal()">
             <i class="bi bi-person"></i> Login
           </button>
