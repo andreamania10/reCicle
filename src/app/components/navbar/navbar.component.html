@@ -1,37 +1,45 @@
-<nav class="navbar">
-    <div class="navbar-inner">
-        <a class="navbar-brand" [routerLink]="homeLink">
-            <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="ReMarket" />
-            <span class="brand-name">ReMarket</span>
-        </a>
-        <div class="navbar-search">
-            <input type="text" placeholder="Buscar artículos..." />
-        </div>
-        <button class="btn-login" (click)="openLoginModal()">
-      Login
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container">
+    <a class="navbar-brand" [routerLink]="homeLink">
+      <img
+        class="brand-logo"
+        src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png"
+        alt="ReMarket"
+      />
+      <span class="brand-name">ReMarket</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
-
-    <!-- Links -->
-    <div class="navbar-menu" [class.open]="isMenuOpen">
-      <ul class="navbar-nav">
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/articulos" routerLinkActive="active">Artículos</a>
+          <a class="nav-link" href="#">Artículos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/descubre" routerLinkActive="active">Descubre</a>
+          <a class="nav-link" href="#">Descubre</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/nosotros" routerLinkActive="active">Nosotros</a>
-        </li>
-        <li class="nav-item" *ngIf="showLoginButton">
-          <button class="btn-login" (click)="openLoginModal()">
-            <i class="bi bi-person"></i> Login
-          </button>
+          <a class="nav-link" href="#">Nosotros</a>
         </li>
       </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..."/>
+      </form>
+      <button class="btn-login" type="submit" (click)="openLoginModal()">
+        <i class="bi bi-person"></i> Login
+      </button>
     </div>
+  </div>
 </nav>
-``
+
+<app-register-modal></app-register-modal>
+
+
+
+
+
+

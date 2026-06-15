@@ -19,8 +19,8 @@ export class ArticleCreate {
   save() {
     this.articleService.createArticle({
       title: this.title,
-      price: this.price,
-      category: this.category
+      price: String(this.price),
+      category: this.category,
     });
 
     console.log('Artículo guardado ✅');

@@ -36,10 +36,12 @@ export class LoginModalComponent {
   goToRegister(): void {
     const modalEl = document.getElementById('loginModal');
     if (modalEl) {
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal?.hide();
+      bootstrap.Modal.getInstance(modalEl)?.hide();
     }
-    this.router.navigate(['/register']);
+    const registerEl = document.getElementById('registerModal');
+    if (registerEl) {
+      new bootstrap.Modal(registerEl).show();
+    }
   }
 
   resetForm(): void {
