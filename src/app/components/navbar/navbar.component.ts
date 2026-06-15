@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +13,11 @@ import { RouterLink, Router } from '@angular/router';
 })
 export class NavbarComponent {
 
-  constructor(private router: Router) {}
+export class NavbarComponent {
+
+  @Input() showLoginButton = false;
+  isMenuOpen = false;
+
 
   get homeLink(): string {
     return localStorage.getItem('user') ? '/home' : '/';

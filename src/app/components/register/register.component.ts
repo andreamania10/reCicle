@@ -52,5 +52,52 @@ export class RegisterComponent {
   goToLogin(): void {
     this.router.navigate(['/']);
   }
+
+  // Localizacion 
+
+  isDetectingLocation = false;
+
+  detectLocation(): void {
+    if (!navigator.geolocation) {
+      this.errorMessage = 'Tu navegador no soporta geolocalización.';
+      return;
+    }
+
+    this.isDetectingLocation = true;
+
+    navigator.geolocation.getCurrentPosition( async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        );
+        const data = await response.json();
+
+        // Coge ciudad o provincia de la respuesta
+        const city = data.address.city || data.address.town || data.address.village || data.address.county || '';
+        const state = data.address.state || '';
+        this.registerData.location = city ? `${city}, ${state}` : state;
+
+      } catch {
+        this.errorMessage = 'No se pudo obtener la ubicación.';
+      } finally {
+        this.isDetectingLocation = false;
+      }
+    },
+    () => {
+      this.errorMessage = 'Permiso de ubicación denegado.';
+      this.isDetectingLocation = false;
+    }
+  );
+}
+
+
+
+
+
+
+
 }
 
