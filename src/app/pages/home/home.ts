@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FilterBarComponent } from '../../components/filter-bar/filter-bar';
 import { ArticleCardComponent } from '../../components/article-card/article-card';
 import { ArticleService } from '../../services/article';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -16,12 +17,22 @@ export class Home implements OnInit {
   allItems: any[] = [];
   items: any[] = [];
 
-  constructor(private articleService: ArticleService) {}
+  
+constructor(private articleService: ArticleService,
+  private router: Router) {}
+
 
   ngOnInit() {
     this.allItems = this.articleService.getArticles();
     this.items = [...this.allItems];
   }
+
+  
+goToCategory(categoryId: string) {
+  this.router.navigate(['/categories'], {
+    queryParams: { category: categoryId }
+  });
+}
 
   onFilter(filters: any) {
     this.items = this.allItems.filter(item => {
@@ -39,5 +50,6 @@ export class Home implements OnInit {
 
       return matchSearch && matchCategory && matchPrice;
     });
+    
   }
 }

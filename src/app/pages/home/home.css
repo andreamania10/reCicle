@@ -1,67 +1,128 @@
+/* CONTENEDOR GENERAL */
+
 .home-page {
-    background: #f6f8fb;
+    padding: 40px;
+    background: #f7f8fa;
     min-height: 100vh;
-    padding: 24px 0 40px;
 }
 
-.container {
-    width: min(1200px, 92%);
-    margin: 0 auto;
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
-.section-categories,
-.section-articles {
-    margin-top: 28px;
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
 }
+
+.hero p {
+    color: #6b7280;
+}
+
+
+/* SECCIONES */
+
+.categoriesSection {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.categoriesSection .categories {
+    display: flex;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+}
+
+.categoriesSection .categories .category-card {
+    width: 150px;
+    height: 100px;
+    padding: 20px;
+    margin: 20px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#transport {
+    background-image: url(https://www.tractionnews.com/wp-content/uploads/2020/06/Design-car-tire-header.png);
+}
+
+#sports {
+    background-image: url(https://images.ctfassets.net/ipjoepkmtnha/3QqEt0VPI4hAAVo6lhxriy/31aaee8b9dc392e2a9ef9fe8891efefa/technogym-elliptical-home-img.jpg);
+}
+
+#homeAccesories {
+    background-image: url(https://queondagye.com/wp-content/uploads/2023/01/De-Prati-Tendencias.jpg);
+}
+
+#technology {
+    background-image: url(https://thfvnext.bing.com/th/id/OIP.fap7_X8Cq3j5nlSNwJlpaQHaE7?r=0&cb=thfvnextfalcon2&pid=Api);
+}
+
+#clothes {
+    background-image: url(https://i.pinimg.com/736x/c1/c9/4e/c1c94e5cd15cd32a15e11044de898ca8.jpg);
+}
+
+#electronic {
+    background-image: url(https://st2.depositphotos.com/1000128/5573/i/450/depositphotos_55735071-stock-photo-modern-touchscreen-smartphones.jpg);
+}
+
+
+/* HEADER DE SECCIÓN */
 
 .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .section-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
 }
 
 .section-subtitle {
     color: #6b7280;
-    margin: 6px 0 0;
 }
 
+
+/* CATEGORÍAS */
+
 .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 16px;
 }
 
-.category-card {
-    background: linear-gradient(135deg, #00a082, #00c2a8);
-    color: white;
-    border-radius: 16px;
-    padding: 26px 18px;
-    text-align: center;
-    font-weight: 600;
-    box-shadow: 0 8px 20px rgba(0, 160, 130, 0.18);
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.category-card:hover {
+    transform: translateY(-3px);
 }
 
-.category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0, 160, 130, 0.25);
-}
+
+/* ARTÍCULOS GRID */
 
 .articles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 }
 
-app-article-card {
-    display: block;
+
+/* RESPONSIVE */
+
+@media (max-width: 1024px) {
+    .articles-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
 }

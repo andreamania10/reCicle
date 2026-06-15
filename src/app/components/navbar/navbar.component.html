@@ -1,22 +1,14 @@
-<nav class="navbar sticky-top">
-  <div class="container">
-
-    <!-- Logo -->
-    <a class="navbar-brand" routerLink="/">
-      <span class="brand-icon">◈</span>
-      <span class="brand-name">ReMarket</span>
-    </a>
-
-    <!-- Hamburguesa: solo visible en mobile -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      (click)="toggleMenu()"
-      [attr.aria-expanded]="isMenuOpen"
-      aria-label="Toggle navigation">
-      <span class="toggler-bar"></span>
-      <span class="toggler-bar"></span>
-      <span class="toggler-bar"></span>
+<nav class="navbar">
+    <div class="navbar-inner">
+        <a class="navbar-brand" [routerLink]="homeLink">
+            <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="ReMarket" />
+            <span class="brand-name">ReMarket</span>
+        </a>
+        <div class="navbar-search">
+            <input type="text" placeholder="Buscar artículos..." />
+        </div>
+        <button class="btn-login" (click)="openLoginModal()">
+      Login
     </button>
 
     <!-- Links -->
@@ -41,6 +33,5 @@
         </li>
       </ul>
     </div>
-
-  </div>
 </nav>
+``

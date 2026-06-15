@@ -7,10 +7,11 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterLink],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+  styleUrl: './navbar.component.css'
 })
+export class NavbarComponent {
 
 export class NavbarComponent {
 
@@ -18,15 +19,12 @@ export class NavbarComponent {
   isMenuOpen = false;
 
 
-  openLoginModal(): void {
-    const modalEl = document.getElementById('loginModal');
-    if (modalEl) {
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-    }
+  get homeLink(): string {
+    return localStorage.getItem('user') ? '/home' : '/';
   }
 
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+  openLoginModal(): void {
+    this.router.navigate(['/login']);
+    // Si luego hacéis modal, aquí lo cambiáis
   }
 }
