@@ -1,100 +1,92 @@
-<!-- Modal Bootstrap -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true" (hidden.bs.modal)="resetForm()">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-    
-            <!-- Header -->
-            <div class="modal-header d-flex justify-content-between">
-                <div class="modal-brand">
-                    
-                    <h5 class="modal-title" id="loginModalLabel">Accede a tu cuenta</h5>
-                </div>
-                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Cerrar">
-                    <i class="bi bi-x"></i>
-                </button>
-            </div>
-        
-            <!-- Body -->
-            <div class="modal-body">
-                <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
-                    
-                    <!-- Email -->
-                    <div class="form-group">
-                        <label for="loginEmail" class="form-label">Correo electrónico</label>
-                        <input
-                            type="email"
-                            id="loginEmail"
-                            name="email"
-                            class="form-control"
-                            [(ngModel)]="loginData.email"
-                            #emailField="ngModel"
-                            required
-                            email
-                            placeholder="tu@correo.com"
-                            [class.is-invalid]="emailField.invalid && emailField.touched">
-                        
-                        
-                        <div class="invalid-feedback" *ngIf="emailField.invalid && emailField.touched">
-                            <span *ngIf="emailField.errors?.['required']">El correo es obligatorio.</span>
-                            <span *ngIf="emailField.errors?.['email']">Introduce un correo válido.</span>
-                        </div>
-            
-                    </div>
-                
-        
-                    <!-- Password -->
-                    <div class="form-group mt-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <label for="loginPassword" class="form-label">Contraseña</label>
-                            <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
-                        </div>
-                        
-                        <input
-                        type="password"
-                        id="loginPassword"
-                        name="password"
-                        class="form-control"
-                        [(ngModel)]="loginData.password"
-                        #passwordField="ngModel"
-                        required
-                        minlength="6"
-                        placeholder="••••••••"
-                        [class.is-invalid]="passwordField.invalid && passwordField.touched">
-                        
-                        <div class="invalid-feedback" *ngIf="passwordField.invalid && passwordField.touched">
-                            <span *ngIf="passwordField.errors?.['required']">La contraseña es obligatoria.</span>
-                            <span *ngIf="passwordField.errors?.['minlength']">Mínimo 6 caracteres.</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Error general -->
-                    <div class="alert-error mt-3" *ngIf="errorMessage">
-                        <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
-                    </div>
-                    
-                    <!-- Botón submit -->
-                    <button type="submit" class="btn btn-primary-custom w-100 mt-4" [disabled]="isLoading">
-                        
-                        <span *ngIf="!isLoading">Entrar</span>
-                          <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center gap-2">
-                            <span class="spinner-border spinner-border-sm" role="status"></span>
-                            Entrando...
-                        </span>
-                    </button>
-                
-                </form>
-            </div>
-        
-            <!-- Footer -->
-            <div class="modal-footer-custom">
-                <p class="register-prompt"> ¿Aún no tienes cuenta?
-                    
-                    <button type="button" class="btn-register-link" (click)="goToRegister()">
-                    Regístrate aquí
-                    </button>
-                </p>
-            </div>
-            
+<div
+  class="modal fade login-modal"
+  id="loginModal"
+  tabindex="-1"
+  aria-labelledby="loginModalLabel"
+  aria-hidden="true"
+  (hidden.bs.modal)="resetForm()"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <div class="brand">
+            <span class="brand-name">ReMarket</span>
+          </div>
+          <h5 class="modal-title" id="loginModalLabel">Accede a tu cuenta</h5>
+          <p class="login-subtitle">Bienvenido de nuevo. Introduce tus datos para continuar.</p>
         </div>
+        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Cerrar">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate class="login-form">
+          <div class="form-group">
+            <label for="loginEmail" class="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              id="loginEmail"
+              name="email"
+              class="form-control"
+              [(ngModel)]="loginData.email"
+              #emailField="ngModel"
+              required
+              email
+              placeholder="tu@correo.com"
+              [class.is-invalid]="emailField.invalid && emailField.touched"
+            />
+            <div class="invalid-feedback" *ngIf="emailField.invalid && emailField.touched">
+              <span *ngIf="emailField.errors?.['required']">El correo es obligatorio.</span>
+              <span *ngIf="emailField.errors?.['email']">Introduce un correo válido.</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="password-header">
+              <label for="loginPassword" class="form-label mb-0">Contraseña</label>
+              <button type="button" class="forgot-link">¿Olvidaste tu contraseña?</button>
+            </div>
+            <input
+              type="password"
+              id="loginPassword"
+              name="password"
+              class="form-control"
+              [(ngModel)]="loginData.password"
+              #passwordField="ngModel"
+              required
+              minlength="6"
+              placeholder="Mínimo 6 caracteres"
+              [class.is-invalid]="passwordField.invalid && passwordField.touched"
+            />
+            <div class="invalid-feedback" *ngIf="passwordField.invalid && passwordField.touched">
+              <span *ngIf="passwordField.errors?.['required']">La contraseña es obligatoria.</span>
+              <span *ngIf="passwordField.errors?.['minlength']">Mínimo 6 caracteres.</span>
+            </div>
+          </div>
+
+          <div class="alert-error" *ngIf="errorMessage">
+            <i class="bi bi-exclamation-circle"></i>
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="isLoading || loginForm.invalid">
+            <span *ngIf="!isLoading">Entrar</span>
+            <span *ngIf="isLoading" class="loading-state">
+              <span class="spinner-border spinner-border-sm" role="status"></span>
+              Entrando...
+            </span>
+          </button>
+        </form>
+      </div>
+
+      <div class="modal-footer-custom">
+        <p class="register-prompt">
+          ¿Aún no tienes cuenta?
+          <button type="button" class="btn-link-inline" (click)="goToRegister()">Regístrate aquí</button>
+        </p>
+      </div>
     </div>
+  </div>
 </div>

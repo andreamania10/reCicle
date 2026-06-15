@@ -1,178 +1,183 @@
-<div class="register-page">
-    <div class="register-container">
-    
-        <!-- Cabecera -->
-        <div class="register-header">
-            <a routerLink="/" class="back-link">
-                <i class="bi bi-arrow-left"></i> Volver al inicio
-            </a>
-            <div class="brand">
-                <span class="brand-icon">◈</span>
-                <span class="brand-name">ReMarket</span>
-            </div>
-            <h1 class="register-title">Crea tu cuenta</h1>
-                <p class="register-subtitle">Únete y empieza a comprar y vender artículos de segunda mano.</p>
+<div
+  class="modal fade"
+  id="registerModal"
+  tabindex="-1"
+  aria-labelledby="registerModalLabel"
+  aria-hidden="true"
+  (hidden.bs.modal)="resetForm()"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-between">
+        <div class="modal-brand">
+          <h5 class="modal-title" id="registerModalLabel">Crea tu cuenta</h5>
+          <p class="register-subtitle mb-0">
+            Únete y empieza a comprar y vender artículos de segunda mano.
+          </p>
         </div>
-        
-        <!-- Formulario -->
+        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Cerrar">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
         <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate class="register-form">
+          <div class="form-group">
+            <label for="username" class="form-label">Nombre de usuario</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-control"
+              [(ngModel)]="registerData.username"
+              #usernameField="ngModel"
+              required
+              minlength="3"
+              maxlength="50"
+              placeholder="tu_nombre_de_usuario"
+              [class.is-invalid]="usernameField.invalid && usernameField.touched"
+            />
+            <div class="invalid-feedback" *ngIf="usernameField.invalid && usernameField.touched">
+              <span *ngIf="usernameField.errors?.['required']">El nombre de usuario es obligatorio.</span>
+              <span *ngIf="usernameField.errors?.['minlength']">Mínimo 3 caracteres.</span>
+            </div>
+          </div>
 
-            <!-- Nombre de usuario -->
+          <div class="form-group mt-3">
+            <label for="regEmail" class="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              id="regEmail"
+              name="email"
+              class="form-control"
+              [(ngModel)]="registerData.email"
+              #regEmailField="ngModel"
+              required
+              email
+              placeholder="tu@correo.com"
+              [class.is-invalid]="regEmailField.invalid && regEmailField.touched"
+            />
+            <div class="invalid-feedback" *ngIf="regEmailField.invalid && regEmailField.touched">
+              <span *ngIf="regEmailField.errors?.['required']">El correo es obligatorio.</span>
+              <span *ngIf="regEmailField.errors?.['email']">Introduce un correo válido.</span>
+            </div>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="location" class="form-label">
+              Localización <span class="optional-tag">opcional</span>
+            </label>
+            <div class="d-flex gap-2">
+              <input
+                type="text"
+                id="location"
+                name="location"
+                class="form-control"
+                [(ngModel)]="registerData.location"
+                placeholder="Ciudad o provincia"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="detectLocation()"
+                [disabled]="isDetectingLocation"
+              >
+                <i class="bi bi-geo-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-row mt-3">
             <div class="form-group">
-                <label for="username" class="form-label">Nombre de usuario</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    class="form-control"
-                    [(ngModel)]="registerData.username"
-                    #usernameField="ngModel"
-                    required
-                    minlength="3"
-                    maxlength="50"
-                    placeholder="tu_nombre_de_usuario"
-                    [class.is-invalid]="usernameField.invalid && usernameField.touched">
-                
-                <div class="invalid-feedback" *ngIf="usernameField.invalid && usernameField.touched">
-                    <span *ngIf="usernameField.errors?.['required']">El nombre de usuario es obligatorio.</span>
-                    <span *ngIf="usernameField.errors?.['minlength']">Mínimo 3 caracteres.</span>
-                </div>
+              <label for="regPassword" class="form-label">Contraseña</label>
+              <input
+                type="password"
+                id="regPassword"
+                name="password"
+                class="form-control"
+                [(ngModel)]="registerData.password"
+                #regPasswordField="ngModel"
+                required
+                minlength="6"
+                placeholder="Mínimo 6 caracteres"
+                [class.is-invalid]="regPasswordField.invalid && regPasswordField.touched"
+              />
+              <div class="invalid-feedback" *ngIf="regPasswordField.invalid && regPasswordField.touched">
+                <span *ngIf="regPasswordField.errors?.['required']">La contraseña es obligatoria.</span>
+                <span *ngIf="regPasswordField.errors?.['minlength']">Mínimo 6 caracteres.</span>
+              </div>
             </div>
-            
-            <!-- Email -->
+
             <div class="form-group">
-                <label for="regEmail" class="form-label">Correo electrónico</label>
-                <input
-                    type="email"
-                    id="regEmail"
-                    name="email"
-                    class="form-control"
-                    [(ngModel)]="registerData.email"
-                    #regEmailField="ngModel"
-                    required
-                    email
-                    placeholder="tu@correo.com"
-                    [class.is-invalid]="regEmailField.invalid && regEmailField.touched">
-                <div class="invalid-feedback" *ngIf="regEmailField.invalid && regEmailField.touched">
-                    <span *ngIf="regEmailField.errors?.['required']">El correo es obligatorio.</span>
-                    <span *ngIf="regEmailField.errors?.['email']">Introduce un correo válido.</span>
-                </div>
+              <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                class="form-control"
+                [(ngModel)]="registerData.confirmPassword"
+                #confirmField="ngModel"
+                required
+                placeholder="Repite la contraseña"
+                [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
+              />
+              <div class="invalid-feedback" *ngIf="passwordMismatch">Las contraseñas no coinciden.</div>
             </div>
-        
-            <!-- Localización -->
-            <div class="form-group">
-                <label for="location" class="form-label">
-                Localización <span class="optional-tag">opcional</span>
-                </label>
-                
-                <div class="d-flex gap-2">
-                    <input
-                        type="text"
-                        id="location"
-                        name="location"
-                        class="form-control"
-                        [(ngModel)]="registerData.location"
-                        placeholder="Ciudad o provincia">
-                    <button type="button" class="btn btn-outline-secondary" (click)="detectLocation()" [disabled]="isDetectingLocation">
-                        <i class="bi bi-geo-alt"></i>
-                    </button>
-                </div>
-            </div>
+          </div>
 
+          <div class="form-check-group mt-3">
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              name="acceptTerms"
+              class="form-check-input"
+              [(ngModel)]="registerData.acceptTerms"
+              #termsField="ngModel"
+              required
+              [class.is-invalid]="termsField.invalid && termsField.touched"
+            />
+            <label for="acceptTerms" class="form-check-label">
+              Acepto los <a href="#" class="terms-link">términos y condiciones</a> y la
+              <a href="#" class="terms-link">política de privacidad</a>.
+            </label>
+          </div>
 
-            
-            <!-- Contraseña -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="regPassword" class="form-label">Contraseña</label>
-                    <input
-                        type="password"
-                        id="regPassword"
-                        name="password"
-                        class="form-control"
-                        [(ngModel)]="registerData.password"
-                        #regPasswordField="ngModel"
-                        required
-                        minlength="6"
-                        placeholder="Mínimo 6 caracteres"
-                        [class.is-invalid]="regPasswordField.invalid && regPasswordField.touched">
-                    <div class="invalid-feedback" *ngIf="regPasswordField.invalid && regPasswordField.touched">
-                        <span *ngIf="regPasswordField.errors?.['required']">La contraseña es obligatoria.</span>
-                        <span *ngIf="regPasswordField.errors?.['minlength']">Mínimo 6 caracteres.</span>
-                    </div>
-                </div>
-        
-                <div class="form-group">
-                    <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        class="form-control"
-                        [(ngModel)]="registerData.confirmPassword"
-                        #confirmField="ngModel"
-                        required
-                        placeholder="Repite la contraseña"
-                        [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch">
-                    <div class="invalid-feedback" *ngIf="passwordMismatch">
-                        Las contraseñas no coinciden.
-                    </div>
-                </div>
-            </div>
+          <div
+            class="invalid-feedback d-block"
+            *ngIf="termsField.invalid && termsField.touched"
+            style="margin-top: -8px; margin-bottom: 8px"
+          >
+            Debes aceptar los términos para continuar.
+          </div>
 
+          <div class="alert-error mt-3" *ngIf="errorMessage">
+            <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+          </div>
 
-            <!-- Términos -->
-            <div class="form-check-group">
-                <input
-                    type="checkbox"
-                    id="acceptTerms"
-                    name="acceptTerms"
-                    class="form-check-input"
-                    [(ngModel)]="registerData.acceptTerms"
-                    #termsField="ngModel"
-                    required
-                    [class.is-invalid]="termsField.invalid && termsField.touched">
-                <label for="acceptTerms" class="form-check-label">
-                    Acepto los <a href="#" class="terms-link">términos y condiciones</a> y la
-                    <a href="#" class="terms-link">política de privacidad</a>.
-                </label>
-            </div>
+          <div class="alert-success mt-3" *ngIf="successMessage">
+            <i class="bi bi-check-circle"></i> {{ successMessage }}
+          </div>
 
-            <div class="invalid-feedback d-block" *ngIf="termsField.invalid && termsField.touched" style="margin-top: -8px; margin-bottom: 8px;">
-                Debes aceptar los términos para continuar.
-            </div>
-
-        
-            <!-- Error general -->
-            <div class="alert-error" *ngIf="errorMessage">
-                <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
-            </div>
-    
-            <!-- Éxito -->
-            <div class="alert-success" *ngIf="successMessage">
-                <i class="bi bi-check-circle"></i> {{ successMessage }}
-            </div>
-            
-            <!-- Botón -->
-            <button
-                type="submit"
-                class="btn-submit"
-                [disabled]="isLoading || registerForm.invalid || passwordMismatch">
-                <span *ngIf="!isLoading">Crear cuenta</span>
-                <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center gap-2">
-                    <span class="spinner-border spinner-border-sm" role="status"></span>
-                    Creando cuenta...
-                </span>
-            </button>
-        
+          <button
+            type="submit"
+            class="btn-submit w-100 mt-4"
+            [disabled]="isLoading || registerForm.invalid || passwordMismatch"
+          >
+            <span *ngIf="!isLoading">Crear cuenta</span>
+            <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center gap-2">
+              <span class="spinner-border spinner-border-sm" role="status"></span>
+              Creando cuenta...
+            </span>
+          </button>
         </form>
-        
-        <!-- Footer del formulario -->
-        <p class="login-redirect">
-            ¿Ya tienes cuenta?
-            <button type="button" class="btn-link-inline" (click)="goToLogin()">Inicia sesión</button>
-        </p>
-    
-    </div>
-</div>
+      </div>
 
+      <div class="modal-footer-custom">
+        <p class="login-redirect mb-0">
+          ¿Ya tienes cuenta?
+          <button type="button" class="btn-link-inline" (click)="goToLogin()">Inicia sesión</button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

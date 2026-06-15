@@ -1,5 +1,5 @@
 <section class="home-page">
-    <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar>
+    <!-- <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar> -->
     <section class="section-categories">
         <div class="container">
             <div class="section-header">
@@ -7,14 +7,21 @@
                 <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
             </div>
 
-            <div class="categories-grid">
-                <div class="category-card">Tecnología</div>
-                <div class="category-card">Electrónica</div>
-                <div class="category-card">Ropa</div>
-                <div class="category-card">Hogar</div>
-                <div class="category-card">Deporte</div>
-                <div class="category-card">Vehículos</div>
-            </div>
+            @if (categoriesState$ | async; as state) {
+                @if (state.error) {
+                    <p class="categories-error">No se pudieron cargar las categorías.</p>
+                } @else {
+                    <div class="categories-grid">
+                        @for (category of state.categories; track category.id) {
+                            <div class="category-card" (click)="goToCategory(category.slug)">
+                                {{ category.name }}
+                            </div>
+                        }
+                    </div>
+                }
+            } @else {
+                <p class="categories-status">Cargando categorías...</p>
+            }
         </div>
     </section>
 
@@ -24,13 +31,23 @@
                 <h2 class="section-title">Artículos recientes</h2>
             </div>
 
-            <div class="articles-grid">
-                <app-article-card *ngFor="let item of items" [item]="item">
-                </app-article-card>
-            </div>
+            @if (articlesState$ | async; as articlesState) {
+                @if (articlesState.error) {
+                    <p class="articles-error">No se pudieron cargar los artículos.</p>
+                } @else if (filteredArticles$ | async; as articles) {
+                    @if (articles.length === 0) {
+                        <p class="articles-status">No hay artículos disponibles.</p>
+                    } @else {
+                        <div class="articles-grid">
+                            @for (item of articles; track item.id) {
+                                <app-article-card [item]="item"></app-article-card>
+                            }
+                        </div>
+                    }
+                }
+            } @else {
+                <p class="articles-status">Cargando artículos...</p>
+            }
         </div>
     </section>
 </section>
-
-<!-- Login Modal: se activa desde el botón Login del navbar -->
-<app-login-modal></app-login-modal>
