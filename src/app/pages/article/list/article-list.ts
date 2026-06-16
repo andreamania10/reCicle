@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Article } from '../../../interfaces/article';
-import { Category, CategoryResponse } from '../../../interfaces/category';
+import { Category, CategoriesResponse } from '../../../interfaces/category';
 import { ArticleService } from '../../../services/article';
 import { CategoryService } from '../../../services/category';
  
@@ -36,7 +36,7 @@ export class ArticleList implements OnInit {
   filteredArticles: Article[] = [];
  
 ngOnInit() {
-  this.categoryService.getAll().subscribe((data: CategoryResponse) => {
+  this.categoryService.getAll().subscribe((data: CategoriesResponse) => {
     this.categories = data.categories;
     this.subCategories = [];
   });
