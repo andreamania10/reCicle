@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from 'rxjs';
 import { FilterBarComponent } from '../../components/filter-bar/filter-bar';

@@ -1,54 +1,102 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ArticleService } from '../../services/article';
 import { Router } from '@angular/router';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from 'rxjs';
+import { ArticleCardComponent } from '../../components/article-card/article-card';
+import { ArticleService } from '../../services/article';
+import { CategoryService } from '../../services/category';
+import { Category } from '../../interfaces/category';
+import { Article } from '../../interfaces/article';
+import { FilterBarComponent } from '../../components/filter-bar/filter-bar';
+
+interface CategoriesState {
+  loading: boolean;
+  error: boolean;
+  categories: Category[];
+}
+
+interface ArticlesState {
+  loading: boolean;
+  error: boolean;
+}
+
+interface ArticleFilters {
+  search: string;
+  category: string;
+  maxPrice: number | null;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ArticleCardComponent, FilterBarComponent],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrls: ['./home.css']
 })
-
 export class Home implements OnInit {
+  categoriesState$!: Observable<CategoriesState>;
+  articlesState$!: Observable<ArticlesState>;
+  filteredArticles$!: Observable<Article[]>;
 
-  allItems: any[] = [];
-  items: any[] = [];
-  
-constructor(private articleService: ArticleService,
-  private router: Router) {}
+  private readonly filters$ = new BehaviorSubject<ArticleFilters>({
+    search: '',
+    category: '',
+    maxPrice: null,
+  });
+
+  constructor(
+    private articleService: ArticleService,
+    private categoryService: CategoryService,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
-    this.articleService.getArticles().subscribe((articles) => {
-      this.allItems = articles;
-      this.items = [...articles];
+    this.categoriesState$ = this.categoryService.getCategories().pipe(
+      map((categories) => ({ loading: false, error: false, categories })),
+      catchError(() =>
+        of({ loading: false, error: true, categories: [] as Category[] }),
+      ),
+    );
+
+    const articlesResult$ = this.articleService.getArticles().pipe(
+      map((articles) => ({ error: false, articles })),
+      catchError(() => of({ error: true, articles: [] as Article[] })),
+    );
+
+    this.articlesState$ = articlesResult$.pipe(
+      map(({ error }) => ({ loading: false, error })),
+    );
+
+    this.filteredArticles$ = combineLatest([
+      articlesResult$.pipe(map(({ articles }) => articles)),
+      this.filters$,
+    ]).pipe(map(([articles, filters]) => this.applyFilter(articles, filters)));
+  }
+
+  goToCategory(slug: string): void {
+    this.router.navigate(['/categories'], {
+      queryParams: { category: slug },
     });
   }
 
-  
-goToCategory(categoryId: string) {
-  this.router.navigate(['/categories'], {
-    queryParams: { category: categoryId }
-  });
-}
+  onFilter(filters: ArticleFilters): void {
+    this.filters$.next(filters);
+  }
 
-  onFilter(filters: any) {
-    this.items = this.allItems.filter(item => {
+  private applyFilter(articles: Article[], filters: ArticleFilters): Article[] {
+    return articles.filter((item) => {
       const matchSearch =
         !filters.search ||
-        item.title.toLowerCase().includes(filters.search.toLowerCase());
+        item.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+        (item.description ?? '').toLowerCase().includes(filters.search.toLowerCase());
 
       const matchCategory =
-        !filters.category ||
-        item.category === filters.category;
+        !filters.category || String(item.category_id) === filters.category;
 
       const matchPrice =
-        !filters.maxPrice ||
-        item.price <= filters.maxPrice;
+        !filters.maxPrice || Number(item.price) <= filters.maxPrice;
 
       return matchSearch && matchCategory && matchPrice;
     });
-    
   }
 }

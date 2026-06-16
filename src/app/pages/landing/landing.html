@@ -49,7 +49,7 @@
             </div>
             } } @else {
             <p class="categories-status">Cargando categorías...</p>
-            } >>>>>>> origin/main
+            }
         </div>
     </section>
 
@@ -97,20 +97,19 @@
         </div>
     </section>
 
-    </div>
-    @if (articlesState$ | async; as articlesState) { @if (articlesState.error) {
-    <p class="articles-error">No se pudieron cargar los artículos.</p>
-    } @else if (filteredArticles$ | async; as articles) { @if (articles.length === 0) {
-    <p class="articles-status">No hay artículos disponibles.</p>
-    } @else {
-    <div class="articles-grid">
-        @for (item of articles; track item.id) {
-        <app-article-card [item]="item"></app-article-card>
+    <div>
+        @if (articlesState$ | async; as articlesState) { @if (articlesState.error) {
+        <p class="articles-error">No se pudieron cargar los artículos.</p>
+        } @else if (filteredArticles$ | async; as articles) { @if (articles.length === 0) {
+        <p class="articles-status">No hay artículos disponibles.</p>
+        } @else {
+        <div class="articles-grid">
+            @for (item of articles; track item.id) {
+            <app-article-card [item]="item"></app-article-card>
+            }
+        </div>
+        } } } @else {
+        <p class="articles-status">Cargando artículos...</p>
         }
     </div>
-    } } } @else {
-    <p class="articles-status">Cargando artículos...</p>
-    }
-    </div>
-</section>
 </section>
