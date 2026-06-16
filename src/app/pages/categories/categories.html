@@ -1,16 +1,21 @@
-<div class="categories-page">
-    <div class="categories">
+<div class="container py-4">
+  <h2>Artículos</h2>
 
-        <app-article-card *ngFor="let item of items" [item]="item">
-        </app-article-card>
+  @if (selectedCategory) {
+    <p class="text-muted">Categoría: {{ selectedCategory }}</p>
+  }
 
-    </div>
-
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    @for (item of items; track item.id) {
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+          <img [src]="item.image || 'https://placehold.co/300x200'" class="card-img-top" [alt]="item.title" style="height: 200px; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">{{ item.title }}</h5>
+            <p class="card-text text-success fw-bold">{{ item.price }} €</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
 </div>
-``
-
-<h2>Artículos</h2>
-
-<p *ngIf="selectedCategory">
-    Categoría: {{ selectedCategory }}
-</p>
