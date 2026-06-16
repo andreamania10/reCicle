@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ArticleService } from '../../services/article';
 import { Router } from '@angular/router';
+import { Article } from '../../interfaces/article';
 
 @Component({
   selector: 'app-home',
@@ -12,44 +13,21 @@ import { Router } from '@angular/router';
 })
 export class Home implements OnInit {
 
-  allItems: any[] = [];
-  items: any[] = [];
+  private articleService = inject(ArticleService);
+  private router = inject(Router);
 
-  
-constructor(private articleService: ArticleService,
-  private router: Router) {}
+  allItems: Article[] = [];
+  items: Article[] = [];
 
-
-  ngOnInit() {
-    this.articleService.getArticles().subscribe((articles) => {
-      this.allItems = articles;
-      this.items = [...articles];
-    });
-  }
-
-  
-goToCategory(categoryId: string) {
-  this.router.navigate(['/categories'], {
-    queryParams: { category: categoryId }
+ngOnInit() {
+  this.articleService.getAll().subscribe(data => {
+    this.allItems = data.results;
+    this.items = [...data.results];
   });
 }
-
-  onFilter(filters: any) {
-    this.items = this.allItems.filter(item => {
-      const matchSearch =
-        !filters.search ||
-        item.title.toLowerCase().includes(filters.search.toLowerCase());
-
-      const matchCategory =
-        !filters.category ||
-        item.category === filters.category;
-
-      const matchPrice =
-        !filters.maxPrice ||
-        item.price <= filters.maxPrice;
-
-      return matchSearch && matchCategory && matchPrice;
-    });
-    
-  }
+ goToCategory(categoryId: string) {
+  this.router.navigate(['/categories'], {
+    queryParams: { category_id: categoryId }
+  });
+}
 }
