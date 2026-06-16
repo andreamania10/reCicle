@@ -1,16 +1,8 @@
-<div class="categories-page">
-    <div class="categories">
+<div class="categories">
+    <app-article-card *ngFor="let item of items" [article]="item">
+    </app-article-card>
 
-        <app-article-card *ngFor="let item of items" [item]="item">
-        </app-article-card>
-
-    </div>
-
+    <p *ngIf="items.length === 0">
+        No hay artículos disponibles
+    </p>
 </div>
-``
-
-<h2>Artículos</h2>
-
-<p *ngIf="selectedCategory">
-    Categoría: {{ selectedCategory }}
-</p>

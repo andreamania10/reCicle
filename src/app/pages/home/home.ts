@@ -12,21 +12,23 @@ import { Router } from '@angular/router';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
+
 export class Home implements OnInit {
 
   allItems: any[] = [];
   items: any[] = [];
-
   
 constructor(private articleService: ArticleService,
   private router: Router) {}
 
-
   ngOnInit() {
-    this.allItems = this.articleService.getArticles();
-    this.items = [...this.allItems];
-  }
-
+    this.articleService.getArticles().then(data => {
+      this.allItems = data;
+      this.items = [...data];
+    });
+  }  
+  
+  
   
 goToCategory(categoryId: string) {
   this.router.navigate(['/categories'], {

@@ -1,36 +1,89 @@
-<section class="home-page">
-    <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar>
-    <section class="section-categories">
+<div class="landing-page">
+
+    <!-- HERO -->
+    <section class="hero">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Explora por categoría</h2>
-                <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
+            <h1>Dale una segunda oportunidad a las cosas</h1>
+            <p>Compra, vende y descubre miles de artículos de segunda mano.</p>
+
+            <div class="hero-actions">
+                <button class="btn-primary">Explorar</button>
+                <button class="btn-secondary">Iniciar sesión</button>
             </div>
+        </div>
+    </section>
+
+    <!-- CATEGORÍAS -->
+    <section class="section">
+        <div class="container">
+            <h2>Explora por categoría</h2>
 
             <div class="categories-grid">
-                <div class="category-card">Tecnología</div>
-                <div class="category-card">Electrónica</div>
-                <div class="category-card">Ropa</div>
-                <div class="category-card">Hogar</div>
-                <div class="category-card">Deporte</div>
-                <div class="category-card">Vehículos</div>
+                <div class="category-card">
+                    <span>Tecnología</span>
+                    <small>1200 anuncios</small>
+                </div>
+
+                <div class="category-card">
+                    <span>Ropa</span>
+                    <small>950 anuncios</small>
+                </div>
+
+                <div class="category-card">
+                    <span>Hogar</span>
+                    <small>670 anuncios</small>
+                </div>
+
+                <div class="category-card">
+                    <span>Deporte</span>
+                    <small>430 anuncios</small>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="section-articles">
+    <!-- QUÉ PUEDES ENCONTRAR -->
+    <section class="section alt">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Artículos recientes</h2>
-            </div>
+            <h2>¿Qué puedes encontrar?</h2>
 
-            <div class="articles-grid">
-                <app-article-card *ngFor="let item of items" [item]="item">
-                </app-article-card>
+            <div class="items-preview">
+                <div class="preview-card">Electrónica</div>
+                <div class="preview-card">Muebles</div>
+                <div class="preview-card">Vehículos</div>
+                <div class="preview-card">Moda</div>
             </div>
         </div>
     </section>
-</section>
 
-<!-- Login Modal: se activa desde el botón Login del navbar -->
-<app-login-modal></app-login-modal>
+    <!-- ESTADÍSTICAS -->
+    <section class="section stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat">
+                    <h3>+5.000</h3>
+                    <p>Anuncios activos</p>
+                </div>
+
+                <div class="stat">
+                    <h3>+2.000</h3>
+                    <p>Usuarios</p>
+                </div>
+
+                <div class="stat">
+                    <h3>+20</h3>
+                    <p>Categorías</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Empieza a vender hoy mismo</h2>
+            <button class="btn-primary">Publicar artículo</button>
+        </div>
+    </section>
+
+</div>
