@@ -1,26 +1,24 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Article, ArticlesResponse } from '../interfaces/article';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ArticleService {
+  private readonly apiUrl = `${environment.apiUrl}/api/articles`;
 
-  apiUrl = 'https://proyecto-final-node-js86.onrender.com/api/articles';
+  constructor(private http: HttpClient) {}
 
-  async getArticles(): Promise<any[]> {
-    const response = await fetch(this.apiUrl);
-    return await response.json();
+  getArticles(): Observable<Article[]> {
+    return this.http.get<ArticlesResponse | Article[]>(this.apiUrl).pipe(
+      map((response) => (Array.isArray(response) ? response : response.results ?? [])),
+    );
   }
 
-  async createArticle(article: any): Promise<any> {
-    const response = await fetch(this.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(article)
-    });
-
-    return await response.json();
+  createArticle(article: Partial<Article>): void {
+    console.warn('createArticle pendiente de implementar con API', article);
   }
 }

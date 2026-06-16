@@ -1,7 +1,6 @@
-<div class="landing-page">
-
-    <!-- HERO -->
-    <section class="hero">
+<section class="home-page">
+    <!-- <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar> -->
+    <section class="section-categories">
         <div class="container">
             <h1>Dale una segunda oportunidad a las cosas</h1>
             <p>Compra, vende y descubre miles de artículos de segunda mano.</p>
@@ -17,7 +16,6 @@
     <section class="section">
         <div class="container">
             <h2>Explora por categoría</h2>
-
             <div class="categories-grid">
                 <div class="category-card">
                     <span>Tecnología</span>
@@ -39,6 +37,19 @@
                     <small>430 anuncios</small>
                 </div>
             </div>
+            ======= @if (categoriesState$ | async; as state) { @if (state.error) {
+            <p class="categories-error">No se pudieron cargar las categorías.</p>
+            } @else {
+            <div class="categories-grid">
+                @for (category of state.categories; track category.id) {
+                <div class="category-card" (click)="goToCategory(category.slug)">
+                    {{ category.name }}
+                </div>
+                }
+            </div>
+            } } @else {
+            <p class="categories-status">Cargando categorías...</p>
+            } >>>>>>> origin/main
         </div>
     </section>
 
@@ -86,4 +97,20 @@
         </div>
     </section>
 
-</div>
+    </div>
+    ======= @if (articlesState$ | async; as articlesState) { @if (articlesState.error) {
+    <p class="articles-error">No se pudieron cargar los artículos.</p>
+    } @else if (filteredArticles$ | async; as articles) { @if (articles.length === 0) {
+    <p class="articles-status">No hay artículos disponibles.</p>
+    } @else {
+    <div class="articles-grid">
+        @for (item of articles; track item.id) {
+        <app-article-card [item]="item"></app-article-card>
+        }
+    </div>
+    } } } @else {
+    <p class="articles-status">Cargando artículos...</p>
+    }
+    </div>
+</section>
+</section>

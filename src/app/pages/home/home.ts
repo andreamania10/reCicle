@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FilterBarComponent } from '../../components/filter-bar/filter-bar';
-import { ArticleCardComponent } from '../../components/article-card/article-card';
 import { ArticleService } from '../../services/article';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FilterBarComponent, ArticleCardComponent],
+  imports: [CommonModule],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -22,13 +20,12 @@ constructor(private articleService: ArticleService,
   private router: Router) {}
 
   ngOnInit() {
-    this.articleService.getArticles().then(data => {
-      this.allItems = data;
-      this.items = [...data];
+    this.articleService.getArticles().subscribe((articles) => {
+      this.allItems = articles;
+      this.items = [...articles];
     });
-  }  
-  
-  
+  }
+
   
 goToCategory(categoryId: string) {
   this.router.navigate(['/categories'], {

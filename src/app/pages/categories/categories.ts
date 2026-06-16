@@ -22,16 +22,16 @@ export class Categories implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
-    this.articleService.getArticles().then(data => {
-      this.allItems = data;
-  
-      this.route.queryParams.subscribe(params => {
+  ngOnInit(): void {
+    this.articleService.getArticles().subscribe((articles) => {
+      this.allItems = articles;
+
+      this.route.queryParams.subscribe((params) => {
         this.selectedCategory = params['category'];
-  
+
         if (this.selectedCategory) {
-          this.items = this.allItems.filter(item =>
-            item.category === this.selectedCategory
+          this.items = this.allItems.filter(
+            (item) => String(item.category_id) === this.selectedCategory,
           );
         } else {
           this.items = [...this.allItems];
