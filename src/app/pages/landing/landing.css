@@ -69,6 +69,11 @@
     box-shadow: 0 12px 28px rgba(0, 160, 130, 0.25);
 }
 
+.category-card--active {
+    outline: 3px solid #1a1a1a;
+    transform: translateY(-4px);
+}
+
 .articles-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
