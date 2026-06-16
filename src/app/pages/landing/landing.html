@@ -37,7 +37,7 @@
                     <small>430 anuncios</small>
                 </div>
             </div>
-            ======= @if (categoriesState$ | async; as state) { @if (state.error) {
+            @if (categoriesState$ | async; as state) { @if (state.error) {
             <p class="categories-error">No se pudieron cargar las categorías.</p>
             } @else {
             <div class="categories-grid">
@@ -98,7 +98,7 @@
     </section>
 
     </div>
-    ======= @if (articlesState$ | async; as articlesState) { @if (articlesState.error) {
+    @if (articlesState$ | async; as articlesState) { @if (articlesState.error) {
     <p class="articles-error">No se pudieron cargar los artículos.</p>
     } @else if (filteredArticles$ | async; as articles) { @if (articles.length === 0) {
     <p class="articles-status">No hay artículos disponibles.</p>
