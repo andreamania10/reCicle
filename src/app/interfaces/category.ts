@@ -2,9 +2,11 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
+  created_at: string;
   parent_id: number | null;
-  created_at?: string;
 }
-export interface CategoryResponse {
+
+export interface CategoriesResponse {
   categories: Category[];
 }
+

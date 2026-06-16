@@ -4,11 +4,12 @@ import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { LoginModalComponent } from './components/login-modal/login-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, CommonModule, NavbarComponent, FooterComponent, LoginModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

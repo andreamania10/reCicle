@@ -1,39 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+
+declare var bootstrap: any;
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-register-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  
   registerData = {
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
     location: '',
-    acceptTerms: false
+    acceptTerms: false,
   };
 
   isLoading = false;
   errorMessage = '';
   successMessage = '';
-
-  constructor(private router: Router) {}
-
-  get passwordMismatch(): boolean {
-    return (
-      this.registerData.password !== '' &&
-      this.registerData.confirmPassword !== '' &&
-      this.registerData.password !== this.registerData.confirmPassword
-    );
-  }
+  isDetectingLocation = false;
 
   onSubmit(form: NgForm): void {
     if (form.invalid || this.passwordMismatch) return;
@@ -44,18 +35,18 @@ export class RegisterComponent {
     // TODO: conectar con AuthService cuando esté disponible
     setTimeout(() => {
       this.isLoading = false;
-      this.successMessage = '¡Cuenta creada correctamente! Redirigiendo...';
-      setTimeout(() => this.router.navigate(['/']), 1500);
+      this.successMessage = '¡Cuenta creada correctamente!';
+      setTimeout(() => this.closeModal(), 1500);
     }, 900);
   }
 
   goToLogin(): void {
-    this.router.navigate(['/']);
+    this.closeModal();
+    const loginEl = document.getElementById('loginModal');
+    if (loginEl) {
+      new bootstrap.Modal(loginEl).show();
+    }
   }
-
-  // Localizacion 
-
-  isDetectingLocation = false;
 
   detectLocation(): void {
     if (!navigator.geolocation) {
@@ -65,39 +56,64 @@ export class RegisterComponent {
 
     this.isDetectingLocation = true;
 
-    navigator.geolocation.getCurrentPosition( async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
 
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-        );
-        const data = await response.json();
-
-        // Coge ciudad o provincia de la respuesta
-        const city = data.address.city || data.address.town || data.address.village || data.address.county || '';
-        const state = data.address.state || '';
-        this.registerData.location = city ? `${city}, ${state}` : state;
-
-      } catch {
-        this.errorMessage = 'No se pudo obtener la ubicación.';
-      } finally {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+          );
+          const data = await response.json();
+          const city =
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            data.address.county ||
+            '';
+          const state = data.address.state || '';
+          this.registerData.location = city ? `${city}, ${state}` : state;
+        } catch {
+          this.errorMessage = 'No se pudo obtener la ubicación.';
+        } finally {
+          this.isDetectingLocation = false;
+        }
+      },
+      () => {
+        this.errorMessage = 'Permiso de ubicación denegado.';
         this.isDetectingLocation = false;
-      }
-    },
-    () => {
-      this.errorMessage = 'Permiso de ubicación denegado.';
-      this.isDetectingLocation = false;
+      },
+    );
+  }
+
+  resetForm(): void {
+    this.registerData = {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      location: '',
+      acceptTerms: false,
+    };
+    this.isLoading = false;
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.isDetectingLocation = false;
+  }
+
+  private closeModal(): void {
+    const modalEl = document.getElementById('registerModal');
+    if (modalEl) {
+      bootstrap.Modal.getInstance(modalEl)?.hide();
     }
-  );
+  }
+
+  get passwordMismatch(): boolean {
+    return (
+      this.registerData.password !== '' &&
+      this.registerData.confirmPassword !== '' &&
+      this.registerData.password !== this.registerData.confirmPassword
+    );
+  }
 }
-
-
-
-
-
-
-
-}
-

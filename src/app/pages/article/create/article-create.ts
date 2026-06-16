@@ -27,7 +27,7 @@ export class ArticleCreate {
       user_id: 1,
       category_id: 1,
       title: this.title,
-      price: this.price,
+      price: String(this.price),
       condition: this.condition,
       description: this.description,
       location: this.location,

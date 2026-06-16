@@ -1,30 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { RegisterComponent } from '../register/register.component';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink, RegisterComponent],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
-
-export class NavbarComponent {
-
   @Input() showLoginButton = false;
   isMenuOpen = false;
-
 
   get homeLink(): string {
     return localStorage.getItem('user') ? '/home' : '/';
   }
 
   openLoginModal(): void {
-    this.router.navigate(['/login']);
-    // Si luego hacéis modal, aquí lo cambiáis
+    const modalEl = document.getElementById('loginModal');
+    if (modalEl) {
+      new bootstrap.Modal(modalEl).show();
+    }
   }
 }
