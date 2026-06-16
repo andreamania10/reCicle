@@ -26,7 +26,7 @@ ngOnInit() {
   });
 }
  goToCategory(categoryId: string) {
-  this.router.navigate(['/articles'], {
+  this.router.navigate(['/categories'], {
     queryParams: { category_id: categoryId }
   });
 }

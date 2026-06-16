@@ -33,6 +33,19 @@
     margin: 6px 0 0;
 }
 
+.categories-status,
+.categories-error,
+.articles-status,
+.articles-error {
+    color: #6b7280;
+    margin: 0 0 12px;
+}
+
+.categories-error,
+.articles-error {
+    color: #c0392b;
+}
+
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -58,8 +71,23 @@
 
 .articles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+@media (min-width: 768px) {
+    .articles-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .articles-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
 }
 
 app-article-card {
