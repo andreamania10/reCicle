@@ -54,7 +54,66 @@
           </div>
         }
 
+<<<<<<< HEAD
       </div>
+=======
+        <!-- Contenido principal -->
+        <div class="col-md-9">
+
+            <!-- Categorías principales -->
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <button class="btn rounded-pill px-4" [class.btn-dark]="selectedCategoryId === null" [class.btn-outline-secondary]="selectedCategoryId !== null" (click)="selectCategory(null)">
+          Todas
+        </button> @for (cat of categories.slice(1); track cat.id) {
+                <button class="btn rounded-pill px-4" [class.btn-dark]="selectedCategoryId === cat.id" [class.btn-outline-secondary]="selectedCategoryId !== cat.id" (click)="selectCategory(cat.id)">
+            {{ cat.name }}
+          </button> }
+            </div>
+
+            <!-- Contador -->
+            <small class="text-muted d-block mb-3">{{ filteredArticles.length }} artículos encontrados</small>
+
+            <!-- Tarjetas -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @for (article of filteredArticles; track article.id) {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <img [src]="article.main_photo || article.image || 'https://placehold.co/300x200'" class="card-img-top">
+                        <div class="card-body">
+                            <span class="badge bg-secondary mb-2">{{ article.condition }}</span>
+                            <span class="badge mb-2 ms-1"
+                                [class.bg-success]="article.status === 'Publicado'"
+                                [class.bg-warning]="article.status === 'En revisión'"
+                                [class.bg-secondary]="article.status === 'Borrador'"
+                                [class.bg-danger]="article.status === 'Retirado'"
+                                [class.bg-dark]="article.status === 'Vendido'">
+                                {{ article.status }}
+                            </span>
+                            <h5 class="card-title fw-bold">{{ article.title }}</h5>
+                            <p class="card-text text-muted small">{{ article.location }}</p>
+                            <p class="card-text text-success fw-bold fs-5">{{ article.price }} €</p>
+                        </div>
+                        <div class="card-footer bg-white border-0 pb-3">
+                            <a [routerLink]="['/articles', article.id]" class="btn btn-dark w-100">Ver detalle</a>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <small class="text-muted d-block mb-3">{{ filteredArticles.length }} artículos encontrados</small>
+
+
+            <!-- Sin resultados -->
+            @if (filteredArticles.length === 0) {
+            <div class="text-center py-5">
+                <p class="fs-1">🔍</p>
+                <p class="text-muted">No hay artículos con estos filtros.</p>
+            </div>
+            }
+
+        </div>
+>>>>>>> a7ff283 (feat: article-edit, favoritos visual, estados interactivos)
     </div>
 
     <!-- Contenido principal -->

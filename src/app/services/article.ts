@@ -26,6 +26,10 @@ export class ArticleService {
   update(id: number, article: Article) {
     return this.http.put<Article>(`${this.apiUrl}/${id}`, article);
   }
+  
+  updateStatus(id: number, status: string) {
+  return this.http.patch<Article>(`${this.apiUrl}/${id}/status`, { status });
+}
 
   delete(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
