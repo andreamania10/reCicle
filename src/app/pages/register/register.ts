@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +28,10 @@ export class Register {
   successMessage = '';
   isDetectingLocation = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private auth: Auth,
+  ) {}
 
   get passwordMismatch(): boolean {
     return (
@@ -37,17 +42,28 @@ export class Register {
   }
 
   onSubmit(form: NgForm): void {
-    if (form.invalid || this.passwordMismatch) return;
+    if (form.invalid || this.passwordMismatch) {
+      Object.values(form.controls).forEach((control) => control.markAsTouched());
+      return;
+    }
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
-    // TODO: conectar con AuthService cuando esté disponible
-    setTimeout(() => {
-      this.isLoading = false;
-      this.successMessage = '¡Cuenta creada correctamente! Redirigiendo...';
-      setTimeout(() => this.router.navigate(['/']), 1500);
-    }, 900);
+    const { username, email, password, location } = this.registerData;
+
+    this.auth
+      .register({ username, email, password, location })
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (user) => {
+          this.router.navigate(['/profile', user.id]);
+        },
+        error: (err: Error) => {
+          this.errorMessage = err.message || 'Error al registrarse';
+        },
+      });
   }
 
   goToLogin(): void {

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { RegisterComponent } from '../register/register.component';
+import { Auth } from '../../services/auth';
 
 declare var bootstrap: any;
 
@@ -16,8 +17,13 @@ export class NavbarComponent {
   @Input() showLoginButton = false;
   isMenuOpen = false;
 
+  constructor(
+    readonly auth: Auth,
+    private router: Router,
+  ) {}
+
   get homeLink(): string {
-    return localStorage.getItem('user') ? '/home' : '/';
+    return this.auth.currentUser() ? '/home' : '/';
   }
 
   openLoginModal(): void {
@@ -25,5 +31,9 @@ export class NavbarComponent {
     if (modalEl) {
       new bootstrap.Modal(modalEl).show();
     }
+  }
+
+  goToProfile(userId: number): void {
+    this.router.navigate(['/profile', userId]);
   }
 }
