@@ -1,24 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
-import { ArticleCard } from './article-card';
+import { ArticleCardComponent } from './article-card';
 
-describe('ArticleCard', () => {
-  let component: ArticleCard;
-  let fixture: ComponentFixture<ArticleCard>;
+describe('ArticleCardComponent', () => {
+  let component: ArticleCardComponent;
+  let fixture: ComponentFixture<ArticleCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-<<<<<<< HEAD
-      imports: [ArticleCard]
-    })
-    .compileComponents();
-=======
-      imports: [ArticleCard],
+      imports: [ArticleCardComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
->>>>>>> eceaf3fb56c22d45fa9891f308eec445eaee60a2
 
-    fixture = TestBed.createComponent(ArticleCard);
+    fixture = TestBed.createComponent(ArticleCardComponent);
     component = fixture.componentInstance;
+    component.item = {
+      id: 1,
+      title: 'Artículo de prueba',
+      price: '99.99',
+      description: 'Descripción de prueba',
+      condition: 'Nuevo',
+      location: 'Madrid',
+      main_photo: 'https://example.com/photo.jpg',
+    };
     await fixture.whenStable();
   });
 

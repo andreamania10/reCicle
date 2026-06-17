@@ -10,54 +10,59 @@
     <section class="categoriesSection">
         <h2>Explora por categoría</h2>
 
-        <div class="categories">
-
-            <div class="category-card" id="technology" (click)="goToCategory( 'technology') ">
-                Tecnología
+        @if (isLoadingCategories()) {
+            <p class="status-message">Cargando categorías...</p>
+        } @else if (categoriesError()) {
+            <p class="status-message status-message--error">No se pudieron cargar las categorías.</p>
+        } @else {
+            <div class="categories">
+                @for (category of categories(); track category.id) {
+                    <div
+                        class="category-card"
+                        [class.category-card--active]="selectedCategoryId() === category.id"
+                        [style.background-image]="'url(' + getCategoryImage(category.id) + ')'"
+                        (click)="selectCategory(category.id)"
+                    >
+                        {{ category.name }}
+                    </div>
+                }
             </div>
-
-            <div class="category-card" id="electronic" (click)="goToCategory( 'electronic') ">
-                Electrónica
-            </div>
-
-            <div class="category-card" id="clothes" (click)="goToCategory( 'clothes') ">
-                Ropa
-            </div>
-
-            <div class="category-card" id="homeAccesories" (click)="goToCategory( 'homeAccesories') ">
-                Hogar
-            </div>
-            <div class="category-card" id="sports" (click)="goToCategory( 'sports') ">
-                Deporte
-            </div>
-            <div class="category-card" id="transport" (click)="goToCategory( 'transport') ">
-                Vehículos
-            </div>
-        </div>
+        }
     </section>
 
     <!-- DESTACADOS -->
-    <section class="section ">
+    <section class="section">
         <h2>Destacados</h2>
 
-        <div class="horizontal-cards ">
-            <div class="product-card "></div>
-            <div class="product-card "></div>
-            <div class="product-card "></div>
-            <div class="product-card "></div>
+        <div class="horizontal-cards">
+            <div class="product-card"></div>
+            <div class="product-card"></div>
+            <div class="product-card"></div>
+            <div class="product-card"></div>
         </div>
     </section>
 
-    <!-- RECIENTES -->
-    <section class="section ">
+    <!-- RECIENTES / ARTÍCULOS POR CATEGORÍA -->
+    <section class="section">
         <h2>Subidos recientemente</h2>
 
-        <div class="grid ">
-            <div class="product-card big "></div>
-            <div class="product-card big "></div>
-            <div class="product-card big "></div>
-            <div class="product-card big "></div>
-        </div>
+        @if (selectedCategoryName()) {
+            <p class="section-subtitle">Categoría: {{ selectedCategoryName() }}</p>
+        }
+
+        @if (isLoadingArticles()) {
+            <p class="status-message">Cargando artículos...</p>
+        } @else if (articlesError()) {
+            <p class="status-message status-message--error">No se pudieron cargar los artículos.</p>
+        } @else if (items().length === 0) {
+            <p class="status-message">No hay artículos para mostrar.</p>
+        } @else {
+            <div class="grid articles-grid">
+                @for (item of items(); track item.id) {
+                    <app-article-card [item]="item"></app-article-card>
+                }
+            </div>
+        }
     </section>
 
 </div>

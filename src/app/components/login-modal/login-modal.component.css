@@ -1,0 +1,264 @@
+:host ::ng-deep .login-modal .modal-content {
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+:host ::ng-deep .login-modal .modal-header {
+  border-bottom: none;
+  padding: 1.75rem 1.75rem 0;
+  align-items: flex-start;
+}
+
+:host ::ng-deep .login-modal .modal-body {
+  padding: 1.25rem 1.75rem 1.5rem;
+}
+
+.modal-brand {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.brand-icon {
+  font-size: 1.2rem;
+  color: #1a1a1a;
+}
+
+.brand-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+}
+
+.modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.03em;
+}
+
+.login-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.btn-close-custom {
+  background: #f4f4f4;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: #666;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-close-custom:hover {
+  background: #eaeaea;
+  color: #1a1a1a;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.password-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #888;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.forgot-link:hover {
+  color: #1a1a1a;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper .form-control {
+  padding-right: 2.75rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.65rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.password-toggle:hover {
+  color: #1a1a1a;
+}
+
+.form-control {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  color: #1a1a1a;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-control:focus {
+  border-color: #1a1a1a;
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.07);
+  outline: none;
+}
+
+.form-control.is-invalid {
+  border-color: #d9534f;
+}
+
+.invalid-feedback {
+  font-size: 0.79rem;
+  color: #d9534f;
+  margin-top: 4px;
+}
+
+.alert-error {
+  background-color: #fff5f5;
+  border: 1px solid #fecaca;
+  color: #c0392b;
+  font-size: 0.83rem;
+  font-family: 'DM Sans', sans-serif;
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-submit {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  padding: 0.72rem;
+  border-radius: 8px;
+  width: 100%;
+  transition: background 0.15s, transform 0.1s;
+  cursor: pointer;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #333;
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.modal-footer-custom {
+  padding: 0 1.75rem 1.75rem;
+  border-top: none;
+  text-align: center;
+}
+
+.register-prompt {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.87rem;
+  color: #888;
+  margin: 0;
+}
+
+.btn-link-inline {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.87rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-link-inline:hover {
+  color: #333;
+}
+
+@media (max-width: 576px) {
+  :host ::ng-deep .login-modal .modal-header,
+  :host ::ng-deep .login-modal .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .modal-footer-custom {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}

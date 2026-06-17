@@ -20,15 +20,17 @@ export interface Article {
 }
 
 export interface ArticlesResponse {
-  description: string;
-  price: number;
-  condition: string;
-  status: string;
-  location: string;
-  image?: string;
-  main_photo?: string;
+  price: string | number;
+  description?: string;
+  condition?: string;
+  status?: string;
+  location?: string;
   created_at?: string;
   updated_at?: string;
+  main_photo?: string;
+  category?: string;
+  image?: string;
+  userId?: number;
 }
 
 export interface ArticleResponse {

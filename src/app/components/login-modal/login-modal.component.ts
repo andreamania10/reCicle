@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
+import { Auth } from '../../services/auth';
 
 declare var bootstrap: any;
 
@@ -14,38 +16,64 @@ declare var bootstrap: any;
 })
 export class LoginModalComponent {
   loginData = { email: '', password: '' };
-  errorMessage = '';
-  isLoading = false;
+  errorMessage = signal('');
+  isLoading = signal(false);
+  showPassword = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private auth: Auth,
+  ) {}
 
   onSubmit(form: NgForm): void {
-    if (form.invalid) return;
+    if (form.invalid) {
+      Object.values(form.controls).forEach((control) => control.markAsTouched());
+      return;
+    }
 
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    // TODO: conectar con AuthService cuando esté disponible
-    setTimeout(() => {
-      this.isLoading = false;
-      // Simulación: aquí iría la llamada al backend
-      console.log('Login con:', this.loginData);
-    }, 800);
+    this.auth
+      .login(this.loginData)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (user) => {
+          this.closeModal();
+          this.router.navigate(['/profile', user.id]);
+        },
+        error: (err: Error) => {
+          this.errorMessage.set(err.message || 'Error al iniciar sesión');
+        },
+      });
   }
 
   goToRegister(): void {
     const modalEl = document.getElementById('loginModal');
     if (modalEl) {
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal?.hide();
+      bootstrap.Modal.getInstance(modalEl)?.hide();
     }
-    this.router.navigate(['/registro']);
+    const registerEl = document.getElementById('registerModal');
+    if (registerEl) {
+      new bootstrap.Modal(registerEl).show();
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  private closeModal(): void {
+    const modalEl = document.getElementById('loginModal');
+    if (modalEl) {
+      bootstrap.Modal.getInstance(modalEl)?.hide();
+    }
   }
 
   resetForm(): void {
     this.loginData = { email: '', password: '' };
-    this.errorMessage = '';
-    this.isLoading = false;
+    this.errorMessage.set('');
+    this.isLoading.set(false);
+    this.showPassword = false;
   }
 }
-

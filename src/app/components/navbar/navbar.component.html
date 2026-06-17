@@ -1,16 +1,51 @@
-<nav class="navbar">
-    <div class="navbar-inner">
-        <a class="navbar-brand" [routerLink]="homeLink">
-            <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="ReMarket" />
-            <span class="brand-name">ReMarket</span>
-        </a>
-        <div class="navbar-search">
-            <input type="text" placeholder="Buscar artículos..." />
-        </div>
-        <button class="btn-login" (click)="openLoginModal()">
-      Login
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container">
+    <a class="navbar-brand" [routerLink]="homeLink">
+      <img
+        class="brand-logo"
+        src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png"
+        alt="Recycle"
+      />
+      <span class="brand-name">Recycle</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
-
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" [routerLink]="homeLink">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Artículos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Descubre</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Nosotros</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..."/>
+      </form>
+      @if (auth.currentUser(); as user) {
+        <button class="btn-role" type="button" (click)="goToProfile(user.id)">
+          {{ user.role }}
+        </button>
+      } @else {
+        <button class="btn-login" type="button" (click)="openLoginModal()">
+          Login
+        </button>
+      }
     </div>
+  </div>
 </nav>
-``
+
+<app-register-modal></app-register-modal>
+
+
+
+
+
+
