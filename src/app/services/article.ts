@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Article, ArticleResponse } from '../interfaces/article';
 
@@ -26,6 +26,20 @@ export class ArticleService {
     return this.http.get<ArticleResponse>(this.apiUrl);
   }
 
+  getByCategoryId(categoryId: number): Observable<Article[]> {
+    const id = Number(categoryId);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new Error('category_id debe ser un número entero válido');
+    }
+
+    const params = new HttpParams().set('category_id', String(id));
+
+    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
+      map((response) => response.results ?? []),
+    );
+  }
+
   getById(id: number) {
     return this.http.get<Article>(`${this.apiUrl}/${id}`);
   }
@@ -37,6 +51,10 @@ export class ArticleService {
   update(id: number, article: Article) {
     return this.http.put<Article>(`${this.apiUrl}/${id}`, article);
   }
+  
+  updateStatus(id: number, status: string) {
+  return this.http.patch<Article>(`${this.apiUrl}/${id}/status`, { status });
+}
 
   delete(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);

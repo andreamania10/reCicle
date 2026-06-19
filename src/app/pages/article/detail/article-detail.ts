@@ -1,31 +1,80 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Article } from '../../../interfaces/article';
+import { User } from '../../../interfaces/user';
+import { ArticleService } from '../../../services/article';
+import { UserService } from '../../../services/user';
 
 @Component({
   selector: 'app-article-detail',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './article-detail.html',
   styleUrl: './article-detail.css',
 })
 export class ArticleDetail implements OnInit {
 
+  private route = inject(ActivatedRoute);
+  private articleService = inject(ArticleService);
+  private userService = inject(UserService);
+  private cdr = inject(ChangeDetectorRef);
+
   article: Article | null = null;
+  seller: User | null = null;
+  loading = true;
+  notFound = false;
 
-  allArticles: Article[] = [
-    { id: 1, user_id: 1, category_id: 7, title: 'iPhone 13', description: 'iPhone 13 128GB', price: 450, condition: 'bueno', status: 'available', location: 'Barcelona', image: 'https://placehold.co/300x200' },
-    { id: 2, user_id: 1, category_id: 8, title: 'Portátil HP', description: 'HP i5 8GB RAM', price: 350, condition: 'muy bueno', status: 'available', location: 'Madrid', image: 'https://placehold.co/300x200' },
-    { id: 3, user_id: 2, category_id: 9, title: 'Camiseta azul', description: 'Talla M', price: 5, condition: 'bueno', status: 'available', location: 'Valencia', image: 'https://placehold.co/300x200' },
-    { id: 4, user_id: 2, category_id: 10, title: 'Pantalón vaquero', description: 'Talla 38', price: 12, condition: 'nuevo', status: 'available', location: 'Sevilla', image: 'https://placehold.co/300x200' },
-    { id: 5, user_id: 3, category_id: 4, title: 'Silla escritorio', description: 'Silla ergonómica', price: 40, condition: 'bueno', status: 'available', location: 'Manresa', image: 'https://placehold.co/300x200' },
-    { id: 6, user_id: 3, category_id: 6, title: 'Harry Potter', description: 'Piedra filosofal', price: 8, condition: 'bueno', status: 'available', location: 'Barcelona', image: 'https://placehold.co/300x200' },
-  ];
-
-  constructor(private route: ActivatedRoute) {}
+  statusOptions = ['Borrador', 'Publicado', 'En revisión', 'Retirado', 'Vendido'];
+  newStatus: string = '';
+  updatingStatus = false;
+  statusError = '';
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.article = this.allArticles.find(a => a.id === id) || null;
+
+    this.articleService.getById(id).subscribe({
+      next: (data) => {
+        this.article = data;
+        this.newStatus = data.status || '';
+        this.loading = false;
+        this.loadSeller(data.user_id);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.notFound = true;
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadSeller(userId: number) {
+    this.userService.getAll().subscribe(users => {
+      this.seller = users.find(u => u.id === userId) || null;
+      this.cdr.detectChanges();
+    });
+  }
+
+  updateStatus() {
+    if (!this.article) return;
+
+    this.updatingStatus = true;
+    this.statusError = '';
+
+    this.articleService.updateStatus(this.article.id, this.newStatus).subscribe({
+      next: (updated) => {
+        if (this.article) {
+          this.article.status = updated.status || this.newStatus;
+        }
+        this.updatingStatus = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.statusError = 'No se pudo actualizar el estado.';
+        this.updatingStatus = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

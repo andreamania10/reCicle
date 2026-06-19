@@ -1,118 +1,79 @@
 import { CommonModule } from '@angular/common';
-<<<<<<< HEAD
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from 'rxjs';
-import { ArticleCardComponent } from '../../components/article-card/article-card';
-import { ArticleService } from '../../services/article';
-import { CategoryService } from '../../services/category';
-import { Category } from '../../interfaces/category';
-import { Article } from '../../interfaces/article';
-import { FilterBarComponent } from '../../components/filter-bar/filter-bar';
-
-interface CategoriesState {
-  loading: boolean;
-  error: boolean;
-  categories: Category[];
-}
-
-interface ArticlesState {
-  loading: boolean;
-  error: boolean;
-}
-
-interface ArticleFilters {
-  search: string;
-  category: string;
-  maxPrice: number | null;
-}
-=======
 import { Component, OnInit, inject } from '@angular/core';
 import { ArticleService } from '../../services/article';
 import { Router } from '@angular/router';
 import { Article } from '../../interfaces/article';
->>>>>>> 536126bd92c8a3788871389c202477c2278b443e
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ArticleCardComponent, FilterBarComponent],
+  imports: [CommonModule],
   templateUrl: './home.html',
-  styleUrls: ['./home.css']
+  styleUrl: './home.css'
 })
 export class Home implements OnInit {
-  categoriesState$!: Observable<CategoriesState>;
-  articlesState$!: Observable<ArticlesState>;
-  filteredArticles$!: Observable<Article[]>;
 
-<<<<<<< HEAD
-  private readonly filters$ = new BehaviorSubject<ArticleFilters>({
-    search: '',
-    category: '',
-    maxPrice: null,
-  });
-
-  constructor(
-    private articleService: ArticleService,
-    private categoryService: CategoryService,
-    private router: Router,
-  ) {}
-
-  ngOnInit() {
-    this.categoriesState$ = this.categoryService.getCategories().pipe(
-      map((categories) => ({ loading: false, error: false, categories })),
-      catchError(() =>
-        of({ loading: false, error: true, categories: [] as Category[] }),
-      ),
-    );
-
-    const articlesResult$ = this.articleService.getArticles().pipe(
-      map((articles) => ({ error: false, articles })),
-      catchError(() => of({ error: true, articles: [] as Article[] })),
-    );
-
-    this.articlesState$ = articlesResult$.pipe(
-      map(({ error }) => ({ loading: false, error })),
-    );
-
-    this.filteredArticles$ = combineLatest([
-      articlesResult$.pipe(map(({ articles }) => articles)),
-      this.filters$,
-    ]).pipe(map(([articles, filters]) => this.applyFilter(articles, filters)));
-  }
-
-  goToCategory(slug: string): void {
-    this.router.navigate(['/categories'], {
-      queryParams: { category: slug },
-    });
-  }
-
-  onFilter(filters: ArticleFilters): void {
-    this.filters$.next(filters);
-  }
-
-  private applyFilter(articles: Article[], filters: ArticleFilters): Article[] {
-    return articles.filter((item) => {
-      const matchSearch =
-        !filters.search ||
-        item.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-        (item.description ?? '').toLowerCase().includes(filters.search.toLowerCase());
-
-      const matchCategory =
-        !filters.category || String(item.category_id) === filters.category;
-
-      const matchPrice =
-        !filters.maxPrice || Number(item.price) <= filters.maxPrice;
-
-      return matchSearch && matchCategory && matchPrice;
-    });
-  }
-=======
   private articleService = inject(ArticleService);
-  private router = inject(Router);
+  private categoryService = inject(CategoryService);
 
-  allItems: Article[] = [];
-  items: Article[] = [];
+  categories = signal<Category[]>([]);
+  items = signal<Article[]>([]);
+  selectedCategoryId = signal<number | null>(null);
+  selectedCategoryName = signal('');
+  isLoadingCategories = signal(true);
+  isLoadingArticles = signal(true);
+  categoriesError = signal(false);
+  articlesError = signal(false);
+
+  private readonly categoryImages: Record<number, string> = {
+    1: 'https://st2.depositphotos.com/1000128/5573/i/450/depositphotos_55735071-stock-photo-modern-touchscreen-smartphones.jpg',
+    2: 'https://i.pinimg.com/736x/c1/c9/4e/c1c94e5cd15cd32a15e11044de898ca8.jpg',
+    3: 'https://queondagye.com/wp-content/uploads/2023/01/De-Prati-Tendencias.jpg',
+    4: 'https://images.ctfassets.net/ipjoepkmtnha/3QqEt0VPI4hAAVo6lhxriy/31aaee8b9dc392e2a9ef9fe8891efefa/technogym-elliptical-home-img.jpg',
+    5: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80',
+  };
+
+  ngOnInit(): void {
+    this.loadRecentArticles();
+
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories.set(categories);
+        this.isLoadingCategories.set(false);
+      },
+      error: () => {
+        this.categoriesError.set(true);
+        this.isLoadingCategories.set(false);
+      },
+    });
+  }
+
+  selectCategory(categoryId: number): void {
+    const id = Number(categoryId);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      return;
+    }
+
+    this.selectedCategoryId.set(id);
+    this.selectedCategoryName.set(
+      this.categories().find((category) => category.id === id)?.name ?? '',
+    );
+    this.loadArticlesByCategory(id);
+  }
+
+  getCategoryImage(categoryId: number): string {
+    const id = Number(categoryId);
+
+    return (
+      this.categoryImages[id] ??
+      'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=600&q=80'
+    );
+  }
+
+  private loadRecentArticles(): void {
+    this.isLoadingArticles.set(true);
+    this.articlesError.set(false);
 
 ngOnInit() {
   this.articleService.getAll().subscribe(data => {
@@ -125,5 +86,4 @@ ngOnInit() {
     queryParams: { category_id: categoryId }
   });
 }
->>>>>>> 536126bd92c8a3788871389c202477c2278b443e
 }

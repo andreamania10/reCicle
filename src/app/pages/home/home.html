@@ -1,115 +1,49 @@
 <section class="home-page">
-    <!-- <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar> -->
     <section class="section-categories">
         <div class="container">
-            <h1>Dale una segunda oportunidad a las cosas</h1>
-            <p>Compra, vende y descubre miles de artículos de segunda mano.</p>
-
-            <div class="hero-actions">
-                <button class="btn-primary">Explorar</button>
-                <button class="btn-secondary">Iniciar sesión</button>
+            <div class="section-header">
+                <h2 class="section-title">Explora por categoría</h2>
+                <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
             </div>
-        </div>
-    </section>
 
-    <!-- CATEGORÍAS -->
-    <section class="section">
-        <div class="container">
-            <h2>Explora por categoría</h2>
-            <div class="categories-grid">
-                <div class="category-card">
-                    <span>Tecnología</span>
-                    <small>1200 anuncios</small>
-                </div>
-
-                <div class="category-card">
-                    <span>Ropa</span>
-                    <small>950 anuncios</small>
-                </div>
-
-                <div class="category-card">
-                    <span>Hogar</span>
-                    <small>670 anuncios</small>
-                </div>
-
-                <div class="category-card">
-                    <span>Deporte</span>
-                    <small>430 anuncios</small>
-                </div>
-            </div>
-            @if (categoriesState$ | async; as state) { @if (state.error) {
+            @if (isLoadingCategories()) {
+            <p class="categories-status">Cargando categorías...</p>
+            } @else if (categoriesError()) {
             <p class="categories-error">No se pudieron cargar las categorías.</p>
             } @else {
             <div class="categories-grid">
-                @for (category of state.categories; track category.id) {
-                <div class="category-card" (click)="goToCategory(category.slug)">
+                @for (category of categories(); track category.id) {
+                <div class="category-card" [class.category-card--active]="selectedCategoryId() === category.id" (click)="selectCategory(category.id)">
                     {{ category.name }}
                 </div>
                 }
             </div>
-            } } @else {
-            <p class="categories-status">Cargando categorías...</p>
             }
         </div>
     </section>
 
-    <!-- QUÉ PUEDES ENCONTRAR -->
-    <section class="section alt">
+    <section class="section-articles">
         <div class="container">
-            <h2>¿Qué puedes encontrar?</h2>
-
-            <div class="items-preview">
-                <div class="preview-card">Electrónica</div>
-                <div class="preview-card">Muebles</div>
-                <div class="preview-card">Vehículos</div>
-                <div class="preview-card">Moda</div>
+            <div class="section-header">
+                <h2 class="section-title">Artículos recientes</h2>
+                @if (selectedCategoryName()) {
+                <p class="section-subtitle">Categoría: {{ selectedCategoryName() }}</p>
+                }
             </div>
-        </div>
-    </section>
 
-    <!-- ESTADÍSTICAS -->
-    <section class="section stats">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat">
-                    <h3>+5.000</h3>
-                    <p>Anuncios activos</p>
-                </div>
-
-                <div class="stat">
-                    <h3>+2.000</h3>
-                    <p>Usuarios</p>
-                </div>
-
-                <div class="stat">
-                    <h3>+20</h3>
-                    <p>Categorías</p>
-                </div>
+            @if (isLoadingArticles()) {
+            <p class="articles-status">Cargando artículos...</p>
+            } @else if (articlesError()) {
+            <p class="articles-error">No se pudieron cargar los artículos.</p>
+            } @else if (items().length === 0) {
+            <p class="articles-status">No hay artículos para mostrar.</p>
+            } @else {
+            <div class="articles-grid">
+                @for (item of items(); track item.id) {
+                <app-article-card [item]="item"></app-article-card>
+                }
             </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta">
-        <div class="container">
-            <h2>Empieza a vender hoy mismo</h2>
-            <button class="btn-primary">Publicar artículo</button>
-        </div>
-    </section>
-
-    <div>
-        @if (articlesState$ | async; as articlesState) { @if (articlesState.error) {
-        <p class="articles-error">No se pudieron cargar los artículos.</p>
-        } @else if (filteredArticles$ | async; as articles) { @if (articles.length === 0) {
-        <p class="articles-status">No hay artículos disponibles.</p>
-        } @else {
-        <div class="articles-grid">
-            @for (item of articles; track item.id){
-            <app-article-card [item]="item"></app-article-card>
             }
         </div>
-        } } } @else {
-        <p class="articles-status">Cargando artículos...</p>
-        }
-    </div>
+    </section>
 </section>

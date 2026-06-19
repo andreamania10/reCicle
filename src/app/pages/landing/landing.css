@@ -21,18 +21,6 @@
     margin-bottom: 18px;
 }
 
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0;
-}
-
-.section-subtitle {
-    color: #6b7280;
-    margin: 6px 0 0;
-}
-
 .categories-status,
 .categories-error,
 .articles-status,
@@ -67,6 +55,11 @@
 .category-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 28px rgba(0, 160, 130, 0.25);
+}
+
+.category-card--active {
+    outline: 3px solid #1a1a1a;
+    transform: translateY(-4px);
 }
 
 .articles-grid {
