@@ -21,18 +21,6 @@
     margin-bottom: 18px;
 }
 
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0;
-}
-
-.section-subtitle {
-    color: #6b7280;
-    margin: 6px 0 0;
-}
-
 .categories-status,
 .categories-error,
 .articles-status,
