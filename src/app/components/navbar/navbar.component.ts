@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { RegisterComponent } from '../register/register.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { User } from '../../interfaces/user';
+// import { UserService } from '../../services/user';
+import { Router, RouterModule } from '@angular/router';
 
 import { Auth } from '../../services/auth';
+import { RegisterComponent } from '../register/register.component';
+
 declare var bootstrap: any;
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
