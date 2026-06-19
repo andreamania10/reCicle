@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from 'rxjs';
@@ -25,6 +26,12 @@ interface ArticleFilters {
   category: string;
   maxPrice: number | null;
 }
+=======
+import { Component, OnInit, inject } from '@angular/core';
+import { ArticleService } from '../../services/article';
+import { Router } from '@angular/router';
+import { Article } from '../../interfaces/article';
+>>>>>>> 536126bd92c8a3788871389c202477c2278b443e
 
 @Component({
   selector: 'app-home',
@@ -38,6 +45,7 @@ export class Home implements OnInit {
   articlesState$!: Observable<ArticlesState>;
   filteredArticles$!: Observable<Article[]>;
 
+<<<<<<< HEAD
   private readonly filters$ = new BehaviorSubject<ArticleFilters>({
     search: '',
     category: '',
@@ -99,4 +107,23 @@ export class Home implements OnInit {
       return matchSearch && matchCategory && matchPrice;
     });
   }
+=======
+  private articleService = inject(ArticleService);
+  private router = inject(Router);
+
+  allItems: Article[] = [];
+  items: Article[] = [];
+
+ngOnInit() {
+  this.articleService.getAll().subscribe(data => {
+    this.allItems = data.results;
+    this.items = [...data.results];
+  });
+}
+ goToCategory(categoryId: string) {
+  this.router.navigate(['/categories'], {
+    queryParams: { category_id: categoryId }
+  });
+}
+>>>>>>> 536126bd92c8a3788871389c202477c2278b443e
 }

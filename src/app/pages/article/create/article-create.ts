@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ArticleService } from '../../../services/article';
+import { Article } from '../../../interfaces/article';
 
 @Component({
   selector: 'app-article-create',
@@ -10,19 +11,31 @@ import { ArticleService } from '../../../services/article';
   styleUrl: './article-create.css',
 })
 export class ArticleCreate {
+
+  private articleService = inject(ArticleService);
+
   title: string = '';
   price: number = 0;
-  category: string = '';
-
-  constructor(private articleService: ArticleService) {}
+  condition: string = '';
+  description: string = '';
+  location: string = '';
+  category_id: number = 1; 
 
   save() {
-    this.articleService.createArticle({
+    const newArticle: Article = {
+      id: 0,
+      user_id: 1,
+      category_id: 1,
       title: this.title,
       price: String(this.price),
-      category: this.category,
-    });
+      condition: this.condition,
+      description: this.description,
+      location: this.location,
+      status: 'available'
+    };
 
-    console.log('Artículo guardado ✅');
+    this.articleService.create(newArticle).subscribe(() => {
+      console.log('Artículo guardado ✅');
+    });
   }
 }
