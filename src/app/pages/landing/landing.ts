@@ -6,6 +6,7 @@ import { Article } from '../../interfaces/article';
 import { Category } from '../../interfaces/category';
 import { ArticleService } from '../../services/article';
 import { CategoryService } from '../../services/category';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -14,9 +15,35 @@ import { CategoryService } from '../../services/category';
   templateUrl: './landing.html',
   styleUrls: ['./landing.css']
 })
+
+
 export class Landing implements OnInit {
   private articleService = inject(ArticleService);
   private categoryService = inject(CategoryService);
+  constructor(private router: Router) {}
+  
+  slides = [
+    {
+      image: 'assets/img1.jpg',
+      title: 'Compra y vende',
+      subtitle: 'de la forma más fácil',
+      action: 'sell'
+    },
+    {
+      image: 'assets/img2.jpg',
+      title: 'Dale un toque de elegancia',
+      subtitle: 'a tu hogar',
+      action: 'home'
+    },
+    {
+      image: 'assets/img3.jpg',
+      title: 'Encuentra lo que buscas',
+      subtitle: 'a un clic',
+      action: 'search'
+    }
+  ];
+  
+  currentIndex = 0;
 
   categories = signal<Category[]>([]);
   items = signal<Article[]>([]);
@@ -30,6 +57,11 @@ export class Landing implements OnInit {
   ngOnInit(): void {
     this.loadRecentArticles();
 
+setInterval(() => {
+  this.currentIndex =
+    (this.currentIndex + 1) % this.slides.length;
+}, 10000);
+
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
         this.categories.set(categories);
@@ -40,6 +72,12 @@ export class Landing implements OnInit {
         this.isLoadingCategories.set(false);
       },
     });
+  }
+
+  onSlideClick(slide: any) {
+    if (slide.action === 'sell') {
+      this.router.navigate(['/sellProduct']); 
+    }
   }
 
   selectCategory(categoryId: number): void {
@@ -71,6 +109,8 @@ export class Landing implements OnInit {
           this.articlesError.set(true);
         },
       });
+
+      
   }
 
   private loadArticlesByCategory(categoryId: number): void {

@@ -8,13 +8,13 @@ import { ArticleService } from '../../services/article';
 import { CategoryService } from '../../services/category';
 
 @Component({
-  selector: 'app-landing',
+  selector: 'app-home',
   standalone: true,
   imports: [CommonModule, ArticleCardComponent],
-  templateUrl: './landing.html',
-  styleUrls: ['./landing.css']
+  templateUrl: './home.html',
+  styleUrls: ['./home.css']
 })
-export class Landing implements OnInit {
+export class Home implements OnInit {
   private articleService = inject(ArticleService);
   private categoryService = inject(CategoryService);
 

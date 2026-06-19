@@ -35,11 +35,6 @@ export class Categories implements OnInit {
         this.items = [...this.allItems];
       }
     });
-<<<<<<< HEAD
-  }
-  
-=======
   });
 }
->>>>>>> 536126bd92c8a3788871389c202477c2278b443e
 }
