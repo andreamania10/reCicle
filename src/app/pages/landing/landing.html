@@ -1,26 +1,22 @@
 <section class="home-page">
-    <!-- <app-filter-bar (filterChange)="onFilter($event)"></app-filter-bar> -->
     <section class="section-categories">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Explora por categoría</h2>
-                <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
+            <div class="content">
+                <img src="" alt="">
             </div>
 
-            @if (categoriesState$ | async; as state) {
-                @if (state.error) {
-                    <p class="categories-error">No se pudieron cargar las categorías.</p>
-                } @else {
-                    <div class="categories-grid">
-                        @for (category of state.categories; track category.id) {
-                            <div class="category-card" (click)="goToCategory(category.slug)">
-                                {{ category.name }}
-                            </div>
-                        }
-                    </div>
-                }
+            @if (isLoadingCategories()) {
+            <p class="categories-status">Cargando categorías...</p>
+            } @else if (categoriesError()) {
+            <p class="categories-error">No se pudieron cargar las categorías.</p>
             } @else {
-                <p class="categories-status">Cargando categorías...</p>
+            <div class="categories-grid">
+                @for (category of categories(); track category.id) {
+                <div class="category-card" [class.category-card--active]="selectedCategoryId() === category.id" (click)="selectCategory(category.id)">
+                    {{ category.name }}
+                </div>
+                }
+            </div>
             }
         </div>
     </section>
@@ -29,24 +25,23 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Artículos recientes</h2>
+                @if (selectedCategoryName()) {
+                <p class="section-subtitle">Categoría: {{ selectedCategoryName() }}</p>
+                }
             </div>
 
-            @if (articlesState$ | async; as articlesState) {
-                @if (articlesState.error) {
-                    <p class="articles-error">No se pudieron cargar los artículos.</p>
-                } @else if (filteredArticles$ | async; as articles) {
-                    @if (articles.length === 0) {
-                        <p class="articles-status">No hay artículos disponibles.</p>
-                    } @else {
-                        <div class="articles-grid">
-                            @for (item of articles; track item.id) {
-                                <app-article-card [item]="item"></app-article-card>
-                            }
-                        </div>
-                    }
-                }
+            @if (isLoadingArticles()) {
+            <p class="articles-status">Cargando artículos...</p>
+            } @else if (articlesError()) {
+            <p class="articles-error">No se pudieron cargar los artículos.</p>
+            } @else if (items().length === 0) {
+            <p class="articles-status">No hay artículos para mostrar.</p>
             } @else {
-                <p class="articles-status">Cargando artículos...</p>
+            <div class="articles-grid">
+                @for (item of items(); track item.id) {
+                <app-article-card [item]="item"></app-article-card>
+                }
+            </div>
             }
         </div>
     </section>

@@ -5,34 +5,92 @@
     ← Volver a artículos
   </a>
 
+  <!-- Cargando -->
+  @if (loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-dark" role="status"></div>
+      <p class="text-muted mt-3">Cargando artículo...</p>
+    </div>
+  }
+
   <!-- Si existe el artículo -->
-  @if (article) {
+  @if (!loading && article) {
     <div class="row g-4">
 
       <!-- Imagen -->
       <div class="col-md-6">
-        <img [src]="article.image" [alt]="article.title" class="img-fluid rounded shadow-sm w-100" style="max-height: 400px; object-fit: cover;">
+        <img [src]="article.photos?.[0]?.url || article.main_photo || article.image || 'https://placehold.co/600x400'" 
+             [alt]="article.title" 
+             class="img-fluid rounded shadow-sm w-100" 
+             style="max-height: 400px; object-fit: cover;">
       </div>
 
       <!-- Info -->
       <div class="col-md-6">
         <span class="badge bg-secondary mb-2">{{ article.condition }}</span>
+        <span class="badge mb-2 ms-2"
+            [class.bg-success]="article.status === 'Publicado'"
+            [class.bg-warning]="article.status === 'En revisión'"
+            [class.bg-secondary]="article.status === 'Borrador'"
+            [class.bg-danger]="article.status === 'Retirado'"
+            [class.bg-dark]="article.status === 'Vendido'">
+            {{ article.status }}
+        </span>
         <h2 class="fw-bold">{{ article.title }}</h2>
         <p class="text-success fw-bold fs-3">{{ article.price }} €</p>
+        <p class="text-muted">📍 {{ article.location }}</p>
         <hr>
         <p class="text-muted">{{ article.description }}</p>
         <hr>
+
+        <!-- Info del vendedor -->
+        @if (seller) {
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <img [src]="seller.avatar_url || 'https://i.pravatar.cc/150?u=' + seller.id" 
+                 class="rounded-circle" 
+                 style="width: 50px; height: 50px; object-fit: cover;" 
+                 [alt]="seller.username">
+            <div>
+              <p class="mb-0 fw-bold">{{ seller.username }}</p>
+              <p class="mb-0 text-muted small">📍 {{ seller.location || 'Ubicación no especificada' }}</p>
+              @if (seller.avg_rating) {
+                <p class="mb-0 text-warning small">⭐ {{ seller.avg_rating }}</p>
+              }
+            </div>
+          </div>
+          <hr>
+        }
+
         <div class="d-flex gap-2 mt-4">
           <button class="btn btn-dark flex-grow-1">Contactar vendedor</button>
           <button class="btn btn-outline-danger">❤ Guardar</button>
         </div>
+
+        <!-- Cambiar estado (pendiente de mostrar solo al propietario cuando haya login) -->
+        <div class="border rounded p-3 mt-4 bg-light">
+          <label class="form-label fw-semibold small mb-2">Cambiar estado del artículo</label>
+          <div class="d-flex gap-2">
+            <select class="form-select" [(ngModel)]="newStatus">
+              @for (option of statusOptions; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+            <button class="btn btn-dark" (click)="updateStatus()" [disabled]="updatingStatus">
+              {{ updatingStatus ? 'Guardando...' : 'Actualizar' }}
+            </button>
+          </div>
+          @if (statusError) {
+            <p class="text-danger small mt-2 mb-0">{{ statusError }}</p>
+          }
+        </div>
+
       </div>
 
     </div>
   }
 
   <!-- Si no existe el artículo -->
-  @if (!article) {
+  @if (!loading && notFound) {
     <div class="text-center py-5">
       <p class="fs-1">😕</p>
       <p class="text-muted">Artículo no encontrado.</p>

@@ -1,1 +1,50 @@
-<p>favorites works!</p>
+<div class="container py-5">
+
+  <h2 class="fw-bold mb-4">Mis favoritos</h2>
+
+  <!-- Cargando -->
+  @if (loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-dark" role="status"></div>
+      <p class="text-muted mt-3">Cargando favoritos...</p>
+    </div>
+  }
+
+  <!-- Sin favoritos -->
+  @if (!loading && favoriteArticles.length === 0) {
+    <div class="text-center py-5">
+      <p class="fs-1">💔</p>
+      <p class="text-muted">Aún no tienes artículos favoritos.</p>
+      <a [routerLink]="['/articles']" class="btn btn-dark mt-3">Explorar artículos</a>
+    </div>
+  }
+
+  <!-- Tarjetas de favoritos -->
+  @if (!loading && favoriteArticles.length > 0) {
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      @for (article of favoriteArticles; track article.id) {
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0">
+            <img [src]="article.main_photo || article.image || 'https://placehold.co/300x200'" 
+                 class="card-img-top" 
+                 [alt]="article.title" 
+                 style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <span class="badge bg-secondary mb-2">{{ article.condition }}</span>
+              <h5 class="card-title fw-bold">{{ article.title }}</h5>
+              <p class="card-text text-muted small">{{ article.location }}</p>
+              <p class="card-text text-success fw-bold fs-5">{{ article.price }} €</p>
+            </div>
+            <div class="card-footer bg-white border-0 pb-3 d-flex gap-2">
+              <a [routerLink]="['/articles', article.id]" class="btn btn-dark flex-grow-1">Ver detalle</a>
+              <button class="btn btn-outline-danger" (click)="removeFavorite(article.id)" title="Quitar de favoritos">
+                ❤
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>
