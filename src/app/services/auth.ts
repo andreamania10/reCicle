@@ -128,6 +128,16 @@ export class Auth {
     }
   }
 
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = this.decodeToken(token);
+      if (!payload?.exp) return false; // sin campo exp → no expira
+      return Date.now() / 1000 > payload.exp;
+    } catch {
+      return true;
+    }
+  }
+
   private loadStoredUser(): User | null {
     const stored = localStorage.getItem(USER_STORAGE_KEY);
     if (!stored) return null;
@@ -135,6 +145,12 @@ export class Auth {
     try {
       const user = JSON.parse(stored) as User;
       if (!user?.id || !user?.role) {
+        localStorage.removeItem(USER_STORAGE_KEY);
+        return null;
+      }
+
+      // Si el token existe y ha expirado, cerrar sesión automáticamente
+      if (user.token && this.isTokenExpired(user.token)) {
         localStorage.removeItem(USER_STORAGE_KEY);
         return null;
       }
