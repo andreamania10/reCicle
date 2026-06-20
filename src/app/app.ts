@@ -6,6 +6,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { LoginModalComponent } from './components/login-modal/login-modal.component';
 
+
+
 @Component({
   selector: 'app-root',
   standalone: true,

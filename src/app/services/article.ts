@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpEvent } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Article, ArticleResponse } from '../interfaces/article';
 
@@ -59,4 +59,17 @@ export class ArticleService {
   delete(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  
+
+  
+createWithMedia(formData: FormData) {
+  return this.http.post(this.apiUrl, formData, {
+    reportProgress: true,
+    observe: 'events'
+  });
+}
+
+  
+
 }

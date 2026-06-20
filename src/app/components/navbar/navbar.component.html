@@ -1,16 +1,18 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
-        <a class="navbar-brand" [routerLink]="homeLink">
+
+        <a class="navbar-brand" (click)="goHome(); $event.preventDefault()">
             <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="Recycle" />
             <span class="brand-name">Recycle</span>
         </a>
+
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                 <li class="nav-item">
                     <a class="nav-link" href="/article/{article.id}">Descubre</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Nosotros</a>
+                    <a class="nav-link" href="/ourteam">Quienes somos</a>
                 </li>
             </ul>
             @if (auth.currentUser(); as user) {

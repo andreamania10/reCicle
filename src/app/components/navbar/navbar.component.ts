@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { User } from '../../interfaces/user';
-import { UserService } from '../../services/user';
-import { Router, RouterLink } from '@angular/router';
-import { RegisterComponent } from '../register/register.component';
+// import { UserService } from '../../services/user';
+import { Router, RouterModule } from '@angular/router';
 
 import { Auth } from '../../services/auth';
+import { RegisterComponent } from '../register/register.component';
+
 declare var bootstrap: any;
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RegisterComponent],
+  imports: [CommonModule, RouterModule, RegisterComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
@@ -41,9 +43,14 @@ export class NavbarComponent implements OnInit{
     // });
   }
 
-  get homeLink(): string {
-    return this.auth.currentUser() ? '/home' : '/';
-  }
+  
+goHome() {
+  const link = this.auth.currentUser() ? '/home' : '/';
+  window.location.href = link;
+}
+
+  
+
   // get userInitial(): string {
   //   return this.profile?.username?.charAt(0).toUpperCase() ?? '?';
   // }
