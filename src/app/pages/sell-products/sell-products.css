@@ -1,0 +1,130 @@
+.container {
+    max-width: 650px;
+    margin: 50px auto;
+    padding: 32px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #1f1f1f;
+    font-size: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+input,
+textarea,
+select {
+    padding: 12px 14px;
+    border: 1px solid #d6d6d6;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #14b8a6;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+small {
+    margin-top: 6px;
+    color: #666;
+    font-size: 12px;
+}
+
+.preview {
+    margin: 22px 0;
+    text-align: center;
+}
+
+.preview img,
+.preview video {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #e3e3e3;
+}
+
+.buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+button {
+    flex: 1;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button[type="submit"] {
+    background: #14b8a6;
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background: #0f9b8d;
+    transform: translateY(-1px);
+}
+
+button.secondary {
+    background: #ececec;
+    color: #333;
+}
+
+button.secondary:hover {
+    background: #d9d9d9;
+}
+
+button:disabled {
+    background: #c8c8c8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.success-message {
+    margin-top: 15px;
+    text-align: center;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.error {
+    border: 2px solid #e53935 !important;
+    background-color: #fff5f5;
+}
+
+.error-message {
+    margin-top: 10px;
+    color: #e53935;
+    font-weight: 600;
+    text-align: center;
+}

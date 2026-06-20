@@ -14,7 +14,6 @@
             <p class="categories-error ">No se pudieron cargar las categorías.</p>
             } @else {
             <div class="categories-grid ">
-
                 <div class="category-card" [class.category-card--active]="!selectedCategoryId()" (click)="selectCategory(null)">
                     Todos
                 </div>
@@ -43,9 +42,13 @@
             <div class="articles-layout" [class.open]="isFiltersOpen">
                 @if (isFiltersOpen && auth.currentUser()) {
                 <div class="filters-panel">
+                    <div class="filters-header">
+                        <h5 class="filters-title fw-bold">Filtros</h5>
 
-                    <h5 class="fw-bold mb-3">Filtros</h5>
-
+                        <button class="reset-button" (click)="resetFilters()" title="Restablecer filtros">
+                          <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                    </div>
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Nombre</label>
                         <input type="text" class="form-control" placeholder="Busca artículos (ej: teclado, móvil, sofá...)" [(ngModel)]="searchTitle" (ngModelChange)="applyFilters()">
@@ -73,7 +76,6 @@
                             <label class="form-label fw-semibold">Ubicación</label>
                             <input type="text" class="form-control" placeholder="Ej: Barcelona" [(ngModel)]="location" (ngModelChange)="applyFilters()">
                         </div>
-
                     </div>
                 </div>
                 }

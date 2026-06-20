@@ -43,9 +43,14 @@ export class NavbarComponent implements OnInit{
     // });
   }
 
-  get homeLink(): string {
-    return this.auth.currentUser() ? '/home' : '/';
-  }
+  
+goHome() {
+  const link = this.auth.currentUser() ? '/home' : '/';
+  window.location.href = link;
+}
+
+  
+
   // get userInitial(): string {
   //   return this.profile?.username?.charAt(0).toUpperCase() ?? '?';
   // }

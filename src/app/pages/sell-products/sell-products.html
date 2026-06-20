@@ -1,0 +1,81 @@
+<div class="container">
+    <h1>Publicar producto</h1>
+    <form (ngSubmit)="submitProduct()">
+        <div class="form-group">
+            <label>Nombre del producto</label>
+            <input type="text" [(ngModel)]="product.name" name="name" [class.error]="formSubmitted && !product.name" required />
+        </div>
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="product.description" name="description" [class.error]="formSubmitted && !product.name" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Precio</label>
+            <input type="number" [(ngModel)]="product.price" name="price" [class.error]="formSubmitted && !product.name" required />
+        </div>
+
+        <div class="form-group">
+            <label>Categoría</label>
+            <select [(ngModel)]="product.category_id" name="category_id" [class.error]="formSubmitted && !product.name" required>
+          <option [ngValue]="null">Selecciona categoría</option>
+          <option [ngValue]="1">Tecnología</option>
+          <option [ngValue]="2">Ropa</option>
+          <option [ngValue]="3">Hogar</option>
+          <option [ngValue]="4">Deporte</option>
+          <option [ngValue]="5">Vehículos</option>
+        </select>
+        </div>
+
+        <div class="form-group">
+            <label>Estado</label>
+            <select [(ngModel)]="product.condition" name="condition" [class.error]="formSubmitted && !product.name" required>
+          <option value="">Selecciona estado</option>
+          <option value="nuevo">Nuevo</option>
+          <option value="como nuevo">Como nuevo</option>
+          <option value="buen estado">Buen estado</option>
+        </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ubicación</label>
+            <input type="text" [(ngModel)]="product.location" name="location" [class.error]="formSubmitted && !product.name" required />
+        </div>
+
+        <div class="form-group">
+            <label>Fotografía o vídeo</label>
+            <input type="file" accept="image/*,video/*" (change)="onFileSelected($event)" />
+            <small>Puedes subir una imagen o un vídeo del artículo.</small>
+        </div>
+
+        <div class="preview" *ngIf="previewUrl">
+            <img *ngIf="isImage" [src]="previewUrl" alt="Vista previa del producto" />
+
+            <video *ngIf="isVideo" [src]="previewUrl" controls></video>
+        </div>
+
+
+        <div class="buttons">
+            <button type="submit" [disabled]="isPublishing">
+                {{ buttonText }}
+            </button>
+            <p class="success-message" *ngIf="successMessage">
+                {{ successMessage }}
+            </p>
+            <button type="button" class="secondary" (click)="resetForm()">
+              Restablecer
+            </button>
+        </div>
+
+    </form>
+    <p class="error-message" *ngIf="formSubmitted && (
+  !product.name ||
+  !product.description ||
+  !product.price ||
+  !product.category_id ||
+  !product.condition ||
+  !product.location
+)">
+        ⚠️ Por favor, completa todos los campos obligatorios.
+    </p>
+</div>

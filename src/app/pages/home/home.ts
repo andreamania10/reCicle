@@ -9,6 +9,7 @@ import { CategoryService } from '../../services/category';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { FormsModule } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,7 @@ export class Home implements OnInit {
   private articleService = inject(ArticleService);
   private categoryService = inject(CategoryService);
 
-  constructor(private router: Router, public auth: Auth) {}
+  constructor(private router: Router, public auth: Auth, private cdr: ChangeDetectorRef) {}
 
   isFiltersOpen = false;
 
@@ -61,9 +62,12 @@ export class Home implements OnInit {
   ngOnInit(): void {
     this.loadRecentArticles();
 
+    
     setInterval(() => {
       this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-    }, 10000);
+      this.cdr.detectChanges();
+    }, 3500);
+
 
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
@@ -190,5 +194,14 @@ export class Home implements OnInit {
           this.articlesError.set(true);
         },
       });
+  }
+  
+  resetFilters() {
+    this.searchTitle = '';
+    this.maxPrice = 1000;
+    this.selectedCondition = '';
+    this.location = '';
+  
+    this.applyFilters();
   }
 }

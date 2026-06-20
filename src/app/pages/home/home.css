@@ -22,7 +22,7 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 1s ease;
+    transition: opacity 0.5s ease;
     z-index: 0;
     cursor: pointer;
 }
@@ -202,7 +202,8 @@ app-article-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px;
+    padding-bottom: 20px;
+    padding-top: 10px;
     border-bottom: 1px solid #eee;
 }
 
@@ -272,4 +273,34 @@ app-article-card {
     background: rgba(0, 0, 0, 0.35);
     z-index: 999;
     backdrop-filter: blur(2px);
+}
+
+.filters-header {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.filters-title {
+    margin: 0;
+}
+
+.reset-button {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    border-radius: 50%;
+    padding: 6px;
+    transition: all 0.2s ease;
+}
+
+.reset-button:hover {
+    background-color: #f0f0f0;
+    color: #2e7d32;
 }
