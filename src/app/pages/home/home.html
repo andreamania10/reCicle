@@ -1,19 +1,25 @@
-<section class="home-page">
+<section class="home-page" [class.filters-open]="isFiltersOpen">
     <section class="section-categories">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Explora por categoría</h2>
-                <p class="section-subtitle">Encuentra exactamente lo que buscas.</p>
+            <div class="hero-banner">
+                <div class="slides">
+                    <div class="slide" *ngFor="let slide of slides; let i = index" [class.active]="i === currentIndex" (click)="onSlideClick(slide)">
+                        <img [src]="slide.image" alt="banner" />
+                    </div>
+                </div>
             </div>
-
             @if (isLoadingCategories()) {
-            <p class="categories-status">Cargando categorías...</p>
+            <p class="categories-status ">Cargando categorías...</p>
             } @else if (categoriesError()) {
-            <p class="categories-error">No se pudieron cargar las categorías.</p>
+            <p class="categories-error ">No se pudieron cargar las categorías.</p>
             } @else {
-            <div class="categories-grid">
+            <div class="categories-grid ">
+
+                <div class="category-card" [class.category-card--active]="!selectedCategoryId()" (click)="selectCategory(null)">
+                    Todos
+                </div>
                 @for (category of categories(); track category.id) {
-                <div class="category-card" [class.category-card--active]="selectedCategoryId() === category.id" (click)="selectCategory(category.id)">
+                <div class="category-card " [class.category-card--active]="selectedCategoryId() === category.id " (click)="selectCategory(category.id) ">
                     {{ category.name }}
                 </div>
                 }
@@ -22,28 +28,74 @@
         </div>
     </section>
 
+
     <section class="section-articles">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Artículos recientes</h2>
-                @if (selectedCategoryName()) {
-                <p class="section-subtitle">Categoría: {{ selectedCategoryName() }}</p>
-                }
+
+                @if (auth.currentUser()) {
+                <button class="filter-button" (click)="toggleFilters()">
+                <i class="bi bi-funnel"></i>
+              </button> }
             </div>
 
-            @if (isLoadingArticles()) {
-            <p class="articles-status">Cargando artículos...</p>
-            } @else if (articlesError()) {
-            <p class="articles-error">No se pudieron cargar los artículos.</p>
-            } @else if (items().length === 0) {
-            <p class="articles-status">No hay artículos para mostrar.</p>
-            } @else {
-            <div class="articles-grid">
-                @for (item of items(); track item.id) {
-                <app-article-card [item]="item"></app-article-card>
+            <div class="articles-layout" [class.open]="isFiltersOpen">
+                @if (isFiltersOpen && auth.currentUser()) {
+                <div class="filters-panel">
+
+                    <h5 class="fw-bold mb-3">Filtros</h5>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Nombre</label>
+                        <input type="text" class="form-control" placeholder="Busca artículos (ej: teclado, móvil, sofá...)" [(ngModel)]="searchTitle" (ngModelChange)="applyFilters()">
+                    </div>
+
+                    <div class="filters-row">
+
+                        <div class="filter-col">
+                            <label class="form-label fw-semibold">
+                              Precio máx: {{ maxPrice }} €
+                            </label>
+                            <input type="range" class="form-range" min="0" max="1000" [(ngModel)]="maxPrice" (ngModelChange)="applyFilters()">
+                        </div>
+                        <div class="filter-col">
+                            <label class="form-label fw-semibold">Condición</label>
+                            <select class="form-select" [(ngModel)]="selectedCondition" (ngModelChange)="applyFilters()">
+                              <option value="">Todas</option>
+                              <option value="nuevo">Nuevo</option>
+                              <option value="como nuevo">Como Nuevo</option>
+                              <option value="buen estado">Buen Estado</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-col">
+                            <label class="form-label fw-semibold">Ubicación</label>
+                            <input type="text" class="form-control" placeholder="Ej: Barcelona" [(ngModel)]="location" (ngModelChange)="applyFilters()">
+                        </div>
+
+                    </div>
+                </div>
                 }
+                <div class="articles-content">
+
+                    @if (isLoadingArticles()) {
+                    <p class="articles-status">Cargando artículos...</p>
+                    } @else if (articlesError()) {
+                    <p class="articles-error">No se pudieron cargar los artículos.</p>
+                    } @else if (items().length === 0) {
+                    <p class="articles-status">No hay artículos para mostrar.</p>
+                    } @else {
+                    <div class="articles-grid">
+                        @for (item of items(); track item.id) {
+                        <app-article-card [item]="item"></app-article-card>
+                        }
+                    </div>
+                    }
+
+                </div>
             </div>
-            }
+
         </div>
     </section>
 </section>
