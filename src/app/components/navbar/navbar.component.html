@@ -19,13 +19,15 @@
             <form class="d-flex" role="search">
                 <input class=" form-control me-2" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..." />
             </form>
+            @if (user.role === 'Administrador') {
+            <a class="btn-admin" routerLink="/admin">
+                <i class="bi bi-shield-check"></i>
+                Panel Admin
+            </a>
+            }
             <div class="btn-role" (click)="goToProfile(user.id)">
-                <!-- @if (profile.avatar_url) {
-                <img class="avatar-initial" [src]="profile.avatar_url" [alt]="'Avatar de ' + profile" /> } @else {
-                <div class="avatar-placeholder">
-                    <i class="bi bi-person-circle"></i>
-                </div>
-                } -->
+                <i class="bi bi-person"></i>
+                Mi perfil
             </div>
             <button class="btn-sell" type="button" (click)="sellProducts()">
           + Vender
@@ -37,5 +39,4 @@
     </div>
 </nav>
 
-<app-register-modal></app-register-modal>
 <app-register-modal></app-register-modal>

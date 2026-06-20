@@ -13,11 +13,13 @@
             }
 
             <div class="article-card-footer">
-                <span class="article-card-price">{{ formattedPrice }} €</span> @if (item.location) {
+                <span class="article-card-price">{{ formattedPrice }} €</span>
+                @if (displayLocation) {
                 <span class="article-card-location">
-            <i class="bi bi-geo-alt"></i>
-            {{ item.location }}
-          </span> }
+                    <i class="bi bi-geo-alt"></i>
+                    {{ displayLocation }}
+                </span>
+                }
             </div>
         </div>
     </a>

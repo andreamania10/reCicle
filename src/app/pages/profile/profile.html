@@ -1,6 +1,12 @@
 <div class="profile-page">
   <div class="profile-container">
 
+    @if (loading) {
+      <p style="text-align:center; padding: 3rem; color:#888;">Cargando perfil...</p>
+    } @else if (errorMsg) {
+      <p style="text-align:center; padding: 3rem; color:#c62828;">{{ errorMsg }}</p>
+    } @else if (profile) {
+
     <div class="profile-header">
       <a routerLink="/home" class="back-link">
         <i class="bi bi-arrow-left"></i> Volver al inicio
@@ -192,5 +198,6 @@
       </section>
 
     </div>
+    } <!-- end @else if profile -->
   </div>
 </div>

@@ -40,7 +40,13 @@ export class LoginModalComponent {
       .subscribe({
         next: (user) => {
           this.closeModal();
-          this.router.navigate(['/profile', user.id]);
+          if (user.role === 'Administrador') {
+            this.router.navigate(['/admin']);
+          } else if (user.role === 'Moderador') {
+            this.router.navigate(['/moderator']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         },
         error: (err: Error) => {
           this.errorMessage.set(err.message || 'Error al iniciar sesión');

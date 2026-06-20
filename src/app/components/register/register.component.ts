@@ -50,9 +50,9 @@ export class RegisterComponent {
       .register({ username, email, password, location })
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (user) => {
+        next: () => {
           this.closeModal();
-          this.router.navigate(['/profile', user.id]);
+          this.router.navigate(['/home']);
         },
         error: (err: Error) => {
           this.errorMessage = err.message || 'Error al registrarse';

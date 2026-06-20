@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Article } from '../../interfaces/article';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-article-card',
@@ -12,6 +13,17 @@ import { Article } from '../../interfaces/article';
 })
 export class ArticleCardComponent {
   @Input({ required: true }) item!: Article;
+  private auth = inject(Auth);
+
+  get displayLocation(): string {
+    if (this.item.location) return this.item.location;
+    // Fallback: localización del usuario actual para sus propios artículos
+    const user = this.auth.currentUser();
+    if (user && this.item.user_id === user.id && user.location) {
+      return user.location;
+    }
+    return '';
+  }
 
   private readonly placeholderImage =
     'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=600&q=80';
