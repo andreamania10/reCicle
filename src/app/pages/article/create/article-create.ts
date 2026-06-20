@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ArticleService } from '../../../services/article';
+import { Auth } from '../../../services/auth';
 import { Article } from '../../../interfaces/article';
 
 @Component({
@@ -13,13 +14,14 @@ import { Article } from '../../../interfaces/article';
 export class ArticleCreate {
 
   private articleService = inject(ArticleService);
+  private auth = inject(Auth);
 
   title: string = '';
   price: number = 0;
   condition: string = '';
   description: string = '';
-  location: string = '';
-  category_id: number = 1; 
+  location: string = this.auth.currentUser()?.location ?? '';
+  category_id: number = 1;
 
   save() {
     const newArticle: Article = {

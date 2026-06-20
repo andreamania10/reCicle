@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { profileGuard } from './guards/auth.guard';
+import { adminGuard, profileGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/landing/landing').then(m => m.Landing) },
@@ -19,6 +19,6 @@ export const routes: Routes = [
   { path: 'messages', loadComponent: () => import('./pages/messages/messages').then(m => m.Messages) },
   { path: 'favorites', loadComponent: () => import('./pages/favorites/favorites').then(m => m.Favorites) },
   { path: 'moderator', loadComponent: () => import('./pages/moderator-panel/moderator-panel').then(m => m.ModeratorPanel) },
-  { path: 'admin', loadComponent: () => import('./pages/admin-panel/admin-panel').then(m => m.AdminPanel) },
+  { path: 'admin', loadComponent: () => import('./pages/admin-panel/admin-panel').then(m => m.AdminPanel), canActivate: [adminGuard] },
   { path: '**', redirectTo: '' }
 ];

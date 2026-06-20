@@ -13,6 +13,21 @@ export const authGuard: CanActivateFn = () => {
   return true;
 };
 
+export const adminGuard: CanActivateFn = () => {
+  const auth = inject(Auth);
+  const router = inject(Router);
+
+  if (!auth.isLoggedIn()) {
+    return router.createUrlTree(['/']);
+  }
+
+  if (auth.currentUser()?.role !== 'Administrador') {
+    return router.createUrlTree(['/home']);
+  }
+
+  return true;
+};
+
 export const profileGuard: CanActivateFn = (route) => {
   const auth = inject(Auth);
   const router = inject(Router);
