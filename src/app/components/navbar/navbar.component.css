@@ -1,164 +1,222 @@
-                .navbar {
-                    position: sticky;
-                    top: 0;
-                    z-index: 1000;
-                    background: #ffffff;
-                    border-bottom: 1px solid #e8e8e8;
-                }
-                
-                .navbar-brand {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    text-decoration: none;
-                    flex-shrink: 0;
-                    cursor: pointer;
-                }
-                
-                .nav-link {
-                    color: rgb(46, 46, 46);
-                }
-                
-                .brand-logo {
-                    width: 34px;
-                    height: 34px;
-                    object-fit: contain;
-                }
-                
-                .brand-name {
-                    font-size: 16px;
-                    font-weight: 700;
-                    color: #1f2937;
-                }
-                
-                .navbar-search-form {
-                    flex: 1;
-                    min-width: 0;
-                    margin-right: 12px;
-                }
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    border-bottom: 1px solid #e8e8e8;
+}
 
-                .navbar-search-form input {
-                    width: 100%;
-                    max-width: 400px;
-                    height: 40px;
-                    border: 1px solid #dcdfe4;
-                    border-radius: 999px;
-                    padding: 0 18px;
-                    font-size: 14px;
-                    background: #f8fafc;
-                    outline: none;
-                }
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+    cursor: pointer;
+}
 
-                .navbar-actions {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    flex-shrink: 0;
-                }
-                
-                .navbar-search input:focus {
-                    border-color: #00bfa5;
-                    background: #ffffff;
-                }
-                
-                .btn-login {
-                    height: 40px;
-                    padding: 0 18px;
-                    border: none;
-                    border-radius: 10px;
-                    background: #111827;
-                    color: #ffffff;
-                    font-size: 14px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    flex-shrink: 0;
-                    margin-right: 15px;
-                }
-                
-                .btn-login:hover {
-                    background: #1f2937;
-                }
-                
-                .btn-sell {
-                    height: 40px;
-                    padding: 0 18px;
-                    border: 1.5px solid transparent;
-                    border-radius: 10px;
-                    background: linear-gradient(135deg, #00a082, #00c2a8);
-                    color: #ffffff;
-                    font-size: 14px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    flex-shrink: 0;
-                    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
-                }
+.brand-logo {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
 
-                .btn-sell:hover {
-                    background: transparent;
-                    color: #00a082;
-                    border-color: #00a082;
-                    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.18);
-                }
-                
-                .btn-admin {
-                    height: 36px;
-                    padding: 0 14px 0 11px;
-                    border: 1.5px solid #00a082;
-                    border-radius: 20px;
-                    background: transparent;
-                    color: #00a082;
-                    font-size: 13px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    text-decoration: none;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    letter-spacing: 0.01em;
-                    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
-                }
+.brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+}
 
-                .btn-admin:hover {
-                    background: linear-gradient(135deg, #00a082, #00c2a8);
-                    color: #ffffff;
-                    border-color: transparent;
-                    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
-                    text-decoration: none;
-                }
+.nav-link {
+    color: rgb(46, 46, 46);
+}
 
-                .btn-role {
-                    height: 36px;
-                    padding: 0 14px 0 11px;
-                    border: 1.5px solid #00a082;
-                    border-radius: 20px;
-                    background: transparent;
-                    color: #00a082;
-                    font-size: 13px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    letter-spacing: 0.01em;
-                    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
-                }
+/* Barra de búsqueda */
+.navbar-search-form {
+    flex: 1;
+    min-width: 0;
+    margin: 0 12px;
+}
 
-                .btn-role:hover {
-                    background: linear-gradient(135deg, #00a082, #00c2a8);
-                    color: #ffffff;
-                    border-color: transparent;
-                    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
-                }
-                
-                @media (max-width: 768px) {
-                    .navbar-inner {
-                        padding: 10px 16px;
-                        gap: 12px;
-                    }
-                    .brand-name {
-                        display: none;
-                    }
-                    .btn-login {
-                        padding: 0 14px;
-                    }
-                }
+.navbar-search-form input {
+    width: 100%;
+    max-width: 400px;
+    height: 40px;
+    border: 1px solid #dcdfe4;
+    border-radius: 999px;
+    padding: 0 18px;
+    font-size: 14px;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.18s;
+}
+
+.navbar-search-form input:focus {
+    border-color: #00bfa5;
+    background: #ffffff;
+}
+
+/* En móvil la búsqueda fuera del collapse ocupa el espacio disponible */
+@media (max-width: 991px) {
+    .navbar-search-form {
+        flex: 1;
+        margin: 0 8px;
+    }
+
+    .navbar-search-form input {
+        max-width: 100%;
+    }
+}
+
+/* Contenedor de botones de usuario */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* En móvil los botones se apilan verticalmente dentro del collapse */
+@media (max-width: 991px) {
+    .navbar-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 0 8px;
+        border-top: 1px solid #e8e8e8;
+        margin-top: 8px;
+    }
+}
+
+/* Botón Login */
+.btn-login {
+    height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background: #111827;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.btn-login:hover {
+    background: #1f2937;
+}
+
+@media (max-width: 991px) {
+    /* El login fuera del collapse no necesita margen extra */
+    .btn-login {
+        padding: 0 14px;
+    }
+}
+
+/* Botón + Vender */
+.btn-sell {
+    height: 40px;
+    padding: 0 18px;
+    border: 1.5px solid transparent;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00a082, #00c2a8);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.btn-sell:hover {
+    background: transparent;
+    color: #00a082;
+    border-color: #00a082;
+    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.18);
+}
+
+@media (max-width: 991px) {
+    .btn-sell {
+        width: 100%;
+    }
+}
+
+/* Botón Panel Admin */
+.btn-admin {
+    height: 36px;
+    padding: 0 14px 0 11px;
+    border: 1.5px solid #00a082;
+    border-radius: 20px;
+    background: transparent;
+    color: #00a082;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    white-space: nowrap;
+}
+
+.btn-admin:hover {
+    background: linear-gradient(135deg, #00a082, #00c2a8);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
+    text-decoration: none;
+}
+
+@media (max-width: 991px) {
+    .btn-admin {
+        justify-content: center;
+        border-radius: 10px;
+        height: 40px;
+    }
+}
+
+/* Botón Mi perfil */
+.btn-role {
+    height: 36px;
+    padding: 0 14px 0 11px;
+    border: 1.5px solid #00a082;
+    border-radius: 20px;
+    background: transparent;
+    color: #00a082;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.btn-role:hover {
+    background: linear-gradient(135deg, #00a082, #00c2a8);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
+}
+
+@media (max-width: 991px) {
+    .btn-role {
+        justify-content: center;
+        border-radius: 10px;
+        height: 40px;
+    }
+}
+
+/* Hamburguesa: color personalizado */
+.navbar-toggler {
+    border-color: #00a082;
+    flex-shrink: 0;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px rgba(0, 160, 130, 0.25);
+}
