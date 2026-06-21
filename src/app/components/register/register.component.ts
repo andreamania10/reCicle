@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -24,10 +24,10 @@ export class RegisterComponent {
     acceptTerms: false,
   };
 
-  isLoading = false;
-  errorMessage = '';
-  successMessage = '';
-  isDetectingLocation = false;
+  isLoading = signal(false);
+  errorMessage = signal('');
+  successMessage = signal('');
+  isDetectingLocation = signal(false);
 
   constructor(
     private router: Router,
@@ -40,22 +40,22 @@ export class RegisterComponent {
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
 
     const { username, email, password, location } = this.registerData;
 
     this.auth
       .register({ username, email, password, location })
-      .pipe(finalize(() => (this.isLoading = false)))
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: () => {
+        next: (user) => {
           this.closeModal();
           this.router.navigate(['/home']);
         },
         error: (err: Error) => {
-          this.errorMessage = err.message || 'Error al registrarse';
+          this.errorMessage.set(err.message || 'Error al registrarse');
         },
       });
   }
@@ -70,11 +70,11 @@ export class RegisterComponent {
 
   detectLocation(): void {
     if (!navigator.geolocation) {
-      this.errorMessage = 'Tu navegador no soporta geolocalización.';
+      this.errorMessage.set('Tu navegador no soporta geolocalización.');
       return;
     }
 
-    this.isDetectingLocation = true;
+    this.isDetectingLocation.set(true);
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -95,14 +95,14 @@ export class RegisterComponent {
           const state = data.address.state || '';
           this.registerData.location = city ? `${city}, ${state}` : state;
         } catch {
-          this.errorMessage = 'No se pudo obtener la ubicación.';
+          this.errorMessage.set('No se pudo obtener la ubicación.');
         } finally {
-          this.isDetectingLocation = false;
+          this.isDetectingLocation.set(false);
         }
       },
       () => {
-        this.errorMessage = 'Permiso de ubicación denegado.';
-        this.isDetectingLocation = false;
+        this.errorMessage.set('Permiso de ubicación denegado.');
+        this.isDetectingLocation.set(false);
       },
     );
   }
@@ -116,10 +116,10 @@ export class RegisterComponent {
       location: '',
       acceptTerms: false,
     };
-    this.isLoading = false;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.isDetectingLocation = false;
+    this.isLoading.set(false);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.isDetectingLocation.set(false);
   }
 
   private closeModal(): void {

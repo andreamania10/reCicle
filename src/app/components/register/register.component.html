@@ -80,7 +80,7 @@
                 type="button"
                 class="btn btn-outline-secondary"
                 (click)="detectLocation()"
-                [disabled]="isDetectingLocation"
+                [disabled]="isDetectingLocation()"
               >
                 <i class="bi bi-geo-alt"></i>
               </button>
@@ -150,21 +150,21 @@
             Debes aceptar los términos para continuar.
           </div>
 
-          <div class="alert-error mt-3" *ngIf="errorMessage">
-            <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+          <div class="alert-error mt-3" *ngIf="errorMessage()">
+            <i class="bi bi-exclamation-circle"></i> {{ errorMessage() }}
           </div>
 
-          <div class="alert-success mt-3" *ngIf="successMessage">
-            <i class="bi bi-check-circle"></i> {{ successMessage }}
+          <div class="alert-success mt-3" *ngIf="successMessage()">
+            <i class="bi bi-check-circle"></i> {{ successMessage() }}
           </div>
 
           <button
             type="submit"
             class="btn-submit w-100 mt-4"
-            [disabled]="isLoading || registerForm.invalid || passwordMismatch"
+            [disabled]="isLoading() || registerForm.invalid || passwordMismatch"
           >
-            <span *ngIf="!isLoading">Crear cuenta</span>
-            <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center gap-2">
+            <span *ngIf="!isLoading()">Crear cuenta</span>
+            <span *ngIf="isLoading()" class="d-flex align-items-center justify-content-center gap-2">
               <span class="spinner-border spinner-border-sm" role="status"></span>
               Creando cuenta...
             </span>
