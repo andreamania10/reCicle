@@ -1,34 +1,26 @@
 <article class="article-card">
-  <a [routerLink]="['/articles', item.id]" class="article-card-link">
-    <div class="article-card-image-wrap">
-      <img
-        class="article-card-image"
-        [src]="imageUrl"
-        [alt]="item.title"
-        loading="lazy"
-      />
-      @if (item.condition) {
-        <span class="condition-badge" [ngClass]="conditionClass">{{ item.condition }}</span>
-      }
-    </div>
+    <a [routerLink]="['/articles', item.id]" class="article-card-link">
+        <div class="article-card-image-wrap">
+            <img class="article-card-image" [src]="imageUrl" [alt]="item.title" loading="lazy" /> @if (item.condition) {
+            <span class="condition-badge" [ngClass]="conditionClass">{{ item.condition }}</span> }
+        </div>
 
-    <div class="article-card-body">
-      <h3 class="article-card-title">{{ item.title }}</h3>
+        <div class="article-card-body">
+            <h3 class="article-card-title">{{ item.title }}</h3>
 
-      @if (item.description) {
-        <p class="article-card-description">{{ item.description }}</p>
-      }
+            @if (item.description) {
+            <p class="article-card-description">{{ item.description }}</p>
+            }
 
-      <div class="article-card-footer">
-        <span class="article-card-price">{{ formattedPrice }} €</span>
-
-        @if (item.location) {
-          <span class="article-card-location">
-            <i class="bi bi-geo-alt"></i>
-            {{ item.location }}
-          </span>
-        }
-      </div>
-    </div>
-  </a>
+            <div class="article-card-footer">
+                <span class="article-card-price">{{ formattedPrice }} €</span>
+                @if (displayLocation) {
+                <span class="article-card-location">
+                    <i class="bi bi-geo-alt"></i>
+                    {{ displayLocation }}
+                </span>
+                }
+            </div>
+        </div>
+    </a>
 </article>

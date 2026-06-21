@@ -1,1 +1,284 @@
-<p>admin-panel works!</p>
+<div class="admin-wrapper">
+  <div class="admin-header">
+    <h1>Panel de Administrador</h1>
+  </div>
+
+  <!-- Mensajes -->
+  @if (successMsg()) {
+    <div class="alert alert-success">{{ successMsg() }}</div>
+  }
+  @if (errorMsg()) {
+    <div class="alert alert-danger">{{ errorMsg() }}</div>
+  }
+
+  <!-- Tabs -->
+  <div class="admin-tabs">
+    <button [class.active]="activeTab() === 'stats'" (click)="setTab('stats')">Estadísticas</button>
+    <button [class.active]="activeTab() === 'users'" (click)="setTab('users')">Usuarios</button>
+    <button [class.active]="activeTab() === 'categories'" (click)="setTab('categories')">Categorías</button>
+    <button [class.active]="activeTab() === 'reports'" (click)="setTab('reports')">Reportes</button>
+  </div>
+
+  <!-- ===== ESTADÍSTICAS ===== -->
+  @if (activeTab() === 'stats') {
+    <div class="tab-content">
+      @if (stats()) {
+        <div class="stats-grid">
+          <div class="stat-card stat-card--link" (click)="goToStat('articles')" title="Ver artículos publicados">
+            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+            <span class="stat-number">{{ stats()!.articulosPublicados }}</span>
+            <span class="stat-label">Artículos publicados</span>
+            <span class="stat-cta">Ver listado <i class="bi bi-arrow-right"></i></span>
+          </div>
+          <div class="stat-card stat-card--link" (click)="goToStat('users')" title="Ir a gestión de usuarios">
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+            <span class="stat-number">{{ stats()!.usuariosActivos }}</span>
+            <span class="stat-label">Usuarios activos</span>
+            <span class="stat-cta">Ver usuarios <i class="bi bi-arrow-right"></i></span>
+          </div>
+          <div class="stat-card stat-card--link" (click)="goToStat('reports')" title="Ir a reportes">
+            <div class="stat-icon"><i class="bi bi-flag"></i></div>
+            <span class="stat-number">{{ stats()!.reportesGestionados }}</span>
+            <span class="stat-label">Reportes gestionados</span>
+            <span class="stat-cta">Ver reportes <i class="bi bi-arrow-right"></i></span>
+          </div>
+          <div class="stat-card stat-card--link" (click)="goToStat('sold')" title="Ver artículos vendidos">
+            <div class="stat-icon"><i class="bi bi-bag-check"></i></div>
+            <span class="stat-number">{{ stats()!.articulosVendidos }}</span>
+            <span class="stat-label">Artículos vendidos</span>
+            <span class="stat-cta">Ver listado <i class="bi bi-arrow-right"></i></span>
+          </div>
+        </div>
+      } @else {
+        <p class="loading-text">Cargando estadísticas...</p>
+      }
+    </div>
+  }
+
+  <!-- ===== USUARIOS ===== -->
+  @if (activeTab() === 'users') {
+    <div class="tab-content">
+      @if (loading()) {
+        <p class="loading-text">Cargando usuarios...</p>
+      } @else {
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td><span class="badge badge-role">{{ user.role }}</span></td>
+                <td>
+                  <span [class]="user.status === 'Bloqueado' ? 'badge badge-blocked' : 'badge badge-active'">
+                    {{ user.status }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button class="btn-icon btn-edit" title="Editar datos" (click)="openEditUser(user)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-icon btn-role" title="Cambiar rol" (click)="openRoleModal(user)">
+                    <i class="bi bi-person-badge"></i>
+                  </button>
+                  <button class="btn-icon" title="{{ user.status === 'Bloqueado' ? 'Desbloquear' : 'Bloquear' }}"
+                    [class]="user.status === 'Bloqueado' ? 'btn-unblock' : 'btn-block'"
+                    (click)="toggleBlock(user)">
+                    <i class="bi" [class.bi-lock]="user.status !== 'Bloqueado'" [class.bi-unlock]="user.status === 'Bloqueado'"></i>
+                  </button>
+                  <button class="btn-icon btn-delete" title="Eliminar usuario" (click)="deleteUser(user.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+
+      <!-- Modal editar usuario -->
+      @if (editingUser()) {
+        <div class="modal-overlay" (click)="editingUser.set(null)">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <h3>Editar usuario — #{{ editingUser()!.id }}</h3>
+            <div class="modal-field">
+              <label>Nombre de usuario</label>
+              <input class="form-input" [(ngModel)]="editUserData.username" placeholder="Username" />
+            </div>
+            <div class="modal-field">
+              <label>Email</label>
+              <input class="form-input" [(ngModel)]="editUserData.email" type="email" placeholder="Email" />
+            </div>
+            <div class="modal-field">
+              <label>Localización</label>
+              <input class="form-input" [(ngModel)]="editUserData.location" placeholder="Ciudad, País" />
+            </div>
+            <div class="modal-field">
+              <label>Nueva contraseña <span class="optional-hint">(dejar vacío para no cambiar)</span></label>
+              <div class="password-field-wrapper">
+                <input
+                  class="form-input"
+                  [type]="showEditPassword ? 'text' : 'password'"
+                  [(ngModel)]="editUserData.password"
+                  placeholder="Escribe aquí para cambiarla"
+                />
+                <button type="button" class="password-eye-btn" (click)="showEditPassword = !showEditPassword"
+                  [attr.aria-label]="showEditPassword ? 'Ocultar' : 'Mostrar'">
+                  <i class="bi" [class.bi-eye]="!showEditPassword" [class.bi-eye-slash]="showEditPassword"></i>
+                </button>
+              </div>
+              <p class="password-note"><i class="bi bi-lock"></i> La contraseña actual está cifrada y no es visible por nadie, ni por el administrador.</p>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-save" (click)="saveEditUser()">Guardar</button>
+              <button class="btn-cancel" (click)="editingUser.set(null)">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Modal cambio de rol -->
+      @if (selectedUser()) {
+        <div class="modal-overlay" (click)="selectedUser.set(null)">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <h3>Cambiar rol — {{ selectedUser()!.username }}</h3>
+            <select [(ngModel)]="newRole" class="form-select">
+              @for (role of roles; track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+            <div class="modal-actions">
+              <button class="btn-save" (click)="saveRole()">Guardar</button>
+              <button class="btn-cancel" (click)="selectedUser.set(null)">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ===== CATEGORÍAS ===== -->
+  @if (activeTab() === 'categories') {
+    <div class="tab-content">
+      <div class="form-inline">
+        <input [(ngModel)]="newCategoryName" placeholder="Nombre" class="form-input" />
+        <input [(ngModel)]="newCategorySlug" placeholder="Slug (opcional)" class="form-input" />
+        <button class="btn-add" (click)="createCategory()">
+          <i class="bi bi-plus-lg"></i> Añadir
+        </button>
+      </div>
+
+      @if (loading()) {
+        <p class="loading-text">Cargando categorías...</p>
+      } @else {
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Slug</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of categories(); track cat.id) {
+              <tr>
+                @if (editingCategory()?.id === cat.id) {
+                  <td>{{ cat.id }}</td>
+                  <td><input [(ngModel)]="editCategoryName" class="form-input-sm" /></td>
+                  <td><input [(ngModel)]="editCategorySlug" class="form-input-sm" /></td>
+                  <td class="actions">
+                    <button class="btn-icon btn-edit" title="Guardar" (click)="saveCategory()">
+                      <i class="bi bi-check-lg"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" title="Cancelar" (click)="editingCategory.set(null)">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </td>
+                } @else {
+                  <td>{{ cat.id }}</td>
+                  <td>{{ cat.name }}</td>
+                  <td>{{ cat.slug }}</td>
+                  <td class="actions">
+                    <button class="btn-icon btn-edit" title="Editar categoría" (click)="openEditCategory(cat)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" title="Eliminar categoría" (click)="deleteCategory(cat.id)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- ===== REPORTES ===== -->
+  @if (activeTab() === 'reports') {
+    <div class="tab-content">
+      @if (loading()) {
+        <p class="loading-text">Cargando reportes...</p>
+      } @else if (reports().length === 0) {
+        <p class="loading-text">No hay reportes pendientes.</p>
+      } @else {
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tipo</th>
+              <th>Motivo</th>
+              <th>Artículo ID</th>
+              <th>Usuario reportado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (report of reports(); track report.id) {
+              <tr (click)="selectedReport.set(report)" class="clickable-row">
+                <td>{{ report.id }}</td>
+                <td><span class="badge badge-role">{{ report.type }}</span></td>
+                <td>{{ report.reason }}</td>
+                <td>{{ report.article_id ?? '—' }}</td>
+                <td>{{ report.reported_user_id ?? '—' }}</td>
+                <td>{{ report.created_at | date:'dd/MM/yyyy' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+
+      @if (selectedReport()) {
+        <div class="modal-overlay" (click)="selectedReport.set(null)">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <h3>Detalle del reporte #{{ selectedReport()!.id }}</h3>
+            <p><strong>Tipo:</strong> {{ selectedReport()!.type }}</p>
+            <p><strong>Motivo:</strong> {{ selectedReport()!.reason }}</p>
+            @if (selectedReport()!.article_id) {
+              <p><strong>Artículo ID:</strong> {{ selectedReport()!.article_id }}</p>
+            }
+            @if (selectedReport()!.reported_user_id) {
+              <p><strong>Usuario reportado ID:</strong> {{ selectedReport()!.reported_user_id }}</p>
+            }
+            <p><strong>Fecha:</strong> {{ selectedReport()!.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+            <div class="modal-actions">
+              <button class="btn-cancel" (click)="selectedReport.set(null)">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

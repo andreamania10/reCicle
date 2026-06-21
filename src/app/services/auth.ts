@@ -56,7 +56,14 @@ export class Auth {
           throw new Error(response?.message || 'No se pudo completar el registro');
         }
 
-        return this.login({ email: body.email, password: body.password });
+        return this.login({ email: body.email, password: body.password }).pipe(
+          tap((user) => {
+            // Enriquecer el usuario almacenado con la localización del registro
+            if (body.location) {
+              this.setUser({ ...user, location: body.location });
+            }
+          }),
+        );
       }),
       catchError((error: HttpErrorResponse | Error) =>
         throwError(() => new Error(this.getErrorMessage(error, 'Error al registrarse'))),
