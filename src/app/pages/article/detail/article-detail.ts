@@ -6,6 +6,8 @@ import { Article } from '../../../interfaces/article';
 import { User } from '../../../interfaces/user';
 import { ArticleService } from '../../../services/article';
 import { UserService } from '../../../services/user';
+import { Auth } from '../../../services/auth';
+import { ReportService } from '../../../services/report';
 
 @Component({
   selector: 'app-article-detail',
@@ -18,6 +20,8 @@ export class ArticleDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private articleService = inject(ArticleService);
   private userService = inject(UserService);
+  private auth = inject(Auth);
+  private reportService = inject(ReportService);
   private cdr = inject(ChangeDetectorRef);
 
   article: Article | null = null;
@@ -29,6 +33,14 @@ export class ArticleDetail implements OnInit {
   newStatus: string = '';
   updatingStatus = false;
   statusError = '';
+
+  // Reportes
+  showReportArticleForm = false;
+  showReportUserForm = false;
+  reportReason = '';
+  sendingReport = false;
+  reportSuccess = '';
+  reportError = '';
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -56,13 +68,33 @@ export class ArticleDetail implements OnInit {
     });
   }
 
+  canEditStatus(): boolean {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser || !this.article) return false;
+
+    const isOwner = currentUser.id === this.article.user_id;
+    const isStaff = currentUser.role === 'Moderador' || currentUser.role === 'Administrador';
+
+    return isOwner || isStaff;
+  }
+
+  isLoggedIn(): boolean {
+    return this.auth.currentUser() !== null;
+  }
+
   updateStatus() {
     if (!this.article) return;
+
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token) {
+      this.statusError = 'Debes iniciar sesión para hacer esto.';
+      return;
+    }
 
     this.updatingStatus = true;
     this.statusError = '';
 
-    this.articleService.updateStatus(this.article.id, this.newStatus).subscribe({
+    this.articleService.updateStatus(this.article.id, this.newStatus, currentUser.token).subscribe({
       next: (updated) => {
         if (this.article) {
           this.article.status = updated.status || this.newStatus;
@@ -73,6 +105,90 @@ export class ArticleDetail implements OnInit {
       error: () => {
         this.statusError = 'No se pudo actualizar el estado.';
         this.updatingStatus = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openReportArticle() {
+    this.showReportArticleForm = true;
+    this.showReportUserForm = false;
+    this.reportReason = '';
+    this.reportSuccess = '';
+    this.reportError = '';
+  }
+
+  openReportUser() {
+    this.showReportUserForm = true;
+    this.showReportArticleForm = false;
+    this.reportReason = '';
+    this.reportSuccess = '';
+    this.reportError = '';
+  }
+
+  cancelReport() {
+    this.showReportArticleForm = false;
+    this.showReportUserForm = false;
+  }
+
+  submitReportArticle() {
+    if (!this.article) return;
+
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token) {
+      this.reportError = 'Debes iniciar sesión para reportar.';
+      return;
+    }
+
+    this.sendingReport = true;
+    this.reportError = '';
+
+    this.reportService.reportArticle({
+      type: 'Articulo',
+      article_id: this.article.id,
+      reason: this.reportReason
+    }, currentUser.token).subscribe({
+      next: () => {
+        this.reportSuccess = 'Artículo reportado correctamente.';
+        this.sendingReport = false;
+        this.showReportArticleForm = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.reportError = 'No se pudo enviar el reporte.';
+        this.sendingReport = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  submitReportUser() {
+    if (!this.article || !this.seller) return;
+
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token) {
+      this.reportError = 'Debes iniciar sesión para reportar.';
+      return;
+    }
+
+    this.sendingReport = true;
+    this.reportError = '';
+
+    this.reportService.reportUser({
+      type: 'Usuario',
+      reported_user_id: this.seller.id,
+      article_id: this.article.id,
+      reason: this.reportReason
+    }, currentUser.token).subscribe({
+      next: () => {
+        this.reportSuccess = 'Usuario reportado correctamente.';
+        this.sendingReport = false;
+        this.showReportUserForm = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.reportError = 'No se pudo enviar el reporte.';
+        this.sendingReport = false;
         this.cdr.detectChanges();
       }
     });

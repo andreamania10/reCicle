@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Article } from '../../../interfaces/article';
 import { ArticleService } from '../../../services/article';
-import { RouterLink } from '@angular/router';
+import { Auth } from '../../../services/auth';
 
 @Component({
   selector: 'app-article-edit',
@@ -17,6 +17,7 @@ export class ArticleEdit implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private articleService = inject(ArticleService);
+  private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
 
   articleId!: number;
@@ -55,6 +56,12 @@ export class ArticleEdit implements OnInit {
   }
 
   save() {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token) {
+      this.errorMessage = 'Debes iniciar sesión para guardar cambios.';
+      return;
+    }
+
     this.saving = true;
     this.errorMessage = '';
 
@@ -67,7 +74,7 @@ export class ArticleEdit implements OnInit {
       location: this.location,
     };
 
-    this.articleService.update(this.articleId, updatedArticle as Article).subscribe({
+    this.articleService.update(this.articleId, updatedArticle as Article, currentUser.token).subscribe({
       next: () => {
         this.router.navigate(['/articles', this.articleId]);
       },

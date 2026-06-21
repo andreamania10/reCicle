@@ -48,12 +48,14 @@ export class ArticleService {
     return this.http.post<Article>(this.apiUrl, article);
   }
 
-  update(id: number, article: Article) {
-    return this.http.put<Article>(`${this.apiUrl}/${id}`, article);
-  }
+  update(id: number, article: Article, token: string) {
+  const headers = { Authorization: `Bearer ${token}` };
+  return this.http.put<Article>(`${this.apiUrl}/${id}`, article, { headers });
+}
   
-  updateStatus(id: number, status: string) {
-  return this.http.patch<Article>(`${this.apiUrl}/${id}/status`, { status });
+  updateStatus(id: number, status: string, token: string) {
+  const headers = { Authorization: `Bearer ${token}` };
+  return this.http.patch<Article>(`${this.apiUrl}/${id}/status`, { status }, { headers });
 }
 
   delete(id: number) {

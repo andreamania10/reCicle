@@ -66,23 +66,79 @@
           <button class="btn btn-outline-danger">❤ Guardar</button>
         </div>
 
-        <!-- Cambiar estado (pendiente de mostrar solo al propietario cuando haya login) -->
-        <div class="border rounded p-3 mt-4 bg-light">
-          <label class="form-label fw-semibold small mb-2">Cambiar estado del artículo</label>
-          <div class="d-flex gap-2">
-            <select class="form-select" [(ngModel)]="newStatus">
-              @for (option of statusOptions; track option) {
-                <option [value]="option">{{ option }}</option>
-              }
-            </select>
-            <button class="btn btn-dark" (click)="updateStatus()" [disabled]="updatingStatus">
-              {{ updatingStatus ? 'Guardando...' : 'Actualizar' }}
-            </button>
+        <!-- Cambiar estado: solo visible para el propietario, moderador o admin -->
+        @if (canEditStatus()) {
+          <div class="border rounded p-3 mt-4 bg-light">
+            <label class="form-label fw-semibold small mb-2">Cambiar estado del artículo</label>
+            <div class="d-flex gap-2">
+              <select class="form-select" [(ngModel)]="newStatus">
+                @for (option of statusOptions; track option) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </select>
+              <button class="btn btn-dark" (click)="updateStatus()" [disabled]="updatingStatus">
+                {{ updatingStatus ? 'Guardando...' : 'Actualizar' }}
+              </button>
+            </div>
+            @if (statusError) {
+              <p class="text-danger small mt-2 mb-0">{{ statusError }}</p>
+            }
           </div>
-          @if (statusError) {
-            <p class="text-danger small mt-2 mb-0">{{ statusError }}</p>
-          }
-        </div>
+        }
+
+        <!-- Reportar: solo visible si hay sesión iniciada -->
+        @if (isLoggedIn()) {
+          <div class="mt-4">
+
+            @if (reportSuccess) {
+              <div class="alert alert-success small">{{ reportSuccess }}</div>
+            }
+
+            @if (!showReportArticleForm && !showReportUserForm) {
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm" (click)="openReportArticle()">
+                  🚩 Reportar artículo
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" (click)="openReportUser()">
+                  🚩 Reportar usuario
+                </button>
+              </div>
+            }
+
+            @if (showReportArticleForm) {
+              <div class="border rounded p-3 bg-light">
+                <label class="form-label fw-semibold small mb-2">Motivo del reporte del artículo</label>
+                <textarea class="form-control mb-2" rows="3" [(ngModel)]="reportReason" placeholder="Describe el motivo..."></textarea>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-dark btn-sm" (click)="submitReportArticle()" [disabled]="sendingReport || !reportReason">
+                    {{ sendingReport ? 'Enviando...' : 'Enviar reporte' }}
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" (click)="cancelReport()">Cancelar</button>
+                </div>
+                @if (reportError) {
+                  <p class="text-danger small mt-2 mb-0">{{ reportError }}</p>
+                }
+              </div>
+            }
+
+            @if (showReportUserForm) {
+              <div class="border rounded p-3 bg-light">
+                <label class="form-label fw-semibold small mb-2">Motivo del reporte del usuario</label>
+                <textarea class="form-control mb-2" rows="3" [(ngModel)]="reportReason" placeholder="Describe el motivo..."></textarea>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-dark btn-sm" (click)="submitReportUser()" [disabled]="sendingReport || !reportReason">
+                    {{ sendingReport ? 'Enviando...' : 'Enviar reporte' }}
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" (click)="cancelReport()">Cancelar</button>
+                </div>
+                @if (reportError) {
+                  <p class="text-danger small mt-2 mb-0">{{ reportError }}</p>
+                }
+              </div>
+            }
+
+          </div>
+        }
 
       </div>
 
