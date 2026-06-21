@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { ArticleService } from '../../services/article';
+import { Auth } from '../../services/auth';
 import { HttpEventType, HttpUploadProgressEvent } from '@angular/common/http';
 
 @Component({
@@ -15,6 +16,7 @@ import { HttpEventType, HttpUploadProgressEvent } from '@angular/common/http';
 export class SellProducts {
   private articleService = inject(ArticleService);
   private router = inject(Router);
+  private auth = inject(Auth);
   isPublishing = false;
   successMessage = '';
   uploadProgress = 0;
@@ -26,14 +28,14 @@ export class SellProducts {
     }
     return 'Publicar';
   }
-  
+
   product = {
     name: '',
     description: '',
     price: null as number | null,
     category_id: null as number | null,
     condition: '',
-    location: ''
+    location: this.auth.currentUser()?.location ?? ''
   };
 
   selectedFile: File | null = null;
@@ -82,7 +84,7 @@ export class SellProducts {
     formData.append('condition', this.product.condition);
     formData.append('location', this.product.location);
     formData.append('status', 'available');
-    formData.append('user_id', '1');
+    formData.append('user_id', String(this.auth.currentUser()?.id ?? ''));
   
     if (this.selectedFile) {
       formData.append('media', this.selectedFile);
@@ -132,7 +134,7 @@ export class SellProducts {
       price: null,
       category_id: null,
       condition: '',
-      location: ''
+      location: this.auth.currentUser()?.location ?? ''
     };
 
     this.selectedFile = null;
