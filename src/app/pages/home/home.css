@@ -127,6 +127,7 @@ app-article-card {
     height: fit-content;
     position: static;
     top: 100px;
+    margin-bottom: 20px;
 }
 
 .filters-panel h5 {
