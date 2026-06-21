@@ -31,8 +31,15 @@
                     color: #1f2937;
                 }
                 
-                .d-flex input {
-                    width: 500px;
+                .navbar-search-form {
+                    flex: 1;
+                    min-width: 0;
+                    margin-right: 12px;
+                }
+
+                .navbar-search-form input {
+                    width: 100%;
+                    max-width: 400px;
                     height: 40px;
                     border: 1px solid #dcdfe4;
                     border-radius: 999px;
@@ -40,6 +47,13 @@
                     font-size: 14px;
                     background: #f8fafc;
                     outline: none;
+                }
+
+                .navbar-actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    flex-shrink: 0;
                 }
                 
                 .navbar-search input:focus {
@@ -100,7 +114,6 @@
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    margin-right: 10px;
                     letter-spacing: 0.01em;
                     transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
                 }
@@ -126,7 +139,6 @@
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    margin: 0 10px;
                     letter-spacing: 0.01em;
                     transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
                 }
