@@ -35,15 +35,15 @@ export class Home implements OnInit {
 
   slides = [
     {
-      image: '/tablet.jpg',
+      image: '/assets/imagenes/tablet.jpg',
       action: 'sell'
     },
     {
-      image: '/hogar.jpg',
+      image: '/assets/imagenes/hogar.jpg',
       action: 'home'
     },
     {
-      image: '/buy.jpg',
+      image: '/assets/imagenes/buy.jpg',
       action: 'search'
     }
   ];
@@ -203,5 +203,17 @@ export class Home implements OnInit {
     this.location = '';
   
     this.applyFilters();
+  }
+
+  getCategoryIcon(category: Category): string {
+    const icons: Record<number, string> = {
+      1: 'bi-phone',
+      2: 'bi-bag-heart',
+      3: 'bi-house-door',
+      4: 'bi-bicycle',
+      5: 'bi-book',
+    };
+
+    return icons[category.id] ?? 'bi-tag';
   }
 }

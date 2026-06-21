@@ -52,7 +52,7 @@ export class Auth {
 
     return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, body).pipe(
       switchMap((response) => {
-        if (response?.affectedRows !== 1) {
+        if (!this.isRegisterSuccessful(response)) {
           throw new Error(response?.message || 'No se pudo completar el registro');
         }
 
@@ -97,6 +97,10 @@ export class Auth {
   logout(): void {
     localStorage.removeItem(USER_STORAGE_KEY);
     this.currentUser.set(null);
+  }
+
+  private isRegisterSuccessful(response: RegisterResponse): boolean {
+    return response?.affectedRows === 1 || !!response?.insertId;
   }
 
   private mapLoginResponse(response: LoginResponse, email: string): User {

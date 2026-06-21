@@ -71,7 +71,7 @@
                         class="form-control"
                         [(ngModel)]="registerData.location"
                         placeholder="Ciudad o provincia">
-                    <button type="button" class="btn btn-outline-secondary" (click)="detectLocation()" [disabled]="isDetectingLocation">
+                    <button type="button" class="btn btn-outline-secondary" (click)="detectLocation()" [disabled]="isDetectingLocation()">
                         <i class="bi bi-geo-alt"></i>
                     </button>
                 </div>
@@ -136,20 +136,20 @@
             </div>
 
             <!-- Error / Éxito -->
-            <div class="alert-error" *ngIf="errorMessage">
-                <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+            <div class="alert-error" *ngIf="errorMessage()">
+                <i class="bi bi-exclamation-circle"></i> {{ errorMessage() }}
             </div>
-            <div class="alert-success" *ngIf="successMessage">
-                <i class="bi bi-check-circle"></i> {{ successMessage }}
+            <div class="alert-success" *ngIf="successMessage()">
+                <i class="bi bi-check-circle"></i> {{ successMessage() }}
             </div>
 
             <!-- Botón -->
             <button
                 type="submit"
                 class="btn-submit"
-                [disabled]="isLoading || registerForm.invalid || passwordMismatch">
-                <span *ngIf="!isLoading">Crear cuenta</span>
-                <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center gap-2">
+                [disabled]="isLoading() || registerForm.invalid || passwordMismatch">
+                <span *ngIf="!isLoading()">Crear cuenta</span>
+                <span *ngIf="isLoading()" class="d-flex align-items-center justify-content-center gap-2">
                     <span class="spinner-border spinner-border-sm" role="status"></span>
                     Creando cuenta...
                 </span>
