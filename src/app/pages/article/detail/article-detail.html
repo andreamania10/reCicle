@@ -63,7 +63,16 @@
 
         <div class="d-flex gap-2 mt-4">
           <button class="btn btn-dark flex-grow-1">Contactar vendedor</button>
-          <button class="btn btn-outline-danger">❤ Guardar</button>
+          <button class="btn"
+              [class.btn-danger]="isFavorite"
+              [class.btn-outline-danger]="!isFavorite"
+              (click)="toggleFavorite()"
+              [disabled]="favoriteLoading">
+              {{ isFavorite ? '❤️ Guardado' : '❤️ Guardar' }}
+          </button>
+          @if (favoriteError) {
+                <p class="text-danger small mt-2">{{ favoriteError }}</p>
+                }
         </div>
 
         <!-- Cambiar estado: solo visible para el propietario, moderador o admin -->

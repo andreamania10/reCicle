@@ -83,14 +83,20 @@ export class SellProducts {
     formData.append('category_id', String(this.product.category_id));
     formData.append('condition', this.product.condition);
     formData.append('location', this.product.location);
-    formData.append('status', 'available');
-    formData.append('user_id', String(this.auth.currentUser()?.id ?? ''));
   
     if (this.selectedFile) {
       formData.append('media', this.selectedFile);
     }
   
-    this.articleService.createWithMedia(formData).subscribe({
+    const currentUser = this.auth.currentUser();
+      if (!currentUser?.token) {
+          this.successMessage = 'Debes iniciar sesión para publicar.';
+          this.isPublishing = false;
+      return;
+}
+
+
+this.articleService.createWithMedia(formData, currentUser.token).subscribe({
       next: (event) => {
     
         if (event.type === HttpEventType.Sent) {
