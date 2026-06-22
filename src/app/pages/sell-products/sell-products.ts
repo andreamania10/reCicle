@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { ArticleService } from '../../services/article';
 import { HttpEventType, HttpUploadProgressEvent } from '@angular/common/http';
+import { Auth } from '../../services/auth'; 
 
 @Component({
   selector: 'app-sell-products',
@@ -15,6 +16,7 @@ import { HttpEventType, HttpUploadProgressEvent } from '@angular/common/http';
 export class SellProducts {
   private articleService = inject(ArticleService);
   private router = inject(Router);
+  private auth = inject(Auth);
   isPublishing = false;
   successMessage = '';
   uploadProgress = 0;
@@ -81,14 +83,21 @@ export class SellProducts {
     formData.append('category_id', String(this.product.category_id));
     formData.append('condition', this.product.condition);
     formData.append('location', this.product.location);
-    formData.append('status', 'available');
-    formData.append('user_id', '1');
+    
   
     if (this.selectedFile) {
       formData.append('media', this.selectedFile);
     }
   
-    this.articleService.createWithMedia(formData).subscribe({
+    const currentUser = this.auth.currentUser();
+      if (!currentUser?.token) {
+          this.successMessage = 'Debes iniciar sesión para publicar.';
+          this.isPublishing = false;
+      return;
+}
+
+
+this.articleService.createWithMedia(formData, currentUser.token).subscribe({
       next: (event) => {
     
         if (event.type === HttpEventType.Sent) {

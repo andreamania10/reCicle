@@ -65,13 +65,14 @@ export class ArticleService {
   
 
   
-createWithMedia(formData: FormData) {
+  createWithMedia(formData: FormData, token: string) {
+  const headers = { Authorization: `Bearer ${token}` };
   return this.http.post(this.apiUrl, formData, {
+    headers,
     reportProgress: true,
     observe: 'events'
   });
 }
-
   
 
 }
