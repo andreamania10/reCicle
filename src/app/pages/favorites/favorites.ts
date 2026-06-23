@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Article } from '../../interfaces/article';
+import { Auth } from '../../services/auth';
+import { FavoriteService, Favorite } from '../../services/favorite';
 
 @Component({
   selector: 'app-favorites',
@@ -12,25 +13,49 @@ import { Article } from '../../interfaces/article';
 export class Favorites implements OnInit {
 
   private cdr = inject(ChangeDetectorRef);
+  private auth = inject(Auth);
+  private favoriteService = inject(FavoriteService);
 
-  favoriteArticles: Article[] = [];
+  favorites: Favorite[] = [];
   loading = true;
-
-  mockFavorites: Article[] = [
-    { id: 14, user_id: 2, category_id: 1, title: 'AirPods Pro 2', description: 'Estuche de carga USB-C', price: 150, condition: 'Buen estado', status: 'Publicado', location: 'Madrid', main_photo: 'https://images.unsplash.com/photo-1588449668338-d13417f16af1?auto=format&fit=crop&w=600&q=80' },
-    { id: 16, user_id: 2, category_id: 2, title: "Vaqueros Levi's 501", description: 'Talla 32, corte clásico', price: 50, condition: 'Buen estado', status: 'Publicado', location: 'Barcelona', main_photo: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80' },
-  ];
+  errorMessage = '';
 
   ngOnInit() {
-    setTimeout(() => {
-      this.favoriteArticles = this.mockFavorites;
+    const currentUser = this.auth.currentUser();
+
+    if (!currentUser?.token) {
+      this.errorMessage = 'Debes iniciar sesión para ver tus favoritos.';
       this.loading = false;
-      this.cdr.detectChanges();
-    }, 300);
+      return;
+    }
+
+    this.favoriteService.getUserFavorites(currentUser.token).subscribe({
+      next: (response) => {
+        this.favorites = response.results;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage = 'No se pudieron cargar los favoritos.';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  removeFavorite(id: number) {
-    this.favoriteArticles = this.favoriteArticles.filter(a => a.id !== id);
-    this.cdr.detectChanges();
+  removeFavorite(favoriteId: number) {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token) return;
+
+    this.favoriteService.remove(favoriteId, currentUser.token).subscribe({
+      next: () => {
+        this.favorites = this.favorites.filter(f => f.favoriteId !== favoriteId);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage = 'No se pudo quitar de favoritos.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

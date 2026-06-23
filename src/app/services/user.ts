@@ -23,7 +23,7 @@ export class UserService {
   }
 
   getById(id: number) {
-    return this.http.get<User>(`${this.apiUrl}/${id}`);
+    return this.http.get<User>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
   getProfile() {

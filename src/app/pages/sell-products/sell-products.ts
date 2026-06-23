@@ -85,7 +85,7 @@ export class SellProducts {
     formData.append('location', this.product.location);
   
     if (this.selectedFile) {
-      formData.append('media', this.selectedFile);
+      formData.append('images', this.selectedFile);
     }
   
     const currentUser = this.auth.currentUser();

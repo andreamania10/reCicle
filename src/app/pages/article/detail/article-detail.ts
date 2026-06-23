@@ -71,10 +71,16 @@ export class ArticleDetail implements OnInit {
   }
 
   loadSeller(userId: number) {
-    this.userService.getAll().subscribe(users => {
-      this.seller = users.find(u => u.id === userId) || null;
+  this.userService.getById(userId).subscribe({
+    next: (user) => {
+      this.seller = user;
       this.cdr.detectChanges();
-    });
+    },
+    error: () => {
+      this.seller = null;
+      this.cdr.detectChanges();
+    }
+  });
   }
 
   canEditStatus(): boolean {
