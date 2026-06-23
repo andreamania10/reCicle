@@ -49,12 +49,13 @@
                     Panel Admin
                 </a>
                 }
-                <div class="btn-role" (click)="goToProfile(user.id)">
+                <button class="btn-role" type="button" (click)="goToProfile(user.id)">
                     <i class="bi bi-person"></i>
                     Mi perfil
-                </div>
+                </button>
                 <button class="btn-sell" type="button" (click)="sellProducts()">
-                    + Vender
+                    <i class="bi bi-plus-lg"></i>
+                    Vender
                 </button>
             </div>
             } @else {

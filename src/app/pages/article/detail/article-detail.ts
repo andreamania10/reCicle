@@ -8,6 +8,7 @@ import { ArticleService } from '../../../services/article';
 import { UserService } from '../../../services/user';
 import { Auth } from '../../../services/auth';
 import { ReportService } from '../../../services/report';
+import { FavoriteService } from '../../../services/favorite';
 
 @Component({
   selector: 'app-article-detail',
@@ -22,6 +23,7 @@ export class ArticleDetail implements OnInit {
   private userService = inject(UserService);
   private auth = inject(Auth);
   private reportService = inject(ReportService);
+  private favoriteService = inject(FavoriteService);
   private cdr = inject(ChangeDetectorRef);
 
   article: Article | null = null;
@@ -42,6 +44,12 @@ export class ArticleDetail implements OnInit {
   reportSuccess = '';
   reportError = '';
 
+  // Favoritos
+  isFavorite = false;
+  favoriteId: number | null = null;
+  favoriteLoading = false;
+  favoriteError = '';
+
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -51,6 +59,7 @@ export class ArticleDetail implements OnInit {
         this.newStatus = data.status || '';
         this.loading = false;
         this.loadSeller(data.user_id);
+        this.checkIfFavorite();
         this.cdr.detectChanges();
       },
       error: () => {
@@ -62,10 +71,16 @@ export class ArticleDetail implements OnInit {
   }
 
   loadSeller(userId: number) {
-    this.userService.getAll().subscribe(users => {
-      this.seller = users.find(u => u.id === userId) || null;
+  this.userService.getById(userId).subscribe({
+    next: (user) => {
+      this.seller = user;
       this.cdr.detectChanges();
-    });
+    },
+    error: () => {
+      this.seller = null;
+      this.cdr.detectChanges();
+    }
+  });
   }
 
   canEditStatus(): boolean {
@@ -108,6 +123,72 @@ export class ArticleDetail implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  checkIfFavorite() {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token || !this.article) return;
+
+    this.favoriteService.getUserFavorites(currentUser.token).subscribe({
+      next: (response) => {
+        console.log('Favoritos recibidos:', response);
+        console.log('Buscando article.id:', this.article!.id);
+        const found = response.results.find(f => f.favoriteArticleId === this.article!.id);
+        console.log('Encontrado:', found);
+        if (found) {
+          this.isFavorite = true;
+          this.favoriteId = found.favoriteId;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.log('ERROR checkIfFavorite:', err.error);
+      }
+    });
+  }
+
+  toggleFavorite() {
+    if (!this.article) return;
+
+    const currentUser = this.auth.currentUser();
+    if (!currentUser?.token) {
+      this.favoriteError = 'Debes iniciar sesión para guardar favoritos.';
+      return;
+    }
+
+    this.favoriteLoading = true;
+    this.favoriteError = '';
+
+    if (this.isFavorite && this.favoriteId) {
+      this.favoriteService.remove(this.favoriteId, currentUser.token).subscribe({
+        next: () => {
+          this.isFavorite = false;
+          this.favoriteId = null;
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.favoriteError = 'No se pudo quitar de favoritos.';
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.favoriteService.add(currentUser.id, this.article.id, currentUser.token).subscribe({
+        next: (created) => {
+          this.isFavorite = true;
+          this.favoriteId = created.id;
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.log('ERROR FAVORITOS:', err.error);
+          this.favoriteError = 'No se pudo guardar en favoritos.';
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
   }
 
   openReportArticle() {

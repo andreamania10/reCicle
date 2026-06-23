@@ -10,8 +10,15 @@
     </div>
   }
 
+  <!-- Error -->
+  @if (!loading && errorMessage) {
+    <div class="text-center py-5">
+      <p class="text-danger">{{ errorMessage }}</p>
+    </div>
+  }
+
   <!-- Sin favoritos -->
-  @if (!loading && favoriteArticles.length === 0) {
+  @if (!loading && !errorMessage && favorites.length === 0) {
     <div class="text-center py-5">
       <p class="fs-1">💔</p>
       <p class="text-muted">Aún no tienes artículos favoritos.</p>
@@ -20,24 +27,24 @@
   }
 
   <!-- Tarjetas de favoritos -->
-  @if (!loading && favoriteArticles.length > 0) {
+  @if (!loading && favorites.length > 0) {
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      @for (article of favoriteArticles; track article.id) {
+      @for (favorite of favorites; track favorite.favoriteId) {
         <div class="col">
           <div class="card h-100 shadow-sm border-0">
-            <img [src]="article.main_photo || article.image || 'https://placehold.co/300x200'" 
+            <img [src]="favorite.photos?.[0]?.url || 'https://placehold.co/300x200'" 
                  class="card-img-top" 
-                 [alt]="article.title" 
+                 [alt]="favorite.title" 
                  style="height: 200px; object-fit: cover;">
             <div class="card-body">
-              <span class="badge bg-secondary mb-2">{{ article.condition }}</span>
-              <h5 class="card-title fw-bold">{{ article.title }}</h5>
-              <p class="card-text text-muted small">{{ article.location }}</p>
-              <p class="card-text text-success fw-bold fs-5">{{ article.price }} €</p>
+              <span class="badge bg-secondary mb-2">{{ favorite.condition }}</span>
+              <h5 class="card-title fw-bold">{{ favorite.title }}</h5>
+              <p class="card-text text-muted small">{{ favorite.location }}</p>
+              <p class="card-text text-success fw-bold fs-5">{{ favorite.price }} €</p>
             </div>
             <div class="card-footer bg-white border-0 pb-3 d-flex gap-2">
-              <a [routerLink]="['/articles', article.id]" class="btn btn-dark flex-grow-1">Ver detalle</a>
-              <button class="btn btn-outline-danger" (click)="removeFavorite(article.id)" title="Quitar de favoritos">
+              <a [routerLink]="['/articles', favorite.articleId]" class="btn btn-dark flex-grow-1">Ver detalle</a>
+              <button class="btn btn-outline-danger" (click)="removeFavorite(favorite.favoriteId)" title="Quitar de favoritos">
                 ❤
               </button>
             </div>
