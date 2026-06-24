@@ -14,8 +14,7 @@
 
         <!-- Botón Login visible en móvil cuando NO hay sesión -->
         @if (!auth.currentUser()) {
-        <button class="btn-login d-lg-none" type="button" (click)="openLoginModal()">Login</button>
-        }
+        <button class="btn-login d-lg-none" type="button" (click)="openLoginModal()">Login</button> }
 
         <!-- Botón hamburguesa: solo móvil -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,23 +44,28 @@
             <div class="navbar-actions">
                 @if (user.role === 'Administrador') {
                 <a class="btn-admin" routerLink="/admin">
-                    <i class="bi bi-shield-check"></i>
-                    Panel Admin
+                    <i class="bi bi-shield-check"></i> Panel Admin
                 </a>
                 }
+
+                <button class="btn-favorites" (click)="goToFavorites()">
+                    <img src="assets/imagenes/heart.png" class="heart-icon" />
+                    <img src="assets/imagenes/heart hover.png" class="heart-icon heart-hover" />
+                </button>
+
+
                 <button class="btn-role" type="button" (click)="goToProfile(user.id)">
                     <i class="bi bi-person"></i>
                     Mi perfil
                 </button>
-                <button class="btn-sell" type="button" (click)="sellProducts()">
+                <button class="btn-sell" (click)="sellProducts()">
                     <i class="bi bi-plus-lg"></i>
-                    Vender
+                    <span class="sell-text">Vender</span>
                 </button>
             </div>
             } @else {
             <!-- Login SOLO DESKTOP (en móvil ya está fuera del collapse) -->
-            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">Login</button>
-            }
+            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">Login</button> }
 
         </div>
     </div>

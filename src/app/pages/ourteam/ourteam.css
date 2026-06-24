@@ -39,7 +39,9 @@
     line-height: 1.6;
 }
 
+
 /* Info cards: 3 en fila, 1 en móvil */
+
 .info-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -118,7 +120,9 @@
     flex-shrink: 0;
 }
 
+
 /* Team section */
+
 .team-section__header {
     text-align: center;
     margin-bottom: 2rem;
@@ -220,14 +224,10 @@
     line-height: 1.4;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
-    .info-cards {
-        grid-template-columns: 1fr;
-    }
-
     .team-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+        justify-content: center;
     }
 }
 
@@ -235,15 +235,12 @@
     .about-page {
         padding: 1.5rem 0.75rem 3rem;
     }
-
     .unir-logo {
         height: 44px;
     }
-
     .about-header h1 {
         font-size: 1.6rem;
     }
-
     .team-grid {
         grid-template-columns: 1fr;
         max-width: 320px;
