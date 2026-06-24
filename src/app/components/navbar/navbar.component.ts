@@ -16,6 +16,7 @@ declare var bootstrap: any;
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
+
 export class NavbarComponent implements OnInit{
   @Input() showLoginButton = false;
   isMenuOpen = false;
@@ -69,4 +70,9 @@ goHome() {
   sellProducts(){
     this.router.navigate(['/sellProduct'])
   }
+  
+goToFavorites() {
+  this.router.navigate(['/favorites']);
+}
+
 }

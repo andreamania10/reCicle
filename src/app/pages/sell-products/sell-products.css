@@ -1,5 +1,5 @@
 .container {
-    max-width: 650px;
+    max-width: 750px;
     margin: 50px auto;
     padding: 32px;
     background: #ffffff;
@@ -127,4 +127,15 @@ button:disabled {
     color: #e53935;
     font-weight: 600;
     text-align: center;
+}
+
+@media (max-width: 1024px) and (min-width: 577px) {
+    .container {
+        max-width: 90%;
+        margin: 40px auto;
+        padding: 28px;
+    }
+    .buttons {
+        flex-direction: row;
+    }
 }

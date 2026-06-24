@@ -9,13 +9,17 @@ import { UserService } from '../../../services/user';
 import { Auth } from '../../../services/auth';
 import { ReportService } from '../../../services/report';
 import { FavoriteService } from '../../../services/favorite';
+import { RegisterComponent } from '../../../components/register/register.component';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-article-detail',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, RegisterComponent],
   templateUrl: './article-detail.html',
   styleUrl: './article-detail.css',
 })
+
 export class ArticleDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
@@ -25,6 +29,7 @@ export class ArticleDetail implements OnInit {
   private reportService = inject(ReportService);
   private favoriteService = inject(FavoriteService);
   private cdr = inject(ChangeDetectorRef);
+  
 
   article: Article | null = null;
   seller: User | null = null;
@@ -49,6 +54,7 @@ export class ArticleDetail implements OnInit {
   favoriteId: number | null = null;
   favoriteLoading = false;
   favoriteError = '';
+
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -191,6 +197,45 @@ export class ArticleDetail implements OnInit {
     }
   }
 
+handleFavoriteClick() {
+  const currentUser = this.auth.currentUser();
+
+  if (!currentUser?.token) {
+    this.openLoginModal();
+    return;
+  }
+
+  this.toggleFavorite();
+}
+
+
+handleContactClick() {
+  const currentUser = this.auth.currentUser();
+
+  if (!currentUser?.token) {
+    this.openLoginModal();
+    return;
+  }
+
+  this.openContactModal();
+}
+
+openContactModal(): void {
+  const modalEl = document.getElementById('contactModal');
+  if (modalEl) {
+    new bootstrap.Modal(modalEl).show();
+  }
+}
+
+
+openLoginModal(): void {
+  const modalEl = document.getElementById('loginModal');
+  if (modalEl) {
+    new bootstrap.Modal(modalEl).show();
+  }
+}
+
+
   openReportArticle() {
     this.showReportArticleForm = true;
     this.showReportUserForm = false;
@@ -274,4 +319,7 @@ export class ArticleDetail implements OnInit {
       }
     });
   }
+
+
+
 }
