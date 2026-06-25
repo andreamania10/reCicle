@@ -1,203 +1,193 @@
 <div class="profile-page">
   <div class="profile-container">
 
-    @if (loading) {
-      <p style="text-align:center; padding: 3rem; color:#888;">Cargando perfil...</p>
-    } @else if (errorMsg) {
-      <p style="text-align:center; padding: 3rem; color:#c62828;">{{ errorMsg }}</p>
-    } @else if (profile) {
-
-    <div class="profile-header">
-      <a routerLink="/home" class="back-link">
-        <i class="bi bi-arrow-left"></i> Volver al inicio
-      </a>
-      <div class="profile-title-row">
-        <h1 class="profile-title">Mi perfil</h1>
-        <button type="button" class="btn-logout" (click)="logout()">
-          <i class="bi bi-box-arrow-right"></i>
-          Cerrar sesión
-        </button>
+    @if (profile(); as user) {
+      <div class="profile-header">
+        <a routerLink="/home" class="back-link">
+          <i class="bi bi-arrow-left"></i> Volver al inicio
+        </a>
+        <div class="profile-title-row">
+          <div>
+            <h1 class="profile-title">Mi perfil</h1>
+            <p class="profile-subtitle">Datos de tu sesión guardados en el dispositivo.</p>
+          </div>
+          <button type="button" class="btn-logout" (click)="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            Cerrar sesión
+          </button>
+        </div>
       </div>
-      <p class="profile-subtitle">Gestiona tu información personal y la seguridad de tu cuenta.</p>
-    </div>
 
-    <div class="profile-grid">
-
-      <!-- Bloque 1: Avatar -->
-      <section class="profile-card profile-card--avatar">
-        <h2 class="card-title">Foto de perfil</h2>
-        <div class="avatar-wrapper">
-          @if (profile.avatar_url) {
+      <div class="profile-grid">
+        <!-- Bloque 1: Avatar -->
+        <section class="profile-card profile-card--avatar">
+          <h2 class="card-title">Foto de perfil</h2>
+          <div class="avatar-wrapper">
             <img
               class="avatar-image"
-              [src]="profile.avatar_url"
-              [alt]="'Avatar de ' + profile.username"
+              [src]="getAvatarUrl(user)"
+              [alt]="'Avatar de ' + displayValue(user.username)"
+              [class.avatar-image--placeholder]="!user.avatar_url"
             />
-          } @else {
-            <div class="avatar-placeholder">
-              <i class="bi bi-person-circle"></i>
+          </div>
+          <p class="avatar-name">{{ displayValue(user.username) }}</p>
+          <span class="role-badge">{{ getRoleLabel(user.role) }}</span>
+        </section>
+
+        <!-- Bloque 2: Información personal -->
+        <section class="profile-card profile-card--info">
+          <h2 class="card-title">Información personal</h2>
+          <dl class="info-list">
+            <div class="info-item">
+              <dt><i class="bi bi-person"></i> Usuario</dt>
+              <dd>{{ displayValue(user.username) }}</dd>
             </div>
-          }
-        </div>
-        <p class="avatar-hint">La imagen se actualizará cuando el servicio de perfil esté disponible.</p>
-      </section>
-
-      <!-- Bloque 2: Datos del usuario -->
-      <section class="profile-card profile-card--info">
-        <h2 class="card-title">Información personal</h2>
-        <dl class="info-list">
-          <div class="info-item">
-            <dt>Usuario</dt>
-            <dd>{{ profile.username }}</dd>
-          </div>
-          <div class="info-item">
-            <dt>Correo electrónico</dt>
-            <dd>{{ profile.email }}</dd>
-          </div>
-          <div class="info-item">
-            <dt>Rol</dt>
-            <dd>
-              <span class="role-badge">{{ getRoleLabel(profile.role) }}</span>
-            </dd>
-          </div>
-          <div class="info-item">
-            <dt>Valoración media</dt>
-            <dd class="rating-value">
-              <i class="bi bi-star-fill"></i>
-              {{ profile.avg_rating }}
-            </dd>
-          </div>
-          <div class="info-item">
-            <dt>Localización</dt>
-            <dd>
-              <i class="bi bi-geo-alt"></i>
-              {{ profile.location }}
-            </dd>
-          </div>
-        </dl>
-      </section>
-
-      <!-- Bloque 3: Cambiar contraseña -->
-      <section class="profile-card profile-card--password">
-        <h2 class="card-title">Cambiar contraseña</h2>
-        <p class="card-description">Actualiza tu contraseña para mantener tu cuenta segura.</p>
-
-        <form
-          #passwordForm="ngForm"
-          (ngSubmit)="onChangePassword(passwordForm)"
-          novalidate
-          class="password-form"
-        >
-          <div class="form-group">
-            <label for="currentPassword" class="form-label">Contraseña actual</label>
-            <div class="password-input-wrapper">
-              <input
-                [type]="showPasswords.current ? 'text' : 'password'"
-                id="currentPassword"
-                name="currentPassword"
-                class="form-control"
-                [(ngModel)]="passwordData.currentPassword"
-                #currentField="ngModel"
-                required
-                placeholder="Introduce tu contraseña actual"
-                [class.is-invalid]="currentField.invalid && currentField.touched"
-              />
-              <button
-                type="button"
-                class="btn-toggle-password"
-                (click)="togglePasswordVisibility('current')"
-                [attr.aria-label]="showPasswords.current ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-              >
-                <i class="bi" [class.bi-eye]="!showPasswords.current" [class.bi-eye-slash]="showPasswords.current"></i>
-              </button>
+            <div class="info-item">
+              <dt><i class="bi bi-envelope"></i> Correo electrónico</dt>
+              <dd>{{ displayValue(user.email) }}</dd>
             </div>
-            <div class="invalid-feedback" *ngIf="currentField.invalid && currentField.touched">
-              La contraseña actual es obligatoria.
+            <div class="info-item">
+              <dt><i class="bi bi-shield-check"></i> Rol</dt>
+              <dd>{{ getRoleLabel(user.role) }}</dd>
             </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="newPassword" class="form-label">Nueva contraseña</label>
-              <div class="password-input-wrapper">
-                <input
-                  [type]="showPasswords.new ? 'text' : 'password'"
-                  id="newPassword"
-                  name="newPassword"
-                  class="form-control"
-                  [(ngModel)]="passwordData.newPassword"
-                  #newField="ngModel"
-                  required
-                  minlength="6"
-                  placeholder="Mínimo 6 caracteres"
-                  [class.is-invalid]="newField.invalid && newField.touched"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  (click)="togglePasswordVisibility('new')"
-                  [attr.aria-label]="showPasswords.new ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-                >
-                  <i class="bi" [class.bi-eye]="!showPasswords.new" [class.bi-eye-slash]="showPasswords.new"></i>
-                </button>
+            <div class="info-item">
+              <dt><i class="bi bi-star-fill"></i> Valoración media</dt>
+              <dd class="rating-value">{{ displayValue(user.avg_rating) }}</dd>
+            </div>
+            <div class="info-item">
+              <dt><i class="bi bi-geo-alt"></i> Localización</dt>
+              <dd>{{ displayValue(user.location) }}</dd>
+            </div>
+            @if (user.status) {
+              <div class="info-item">
+                <dt><i class="bi bi-circle-fill"></i> Estado</dt>
+                <dd>{{ user.status }}</dd>
               </div>
-              <div class="invalid-feedback" *ngIf="newField.invalid && newField.touched">
-                <span *ngIf="newField.errors?.['required']">La nueva contraseña es obligatoria.</span>
-                <span *ngIf="newField.errors?.['minlength']">Mínimo 6 caracteres.</span>
-              </div>
-            </div>
+            }
+          </dl>
+        </section>
 
-            <div class="form-group">
-              <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-              <div class="password-input-wrapper">
-                <input
-                  [type]="showPasswords.confirm ? 'text' : 'password'"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  class="form-control"
-                  [(ngModel)]="passwordData.confirmPassword"
-                  #confirmField="ngModel"
-                  required
-                  placeholder="Repite la nueva contraseña"
-                  [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  (click)="togglePasswordVisibility('confirm')"
-                  [attr.aria-label]="showPasswords.confirm ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-                >
-                  <i class="bi" [class.bi-eye]="!showPasswords.confirm" [class.bi-eye-slash]="showPasswords.confirm"></i>
-                </button>
-              </div>
-              <div class="invalid-feedback" *ngIf="passwordMismatch">
-                Las contraseñas no coinciden.
-              </div>
-            </div>
-          </div>
+        <!-- Bloque 3: Cambiar contraseña -->
+        <section class="profile-card profile-card--password">
+          <h2 class="card-title">Cambiar contraseña</h2>
+          <p class="card-description">Actualiza tu contraseña para mantener tu cuenta segura.</p>
 
-          <div class="alert-error" *ngIf="passwordError">
-            <i class="bi bi-exclamation-circle"></i> {{ passwordError }}
-          </div>
-          <div class="alert-success" *ngIf="passwordMessage">
-            <i class="bi bi-check-circle"></i> {{ passwordMessage }}
-          </div>
-
-          <button
-            type="submit"
-            class="btn-submit"
-            [disabled]="isChangingPassword || passwordForm.invalid || passwordMismatch"
+          <form
+            #passwordForm="ngForm"
+            (ngSubmit)="onChangePassword(passwordForm)"
+            novalidate
+            class="password-form"
           >
-            <span *ngIf="!isChangingPassword">Actualizar contraseña</span>
-            <span *ngIf="isChangingPassword" class="d-flex align-items-center justify-content-center gap-2">
-              <span class="spinner-border spinner-border-sm" role="status"></span>
-              Actualizando...
-            </span>
-          </button>
-        </form>
-      </section>
+            <div class="form-group">
+              <label for="currentPassword" class="form-label">Contraseña actual</label>
+              <div class="password-input-wrapper">
+                <input
+                  [type]="showPasswords.current ? 'text' : 'password'"
+                  id="currentPassword"
+                  name="currentPassword"
+                  class="form-control"
+                  [(ngModel)]="passwordData.currentPassword"
+                  #currentField="ngModel"
+                  required
+                  placeholder="Introduce tu contraseña actual"
+                  [class.is-invalid]="currentField.invalid && currentField.touched"
+                />
+                <button
+                  type="button"
+                  class="btn-toggle-password"
+                  (click)="togglePasswordVisibility('current')"
+                  [attr.aria-label]="showPasswords.current ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                >
+                  <i class="bi" [class.bi-eye]="!showPasswords.current" [class.bi-eye-slash]="showPasswords.current"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback" *ngIf="currentField.invalid && currentField.touched">
+                La contraseña actual es obligatoria.
+              </div>
+            </div>
 
-    </div>
-    } <!-- end @else if profile -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="newPassword" class="form-label">Nueva contraseña</label>
+                <div class="password-input-wrapper">
+                  <input
+                    [type]="showPasswords.new ? 'text' : 'password'"
+                    id="newPassword"
+                    name="newPassword"
+                    class="form-control"
+                    [(ngModel)]="passwordData.newPassword"
+                    #newField="ngModel"
+                    required
+                    minlength="6"
+                    placeholder="Mínimo 6 caracteres"
+                    [class.is-invalid]="newField.invalid && newField.touched"
+                  />
+                  <button
+                    type="button"
+                    class="btn-toggle-password"
+                    (click)="togglePasswordVisibility('new')"
+                    [attr.aria-label]="showPasswords.new ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  >
+                    <i class="bi" [class.bi-eye]="!showPasswords.new" [class.bi-eye-slash]="showPasswords.new"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback" *ngIf="newField.invalid && newField.touched">
+                  <span *ngIf="newField.errors?.['required']">La nueva contraseña es obligatoria.</span>
+                  <span *ngIf="newField.errors?.['minlength']">Mínimo 6 caracteres.</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                <div class="password-input-wrapper">
+                  <input
+                    [type]="showPasswords.confirm ? 'text' : 'password'"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    class="form-control"
+                    [(ngModel)]="passwordData.confirmPassword"
+                    #confirmField="ngModel"
+                    required
+                    placeholder="Repite la nueva contraseña"
+                    [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
+                  />
+                  <button
+                    type="button"
+                    class="btn-toggle-password"
+                    (click)="togglePasswordVisibility('confirm')"
+                    [attr.aria-label]="showPasswords.confirm ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  >
+                    <i class="bi" [class.bi-eye]="!showPasswords.confirm" [class.bi-eye-slash]="showPasswords.confirm"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordMismatch">
+                  Las contraseñas no coinciden.
+                </div>
+              </div>
+            </div>
+
+            <div class="alert-error" *ngIf="passwordError">
+              <i class="bi bi-exclamation-circle"></i> {{ passwordError }}
+            </div>
+            <div class="alert-success" *ngIf="passwordMessage">
+              <i class="bi bi-check-circle"></i> {{ passwordMessage }}
+            </div>
+
+            <button
+              type="submit"
+              class="btn-submit"
+              [disabled]="isChangingPassword || passwordForm.invalid || passwordMismatch"
+            >
+              <span *ngIf="!isChangingPassword">Actualizar contraseña</span>
+              <span *ngIf="isChangingPassword" class="d-flex align-items-center justify-content-center gap-2">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                Actualizando...
+              </span>
+            </button>
+          </form>
+        </section>
+      </div>
+    }
+
   </div>
 </div>

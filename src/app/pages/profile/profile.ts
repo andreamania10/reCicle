@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { User } from '../../interfaces/user';
 import { Auth } from '../../services/auth';
-import { UserService } from '../../services/user';
 
 @Component({
   selector: 'app-profile',
@@ -14,9 +13,9 @@ import { UserService } from '../../services/user';
   styleUrl: './profile.css',
 })
 export class Profile implements OnInit {
-  profile: User | null = null;
-  loading = true;
-  errorMsg = '';
+  readonly defaultAvatar = '/assets/imagenes/sin_foto.png';
+
+  profile = signal<User | null>(null);
 
   passwordData = {
     currentPassword: '',
@@ -30,35 +29,25 @@ export class Profile implements OnInit {
   showPasswords = { current: false, new: false, confirm: false };
 
   constructor(
-    private auth: Auth,
-    private userService: UserService,
+    readonly auth: Auth,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
-    // Mostrar inmediatamente los datos del token (id, email, role)
-    const stored = this.auth.currentUser();
-    if (stored) {
-      this.profile = stored;
-      this.loading = false;
-    }
-
-    // Intentar enriquecer con datos completos del backend
-    this.userService.getProfile().subscribe({
-      next: (user) => { this.profile = user; },
-      error: () => {
-        // Si falla el endpoint, nos quedamos con los datos del token
-        if (!this.profile) {
-          this.errorMsg = 'No se pudo cargar el perfil.';
-        }
-        this.loading = false;
-      },
-    });
+    this.loadProfileFromStorage();
   }
 
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/']);
+  }
+
+  getAvatarUrl(user: User): string {
+    return user.avatar_url?.trim() || this.defaultAvatar;
+  }
+
+  displayValue(value?: string | null): string {
+    return value?.trim() ? value.trim() : 'No disponible';
   }
 
   get passwordMismatch(): boolean {
@@ -72,6 +61,8 @@ export class Profile implements OnInit {
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
       Usuario: 'Usuario',
+      buyer: 'Comprador',
+      seller: 'Vendedor',
       Moderador: 'Moderador',
       Administrador: 'Administrador',
     };
@@ -92,11 +83,21 @@ export class Profile implements OnInit {
     this.passwordError = '';
     this.passwordMessage = '';
 
+    // TODO: conectar con el servicio cuando esté disponible
     setTimeout(() => {
       this.isChangingPassword = false;
       this.passwordMessage = 'Contraseña actualizada correctamente.';
       form.resetForm();
       this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
     }, 800);
+  }
+
+  private loadProfileFromStorage(): void {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    this.profile.set(this.auth.currentUser());
   }
 }
