@@ -18,7 +18,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   message: string;
   token: string;
-  role: string;
+  role?: string;
 }
 
 export interface RegisterRequest {
