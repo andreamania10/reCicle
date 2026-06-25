@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { User } from '../../interfaces/user';
 import { Article } from '../../interfaces/article';
 import { Auth } from '../../services/auth';
+<<<<<<< HEAD
 import { UserService } from '../../services/user';
 import { ArticleService } from '../../services/article';
+=======
+>>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
 
 @Component({
   selector: 'app-profile',
@@ -16,9 +19,9 @@ import { ArticleService } from '../../services/article';
   styleUrl: './profile.css',
 })
 export class Profile implements OnInit {
-  profile: User | null = null;
-  loading = true;
-  errorMsg = '';
+  readonly defaultAvatar = '/assets/imagenes/sin_foto.png';
+
+  profile = signal<User | null>(null);
 
   // Artículos del usuario
   userArticles: Article[] = [];
@@ -40,13 +43,18 @@ export class Profile implements OnInit {
   showPasswords = { current: false, new: false, confirm: false };
 
   constructor(
+<<<<<<< HEAD
     private auth: Auth,
     private userService: UserService,
     private articleService: ArticleService,
+=======
+    readonly auth: Auth,
+>>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
     private router: Router,
   ) {}
 
   ngOnInit(): void {
+<<<<<<< HEAD
     const stored = this.auth.currentUser();
 
     // Mostrar inmediatamente lo que hay en localStorage (evita pantalla de carga infinita)
@@ -88,6 +96,9 @@ export class Profile implements OnInit {
         this.loadingArticles = false;
       },
     });
+=======
+    this.loadProfileFromStorage();
+>>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
   }
 
   logout(): void {
@@ -95,6 +106,7 @@ export class Profile implements OnInit {
     this.router.navigate(['/']);
   }
 
+<<<<<<< HEAD
   // ── Modales de contraseña ────────────────────────────────
 
   openConfirmModal(): void {
@@ -118,6 +130,14 @@ export class Profile implements OnInit {
     this.showPasswordModal = false;
     this.passwordMessage = '';
     this.passwordError = '';
+=======
+  getAvatarUrl(user: User): string {
+    return user.avatar_url?.trim() || this.defaultAvatar;
+  }
+
+  displayValue(value?: string | null): string {
+    return value?.trim() ? value.trim() : 'No disponible';
+>>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
   }
 
   get passwordMismatch(): boolean {
@@ -128,6 +148,20 @@ export class Profile implements OnInit {
     );
   }
 
+<<<<<<< HEAD
+=======
+  getRoleLabel(role: string): string {
+    const labels: Record<string, string> = {
+      Usuario: 'Usuario',
+      buyer: 'Comprador',
+      seller: 'Vendedor',
+      Moderador: 'Moderador',
+      Administrador: 'Administrador',
+    };
+    return labels[role] || role;
+  }
+
+>>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
   togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
     this.showPasswords[field] = !this.showPasswords[field];
   }
@@ -142,6 +176,7 @@ export class Profile implements OnInit {
     this.passwordError = '';
     this.passwordMessage = '';
 
+<<<<<<< HEAD
     this.userService.updatePassword(
       this.passwordData.currentPassword,
       this.passwordData.newPassword
@@ -172,5 +207,23 @@ export class Profile implements OnInit {
 
   getArticleImage(article: Article): string {
     return article.main_photo ?? article.image ?? '';
+=======
+    // TODO: conectar con el servicio cuando esté disponible
+    setTimeout(() => {
+      this.isChangingPassword = false;
+      this.passwordMessage = 'Contraseña actualizada correctamente.';
+      form.resetForm();
+      this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
+    }, 800);
+>>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
+  }
+
+  private loadProfileFromStorage(): void {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    this.profile.set(this.auth.currentUser());
   }
 }
