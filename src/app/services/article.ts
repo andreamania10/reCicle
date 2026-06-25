@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpEvent } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Article, ArticleResponse } from '../interfaces/article';
 
@@ -73,6 +73,16 @@ export class ArticleService {
     observe: 'events'
   });
 }
-  
+
+  getMyArticles(token: string): Observable<Article[]> {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http
+      .get<Article[] | ArticleResponse>(`${this.apiUrl}/user/me`, { headers })
+      .pipe(
+        map((response) =>
+          Array.isArray(response) ? response : (response as ArticleResponse).results ?? []
+        )
+      );
+  }
 
 }
