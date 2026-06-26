@@ -146,16 +146,26 @@
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* ──────────────────────────────────────────────────────────────
    INFO LIST (compartida por info-personal y privacidad)
 ────────────────────────────────────────────────────────────── */
 =======
+=======
+>>>>>>> origin/main
 .avatar-name {
   font-family: 'Syne', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 0.5rem;
+<<<<<<< HEAD
+=======
+}
+
+.profile-card--avatar .role-badge {
+  margin-top: 0.25rem;
+>>>>>>> origin/main
 }
 
 .profile-card--avatar .role-badge {

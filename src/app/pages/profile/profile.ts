@@ -6,10 +6,13 @@ import { User } from '../../interfaces/user';
 import { Article } from '../../interfaces/article';
 import { Auth } from '../../services/auth';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { UserService } from '../../services/user';
 import { ArticleService } from '../../services/article';
 =======
 >>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
+=======
+>>>>>>> origin/main
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +25,7 @@ export class Profile implements OnInit {
   readonly defaultAvatar = '/assets/imagenes/sin_foto.png';
 
   profile = signal<User | null>(null);
+<<<<<<< HEAD
 
   // Artículos del usuario
   userArticles: Article[] = [];
@@ -31,6 +35,8 @@ export class Profile implements OnInit {
   // Modales de contraseña
   showConfirmModal = false;
   showPasswordModal = false;
+=======
+>>>>>>> origin/main
 
   passwordData = {
     currentPassword: '',
@@ -44,16 +50,21 @@ export class Profile implements OnInit {
 
   constructor(
 <<<<<<< HEAD
+<<<<<<< HEAD
     private auth: Auth,
     private userService: UserService,
     private articleService: ArticleService,
 =======
     readonly auth: Auth,
 >>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
+=======
+    readonly auth: Auth,
+>>>>>>> origin/main
     private router: Router,
   ) {}
 
   ngOnInit(): void {
+<<<<<<< HEAD
 <<<<<<< HEAD
     const stored = this.auth.currentUser();
 
@@ -78,6 +89,9 @@ export class Profile implements OnInit {
         }
       },
     });
+=======
+    this.loadProfileFromStorage();
+>>>>>>> origin/main
   }
 
   private loadMyArticles(): void {
@@ -107,6 +121,7 @@ export class Profile implements OnInit {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // ── Modales de contraseña ────────────────────────────────
 
   openConfirmModal(): void {
@@ -131,13 +146,18 @@ export class Profile implements OnInit {
     this.passwordMessage = '';
     this.passwordError = '';
 =======
+=======
+>>>>>>> origin/main
   getAvatarUrl(user: User): string {
     return user.avatar_url?.trim() || this.defaultAvatar;
   }
 
   displayValue(value?: string | null): string {
     return value?.trim() ? value.trim() : 'No disponible';
+<<<<<<< HEAD
 >>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
+=======
+>>>>>>> origin/main
   }
 
   get passwordMismatch(): boolean {
@@ -177,6 +197,7 @@ export class Profile implements OnInit {
     this.passwordMessage = '';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     this.userService.updatePassword(
       this.passwordData.currentPassword,
       this.passwordData.newPassword
@@ -208,6 +229,8 @@ export class Profile implements OnInit {
   getArticleImage(article: Article): string {
     return article.main_photo ?? article.image ?? '';
 =======
+=======
+>>>>>>> origin/main
     // TODO: conectar con el servicio cuando esté disponible
     setTimeout(() => {
       this.isChangingPassword = false;
@@ -216,6 +239,15 @@ export class Profile implements OnInit {
       this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
     }, 800);
 >>>>>>> 35a467a (feat: perfil desde sesión local y login con datos completos del usuario)
+  }
+
+  private loadProfileFromStorage(): void {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    this.profile.set(this.auth.currentUser());
   }
 
   private loadProfileFromStorage(): void {
