@@ -75,4 +75,8 @@ goToFavorites() {
   this.router.navigate(['/favorites']);
 }
 
+goToMessages() {
+  this.router.navigate(['/messages']);
+}
+
 }

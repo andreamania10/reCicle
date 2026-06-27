@@ -1,1 +1,129 @@
-<p>messages works!</p>
+<div class="messages-page">
+  <div class="messages-container">
+    <div class="messages-header">
+      <a routerLink="/home" class="back-link">
+        <i class="bi bi-arrow-left"></i> Volver al inicio
+      </a>
+      <h1 class="messages-title">Mensajes</h1>
+      <p class="messages-subtitle">Chatea con compradores y vendedores sobre tus artículos.</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger">{{ errorMessage() }}</div>
+    }
+
+    <div class="messages-layout">
+      <!-- Bandeja de entrada -->
+      <aside class="inbox-panel" [class.inbox-panel--hidden-mobile]="activeConversationId()">
+        <h2 class="panel-title">Conversaciones</h2>
+
+        @if (loadingInbox()) {
+          <div class="panel-loading">
+            <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+            <span>Cargando...</span>
+          </div>
+        } @else if (inbox().length === 0) {
+          <p class="panel-empty">Aún no tienes conversaciones.</p>
+        } @else {
+          <ul class="inbox-list">
+            @for (conversation of inbox(); track conversation.conversation_id) {
+              <li>
+                <button
+                  type="button"
+                  class="inbox-item"
+                  [class.inbox-item--active]="activeConversationId() === conversation.conversation_id"
+                  (click)="selectConversation(conversation.conversation_id)"
+                >
+                  <span class="inbox-item__title">{{ conversation.article_title }}</span>
+                  <span class="inbox-item__meta">
+                    <span class="inbox-item__partner">{{ getDisplayPartnerName(conversation) }}</span>
+                    · {{ conversation.article_price }} €
+                  </span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </aside>
+
+      <!-- Chat activo -->
+      <section class="chat-panel" [class.chat-panel--hidden-mobile]="!activeConversationId()">
+        @if (!activeConversationId()) {
+          <div class="chat-placeholder">
+            <p class="chat-placeholder__icon">💬</p>
+            <p>Selecciona una conversación para ver el chat.</p>
+          </div>
+        } @else {
+          <div class="chat-header">
+            <button
+              type="button"
+              class="chat-back-mobile"
+              (click)="router.navigate(['/messages'])"
+            >
+              ← Volver
+            </button>
+            <div>
+              <p class="chat-header__label">Estás escribiendo a</p>
+              <h2 class="chat-header__partner">
+                {{ activeChatContext()?.partnerName || 'Usuario' }}
+              </h2>
+              <p class="chat-header__meta">
+                Sobre: {{ activeChatContext()?.articleTitle || 'Artículo' }}
+                @if (activeChatContext()?.articlePrice !== undefined) {
+                  · {{ activeChatContext()?.articlePrice }} €
+                }
+              </p>
+            </div>
+          </div>
+
+          <div class="chat-messages">
+            @if (loadingMessages()) {
+              <div class="panel-loading">
+                <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                <span>Cargando mensajes...</span>
+              </div>
+            } @else if (messages().length === 0) {
+              <p class="panel-empty">No hay mensajes todavía. ¡Envía el primero!</p>
+            } @else {
+              @for (message of messages(); track message.id) {
+                <div
+                  class="message-bubble"
+                  [class.message-bubble--own]="isOwnMessage(message)"
+                  [class.message-bubble--other]="!isOwnMessage(message)"
+                >
+                  @if (!isOwnMessage(message)) {
+                    <span class="message-bubble__sender">
+                      {{ activeChatContext()?.partnerName || 'Usuario' }}
+                    </span>
+                  }
+                  <p class="message-bubble__content">{{ message.content }}</p>
+                  <time class="message-bubble__time">{{ message.sent_at | date: 'short' }}</time>
+                </div>
+              }
+            }
+            <div #messagesEnd></div>
+          </div>
+
+          <form class="chat-form" (ngSubmit)="sendMessage()">
+            <input
+              type="text"
+              class="chat-input"
+              [(ngModel)]="newMessage"
+              name="newMessage"
+              [placeholder]="'Escribe a ' + (activeChatContext()?.partnerName || 'usuario') + '...'"
+              [disabled]="loadingMessages() || sending()"
+              autocomplete="off"
+            />
+            <button
+              type="submit"
+              class="chat-send"
+              [disabled]="!newMessage.trim() || loadingMessages() || sending()"
+            >
+              Enviar
+            </button>
+          </form>
+        }
+      </section>
+    </div>
+  </div>
+</div>

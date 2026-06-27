@@ -29,4 +29,16 @@ export class UserService {
   getProfile() {
     return this.http.get<User>(`${this.apiUrl}/profile`, { headers: this.getHeaders() });
   }
+
+  updateProfile(data: Partial<User>) {
+    return this.http.put<User>(`${this.apiUrl}/profile`, data, { headers: this.getHeaders() });
+  }
+
+  updatePassword(currentPassword: string, newPassword: string) {
+    return this.http.put(
+      `${this.apiUrl}/password`,
+      { currentPassword, newPassword },
+      { headers: this.getHeaders() }
+    );
+  }
 }

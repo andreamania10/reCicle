@@ -11,21 +11,15 @@
                     <h1 class="profile-title">Mi perfil</h1>
                     <p class="profile-subtitle">Datos de tu sesión guardados en el dispositivo.</p>
                 </div>
-
-                <div class="profile-actions">
-
-                    @if (user.role === 'Moderador' || user.role === 'ROLE_MODERATOR' || user.role === 'Administrador' || user.role === 'ROLE_ADMIN') {
-                    <a routerLink="/moderator" class="btn-moderation">
-      Panel de reportes
-    </a> }
-
-                    <button type="button" class="btn-logout" (click)="logout()">
-    Cerrar sesión
-  </button>
-                </div>
+                <button type="button" class="btn-logout" (click)="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            Cerrar sesión
+          </button>
             </div>
         </div>
+
         <div class="profile-grid">
+            <!-- Bloque 1: Avatar -->
             <section class="profile-card profile-card--avatar">
                 <h2 class="card-title">Foto de perfil</h2>
                 <div class="avatar-wrapper">
@@ -35,6 +29,7 @@
                 <span class="role-badge">{{ getRoleLabel(user.role) }}</span>
             </section>
 
+            <!-- Bloque 2: Información personal -->
             <section class="profile-card profile-card--info">
                 <h2 class="card-title">Información personal</h2>
                 <dl class="info-list">
@@ -136,5 +131,6 @@
             </section>
         </div>
         }
+
     </div>
 </div>
