@@ -98,10 +98,14 @@
             <hr> }
 
             <div class="d-flex gap-2 mt-4">
-                <button class="btn-contact" type="button" (click)="handleContactClick()">Contactar vendedor</button>
+                <button class="btn-contact" type="button" (click)="handleContactClick()" [disabled]="contactLoading">
+              {{ contactLoading ? 'Abriendo chat...' : 'Contactar vendedor' }}
+          </button>
                 <button class="btn" [class.btn-danger]="isFavorite" [class.btn-outline-danger]="!isFavorite" (click)="handleFavoriteClick()" [disabled]="favoriteLoading">
               {{ isFavorite ? '❤️ Guardado' : '❤️ Guardar' }}
-          </button> @if (favoriteError) {
+          </button> @if (contactError) {
+                <p class="text-danger small mt-2">{{ contactError }}</p>
+                } @if (favoriteError) {
                 <p class="text-danger small mt-2">{{ favoriteError }}</p>
                 }
             </div>

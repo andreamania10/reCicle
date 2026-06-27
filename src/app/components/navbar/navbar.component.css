@@ -233,6 +233,27 @@
     opacity: 0;
 }
 
+.btn-messages {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #00a082;
+    background-color: white;
+    color: #00a082;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.btn-messages:hover {
+    background: linear-gradient(135deg, #00a082, #00c2a8);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
+}
+
 .sell-text {
     display: inline;
 }
