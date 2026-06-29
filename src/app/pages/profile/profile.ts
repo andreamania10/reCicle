@@ -36,6 +36,7 @@ export class Profile implements OnInit {
   passwordError = '';
   showPasswords = { current: false, new: false, confirm: false };
 
+  
   constructor(
     readonly auth: Auth,
     private router: Router,
@@ -57,7 +58,7 @@ export class Profile implements OnInit {
   displayValue(value?: string | null): string {
     return value?.trim() ? value.trim() : 'No disponible';
   }
-
+  
   get passwordMismatch(): boolean {
     return (
       this.passwordData.newPassword !== '' &&
@@ -70,6 +71,26 @@ export class Profile implements OnInit {
     this.showPasswords[field] = !this.showPasswords[field];
   }
 
+  getRoleLabel(role: string | null | undefined): string {
+    if (!role) return '—';
+  
+    const normalized = role.toLowerCase().trim();
+  
+    const map: Record<string, string> = {
+      admin: 'Administrador',
+      administrador: 'Administrador',
+      role_admin: 'Administrador',
+  
+      moderador: 'Moderador',
+      role_moderator: 'Moderador',
+  
+      user: 'Usuario',
+      usuario: 'Usuario',
+    };
+  
+    return map[normalized] ?? role;
+  }
+  
   onChangePassword(form: NgForm): void {
     if (form.invalid || this.passwordMismatch) {
       Object.values(form.controls).forEach((control) => control.markAsTouched());

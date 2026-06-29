@@ -2,9 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ModeradorService } from '../../services/moderadorService';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-moderator-panel',

@@ -4,152 +4,153 @@
         @if (profile(); as user) {
 
         <!-- HEADER -->
-        <div class="profile-title-row">
-            <div>
+        <div class="profile-header">
+            <a routerLink="/home" class="back-link">
+                <i class="bi bi-arrow-left"></i> Volver al inicio
+            </a>
+
+            <div class="profile-title-row">
+
                 <h1 class="profile-title">Mi perfil</h1>
-                <p class="profile-subtitle">
-                    Datos de tu sesión guardados en el dispositivo.
-                </p>
+
+                <div class="profile-actions">
+
+                    @if ( user.role === 'Moderador' || user.role === 'ROLE_MODERATOR' || user.role === 'Administrador' || user.role === 'ROLE_ADMIN' ) {
+                    <a routerLink="/moderator" class="btn-action btn-action--moderator">
+                        <i class="bi bi-flag"></i> Panel de reportes
+                    </a>
+                    }
+
+                    <button type="button" class="btn-action btn-danger" (click)="logout()">
+              <i class="bi bi-box-arrow-right"></i>
+              Cerrar sesión
+            </button>
+
+                </div>
             </div>
 
-            <div class="profile-actions">
-
-                @if ( user.role === 'Moderador' || user.role === 'ROLE_MODERATOR' || user.role === 'Administrador' || user.role === 'ROLE_ADMIN' ) {
-                <a routerLink="/moderator" class="btn-action">
-                    <i class="bi bi-flag"></i> Panel de reportes
-                </a>
-                }
-
-                <button type="button" class="btn-action btn-danger" (click)="logout()">
-            <i class="bi bi-box-arrow-right"></i>
-            Cerrar sesión
-          </button>
-
-            </div>
+            <p class="profile-subtitle">
+                Gestiona tu información personal y la seguridad de tu cuenta.
+            </p>
         </div>
-
-        <!-- GRID -->
         <div class="profile-grid">
-
-            <!-- AVATAR -->
             <section class="profile-card profile-card--avatar">
                 <h2 class="card-title">Foto de perfil</h2>
+
                 <div class="avatar-wrapper">
-                    <img class="avatar-image" [src]="getAvatarUrl(user)" [alt]="'Avatar de ' + displayValue(user.username)" [class.avatar-image--placeholder]="!user.avatar_url" />
+                    @if (user.avatar_url) {
+                    <img class="avatar-image" [src]="user.avatar_url" [alt]="'Avatar de ' + user.username" /> } @else {
+                    <div class="avatar-placeholder">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    }
                 </div>
-                <p class="avatar-name">{{ displayValue(user.username) }}</p>
-                <span class="role-badge">{{ getRoleLabel(user.role) }}</span>
+
+                <p class="avatar-hint">
+                    La imagen se actualizará cuando el servicio de perfil esté disponible.
+                </p>
             </section>
 
-            <!-- INFO -->
             <section class="profile-card profile-card--info">
                 <h2 class="card-title">Información personal</h2>
 
                 <dl class="info-list">
+
                     <div class="info-item">
-                        <dt><i class="bi bi-person"></i> Usuario</dt>
-                        <dd>{{ displayValue(user.username) }}</dd>
+                        <dt>Usuario</dt>
+                        <dd>{{ user.username }}</dd>
                     </div>
 
                     <div class="info-item">
-                        <dt><i class="bi bi-envelope"></i> Correo electrónico</dt>
-                        <dd>{{ displayValue(user.email) }}</dd>
+                        <dt>Correo electrónico</dt>
+                        <dd>{{ user.email }}</dd>
                     </div>
 
                     <div class="info-item">
-                        <dt><i class="bi bi-shield-check"></i> Rol</dt>
-                        <dd>{{ getRoleLabel(user.role) }}</dd>
-                    </div>
-
-                    <div class="info-item">
-                        <dt><i class="bi bi-star-fill"></i> Valoración media</dt>
-                        <dd class="rating-value">
-                            {{ displayValue(user.avg_rating) }}
+                        <dt>Rol</dt>
+                        <dd>
+                            <span class="role-badge">
+                  {{ getRoleLabel(user.role) }}
+                </span>
                         </dd>
                     </div>
 
                     <div class="info-item">
-                        <dt><i class="bi bi-geo-alt"></i> Localización</dt>
-                        <dd>{{ displayValue(user.location) }}</dd>
+                        <dt>Valoración media</dt>
+                        <dd class="rating-value">
+                            <i class="bi bi-star-fill"></i> {{ user.avg_rating }}
+                        </dd>
                     </div>
 
-                    @if (user.status) {
                     <div class="info-item">
-                        <dt><i class="bi bi-circle-fill"></i> Estado</dt>
-                        <dd>{{ user.status }}</dd>
+                        <dt>Localización</dt>
+                        <dd>
+                            <i class="bi bi-geo-alt"></i> {{ user.location }}
+                        </dd>
                     </div>
-                    }
-                </dl>
 
-                <div class="privacy-action">
-                    <button type="button" class="btn-change-password" (click)="openConfirmModal()">
-              <i class="bi bi-shield-lock"></i>
-              Cambiar contraseña
-            </button>
-                </div>
+                </dl>
             </section>
 
-        </div>
+            <section class="profile-card profile-card--password">
+                <h2 class="card-title">Cambiar contraseña</h2>
+                <p class="card-description">
+                    Actualiza tu contraseña para mantener tu cuenta segura.
+                </p>
 
-        <!-- ARTÍCULOS -->
-        <section class="profile-articles">
-            <h2 class="articles-title">Mis artículos</h2>
+                <form #passwordForm="ngForm" (ngSubmit)="onChangePassword(passwordForm)" novalidate class="password-form">
+                    <div class="form-group">
+                        <label for="currentPassword" class="form-label">
+                Contraseña actual
+              </label>
 
-            @if (loadingArticles) {
-            <p class="articles-status">Cargando artículos...</p>
+                        <div class="password-input-wrapper">
+                            <input [type]="showPasswords.current ? 'text' : 'password'" id="currentPassword" name="currentPassword" class="form-control" [(ngModel)]="passwordData.currentPassword" #currentField="ngModel" required />
 
-            } @else if (articlesError) {
-            <p class="articles-status articles-status--error">
-                {{ articlesError }}
-            </p>
+                            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('current')">
+                  <i
+                    class="bi"
+                    [class.bi-eye]="!showPasswords.current"
+                    [class.bi-eye-slash]="showPasswords.current"
+                  ></i>
+                </button>
+                        </div>
+                    </div>
 
-            } @else if (!userArticles?.length) {
-            <p class="articles-status">
-                Aún no tienes artículos publicados.
-            </p>
+                    <div class="form-group">
+                        <label for="newPassword">Nueva contraseña</label>
 
-            } @else {
-            <div class="articles-grid">
-                @for (article of userArticles; track article.id) {
-                <div class="article-card">
+                        <div class="password-input-wrapper">
+                            <input [type]="showPasswords.new ? 'text' : 'password'" id="newPassword" name="newPassword" [(ngModel)]="passwordData.newPassword" #newField="ngModel" required minlength="6" />
 
-                    <div class="article-image-wrapper">
+                            <button type="button" (click)="togglePasswordVisibility('new')">
+                  <i class="bi"
+                    [class.bi-eye]="!showPasswords.new"
+                    [class.bi-eye-slash]="showPasswords.new"></i>
+                </button>
+                        </div>
+                    </div>
 
-                        @if (getArticleImage(article); as image) {
-                        <img [src]="image" [alt]="article.title" class="article-image" /> } @else {
-                        <div class="article-image-placeholder">
-                            <i class="bi bi-image"></i>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar contraseña</label>
+
+                        <div class="password-input-wrapper">
+                            <input [type]="showPasswords.confirm ? 'text' : 'password'" id="confirmPassword" name="confirmPassword" [(ngModel)]="passwordData.confirmPassword" required [class.is-invalid]="passwordMismatch" />
+                        </div>
+
+                        @if (passwordMismatch) {
+                        <div class="invalid-feedback">
+                            Las contraseñas no coinciden.
                         </div>
                         }
-
-                        <span class="article-status-badge" [class.badge--publicado]="article.status === 'Publicado'" [class.badge--vendido]="article.status === 'Vendido'" [class.badge--reservado]="article.status === 'Reservado'">
-                    {{ article.status ?? 'Publicado' }}
-                  </span>
-
                     </div>
 
-                    <div class="article-info">
-                        <h3 class="article-title">{{ article.title }}</h3>
-
-                        <p class="article-price">
-                            {{ article.price | currency:'EUR':'symbol':'1.2-2' }}
-                        </p>
-
-                        @if (article.location) {
-                        <p class="article-location">
-                            <i class="bi bi-geo-alt"></i> {{ article.location }}
-                        </p>
-                        }
-                    </div>
-
-                </div>
-                }
-            </div>
-            }
-        </section>
-
+                    <button type="submit" class="btn-submit" [disabled]="isChangingPassword || passwordForm.invalid || passwordMismatch">
+              Actualizar contraseña
+            </button>
+                </form>
+            </section>
+        </div>
         }
-        <!-- FIN @if -->
-
     </div>
 </div>
