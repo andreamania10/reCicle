@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { User } from '../../interfaces/user';
-import { Article } from '../../interfaces/article';
 import { Auth } from '../../services/auth';
-import { UserService } from '../../services/user';
-import { ArticleService } from '../../services/article';
 
 @Component({
   selector: 'app-profile',
@@ -15,50 +12,38 @@ import { ArticleService } from '../../services/article';
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile implements OnInit {
-  readonly defaultAvatar = '/assets/imagenes/sin_foto.png';
-
-  profile = signal<User | null>(null);
-
-  // Artículos del usuario
-  userArticles: Article[] = [];
-  loadingArticles = true;
-  articlesError = '';
-
-  // Modales de contraseña
-  showConfirmModal = false;
-  showPasswordModal = false;
+export class Profile {
+  /** Datos quemados hasta tener el servicio de perfil */
+  profile: User = {
+    id: 1,
+    username: 'recycle_user',
+    email: 'usuario@correo.com',
+    role: 'buyer',
+    avatar_url:
+      'https://ui-avatars.com/api/?name=Recycle+User&background=1a1a1a&color=fff&size=256',
+    location: 'Madrid, España',
+    avg_rating: '4.5',
+  };
 
   passwordData = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   };
+
   isChangingPassword = false;
   passwordMessage = '';
   passwordError = '';
   showPasswords = { current: false, new: false, confirm: false };
 
   constructor(
-    readonly auth: Auth,
+    private auth: Auth,
     private router: Router,
   ) {}
-
-  ngOnInit(): void {
-    this.loadProfileFromStorage();
-  }
 
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/']);
-  }
-
-  getAvatarUrl(user: User): string {
-    return user.avatar_url?.trim() || this.defaultAvatar;
-  }
-
-  displayValue(value?: string | null): string {
-    return value?.trim() ? value.trim() : 'No disponible';
   }
 
   get passwordMismatch(): boolean {
@@ -67,6 +52,16 @@ export class Profile implements OnInit {
       this.passwordData.confirmPassword !== '' &&
       this.passwordData.newPassword !== this.passwordData.confirmPassword
     );
+  }
+
+  getRoleLabel(role: string): string {
+    const labels: Record<string, string> = {
+      buyer: 'Comprador',
+      seller: 'Vendedor',
+      moderator: 'Moderador',
+      admin: 'Administrador',
+    };
+    return labels[role] || role;
   }
 
   togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
@@ -90,14 +85,5 @@ export class Profile implements OnInit {
       form.resetForm();
       this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
     }, 800);
-  }
-
-  private loadProfileFromStorage(): void {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/']);
-      return;
-    }
-
-    this.profile.set(this.auth.currentUser());
   }
 }
