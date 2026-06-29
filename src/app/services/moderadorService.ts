@@ -45,22 +45,27 @@ export class ModeradorService {
     action: 'accept' | 'reject',
     token: string
   ): Observable<unknown> {
+  
     const headers = this.getHeaders(token);
-    const resolution = action === 'reject' ? 'REJECTED' : 'APPROVED';
-
+  
+    console.log('Payload enviado', {
+      action,
+      moderator_note:
+        action === 'accept'
+          ? 'Reporte aprobado'
+          : 'Reporte rechazado'
+    });
+  
     return this.http.put(
       `${environment.apiUrl}/api/reports/resolution/${reportId}`,
-      { resolution },
-      { headers }
-    );
-  }
-
-  eliminarArticulo(articleId: number, token: string): Observable<unknown> {
-    return this.http.delete(
-      `${environment.apiUrl}/api/articles/${articleId}`,
       {
-        headers: this.getHeaders(token)
-      }
+        action,
+        moderator_note:
+          action === 'accept'
+            ? 'Reporte aprobado'
+            : 'Reporte rechazado'
+      },
+      { headers }
     );
   }
 

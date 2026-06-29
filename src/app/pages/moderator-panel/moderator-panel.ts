@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 import { ModeradorService } from '../../services/moderadorService';
 import {
@@ -36,6 +38,7 @@ export class ModeratorPanel implements OnInit {
   loadingUsers = true;
 
   ngOnInit(): void {
+    
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const role = user?.role || '';
 
@@ -61,6 +64,9 @@ export class ModeratorPanel implements OnInit {
     this.cargarDatos();
   }
 
+  constructor (
+    private cd: ChangeDetectorRef
+  ) {}
   /* =========================
      NORMALIZACIÓN
      ========================= */
@@ -244,20 +250,26 @@ export class ModeratorPanel implements OnInit {
       (a, b) => b.totalReportes - a.totalReportes
     );
   }
+  
 
   /* =========================
      CARGA
      ========================= */
 
   cargarDatos(): void {
+
     this.loadingArticles = true;
     this.loadingUsers = true;
+    
+    console.time('Articulos');
 
     this.moderadorService.getReportesArticulos(this.token).subscribe({
       next: (data: ApiListResponse<Report>) => {
+        console.timeEnd('Articulos');
         const list = this.extractList(data);
         this.articulosAgrupados = this.agruparArticulos(list);
         this.loadingArticles = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar artículos:', err);
@@ -271,6 +283,7 @@ export class ModeratorPanel implements OnInit {
         const list = this.extractList(data);
         this.usuariosAgrupados = this.agruparUsuarios(list);
         this.loadingUsers = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar usuarios:', err);
@@ -300,10 +313,13 @@ export class ModeratorPanel implements OnInit {
 
     forkJoin(calls).subscribe({
       next: () => {
-        this.articulosAgrupados = this.articulosAgrupados.filter(
-          (a) => a.targetId !== grupo.targetId
-        );
-        this.mostrarMensaje('Reportes aprobados');
+        setTimeout(() => {
+          this.articulosAgrupados = this.articulosAgrupados.filter(
+            (a) => a.targetId !== grupo.targetId
+          );
+          this.cd.detectChanges();
+          this.mostrarMensaje('Reportes aprobados');
+        });
       },
       error: (err) => {
         console.error('Error al aprobar reportes:', err);
