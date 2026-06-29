@@ -36,6 +36,7 @@ export class Profile {
   passwordError = '';
   showPasswords = { current: false, new: false, confirm: false };
 
+  
   constructor(
     private auth: Auth,
     private router: Router,
@@ -67,7 +68,7 @@ export class Profile {
   togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
     this.showPasswords[field] = !this.showPasswords[field];
   }
-
+  
   onChangePassword(form: NgForm): void {
     if (form.invalid || this.passwordMismatch) {
       Object.values(form.controls).forEach((control) => control.markAsTouched());
@@ -77,6 +78,7 @@ export class Profile {
     this.isChangingPassword = true;
     this.passwordError = '';
     this.passwordMessage = '';
+
 
     // TODO: conectar con el servicio cuando esté disponible
     setTimeout(() => {
