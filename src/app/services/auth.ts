@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
@@ -31,7 +31,7 @@ export class Auth {
 
   login(credentials: LoginRequest): Observable<User> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      map((response) => this.mapLoginResponse(response, credentials.email)),
+      switchMap((response) => this.fetchUserAfterLogin(response)),
       tap((user) => this.setUser(user)),
       catchError((error: HttpErrorResponse | Error) =>
         throwError(() => new Error(this.getErrorMessage(error, 'Error al iniciar sesión'))),
@@ -58,7 +58,6 @@ export class Auth {
 
         return this.login({ email: body.email, password: body.password }).pipe(
           tap((user) => {
-            // Enriquecer el usuario almacenado con la localización del registro
             if (body.location) {
               this.setUser({ ...user, location: body.location });
             }
@@ -99,26 +98,38 @@ export class Auth {
     this.currentUser.set(null);
   }
 
-  private isRegisterSuccessful(response: RegisterResponse): boolean {
-    return response?.affectedRows === 1 || !!response?.insertId;
+  private fetchUserAfterLogin(response: LoginResponse): Observable<User> {
+    const token = this.extractToken(response);
+    const payload = this.decodeToken(token);
+
+    if (!payload?.userId) {
+      throw new Error('No se pudo obtener el usuario del token');
+    }
+
+    return this.http
+      .get<User>(`${this.apiUrl}/${payload.userId}`, {
+        headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
+      })
+      .pipe(
+        map((user) => ({
+          ...user,
+          id: user.id ?? payload.userId,
+          role: user.role ?? payload.role ?? response.role ?? '',
+          token,
+        })),
+      );
   }
 
-  private mapLoginResponse(response: LoginResponse, email: string): User {
-    if (!response?.token || !response?.role || response.message !== 'Login correcto') {
+  private extractToken(response: LoginResponse): string {
+    if (!response?.token || response.message !== 'Login correcto') {
       throw new Error(response?.message || 'Credenciales incorrectas');
     }
 
-    const payload = this.decodeToken(response.token);
-    if (!payload?.userId) {
-      throw new Error('No se pudo obtener el usuario');
-    }
+    return response.token;
+  }
 
-    return {
-      id: payload.userId,
-      email,
-      role: response.role,
-      token: response.token,
-    };
+  private isRegisterSuccessful(response: RegisterResponse): boolean {
+    return response?.affectedRows === 1 || !!response?.insertId;
   }
 
   private decodeToken(token: string): JwtPayload | null {
@@ -135,7 +146,7 @@ export class Auth {
   private isTokenExpired(token: string): boolean {
     try {
       const payload = this.decodeToken(token);
-      if (!payload?.exp) return false; // sin campo exp → no expira
+      if (!payload?.exp) return false;
       return Date.now() / 1000 > payload.exp;
     } catch {
       return true;
@@ -153,7 +164,6 @@ export class Auth {
         return null;
       }
 
-      // Si el token existe y ha expirado, cerrar sesión automáticamente
       if (user.token && this.isTokenExpired(user.token)) {
         localStorage.removeItem(USER_STORAGE_KEY);
         return null;

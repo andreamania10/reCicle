@@ -1,1 +1,161 @@
-<p>moderator-panel works!</p>
+<div *ngIf="isModerador; else noPermisos" class="moderator-panel">
+
+    <header class="panel-header">
+        <div>
+            <h1>Panel de moderación</h1>
+            <p>Revisa artículos y usuarios reportados</p>
+        </div>
+
+        <div class="tabs">
+            <button (click)="tab = 'articles'" [class.active]="tab === 'articles'">Artículos</button>
+            <button (click)="tab = 'usuarios'" [class.active]="tab === 'usuarios'">Usuarios</button>
+            <button (click)="tab = 'historico'" [class.active]="tab === 'historico'">Histórico</button>
+        </div>
+    </header>
+
+
+    <section *ngIf="tab === 'articles'">
+
+        <h2>Artículos reportados</h2>
+
+        <!-- LOADING -->
+        <p *ngIf="loadingArticles">Cargando artículos...</p>
+
+        <!-- DATA -->
+        <table *ngIf="!loadingArticles && articulosAgrupados.length; else sinArticulos">
+            <thead>
+                <tr>
+                    <th>Artículo</th>
+                    <th>Motivos</th>
+                    <th>Reportes</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let item of articulosAgrupados">
+
+                    <td>
+                        <strong>{{ item.titulo || ('Artículo #' + item.targetId) }}</strong>
+                        <br />
+                        <small>ID: {{ item.targetId }}</small>
+                    </td>
+
+                    <td>
+                        <span *ngFor="let motivo of item.motivos" class="chip">
+                {{ motivo }}
+              </span>
+                    </td>
+
+                    <td>
+                        <span class="badge" [class.badge-strong]="item.totalReportes >= 3">
+                            {{ item.totalReportes }}
+                          </span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button (click)="observarArticulo(item)" class="secondary">
+                            Ver
+                          </button>
+
+                            <button (click)="accionGrupo('eliminar', item)" class="danger">
+                            Eliminar
+                          </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+    <!-- ================= USUARIOS ================= -->
+    <section *ngIf="tab === 'usuarios'">
+
+        <h2>Usuarios reportados</h2>
+
+        <table *ngIf="usuariosAgrupados.length; else sinUsuarios">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Motivos</th>
+                    <th>Reportes</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let item of usuariosAgrupados">
+
+                    <td>
+                        <strong>{{ item.nombre || ('Usuario #' + item.targetId) }}</strong>
+                    </td>
+
+                    <td>
+                        <span *ngFor="let motivo of item.motivos" class="chip">
+                {{ motivo }}
+              </span>
+                    </td>
+
+                    <td>
+                        <span class="badge">{{ item.totalReportes }}</span>
+                    </td>
+
+                    <td>
+                        <button (click)="accionGrupo('suspender', item)" class="danger">
+                Suspender
+              </button>
+
+                        <button (click)="accionGrupo('rechazar', item)">
+                Descartar
+              </button>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+    <!-- ================= HISTÓRICO ================= -->
+    <section *ngIf="tab === 'historico'">
+
+        <h2>Histórico</h2>
+
+        <table *ngIf="historico.length; else sinHistorico">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Resultado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let item of historico">
+                    <td>{{ item.tipo }}</td>
+                    <td>{{ item.resultado }}</td>
+                    <td>{{ item.fecha }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+</div>
+
+<ng-template #sinArticulos>
+    <p>No hay artículos reportados</p>
+</ng-template>
+
+<ng-template #sinUsuarios>
+    <p>No hay usuarios reportados</p>
+</ng-template>
+
+<ng-template #sinHistorico>
+    <p>No hay histórico</p>
+</ng-template>
+
+<ng-template #noPermisos>
+    <p>No tienes permisos</p>
+</ng-template>

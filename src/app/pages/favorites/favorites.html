@@ -32,7 +32,7 @@
       @for (favorite of favorites; track favorite.favoriteId) {
         <div class="col">
           <div class="card h-100 shadow-sm border-0">
-            <img [src]="favorite.photos?.[0]?.url || 'https://placehold.co/300x200'" 
+            <img [src]="favorite.photos[0]?.url || 'https://placehold.co/300x200'" 
                  class="card-img-top" 
                  [alt]="favorite.title" 
                  style="height: 200px; object-fit: cover;">

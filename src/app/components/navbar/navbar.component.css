@@ -22,16 +22,18 @@
 }
 
 .brand-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
+    font-size: 20px;
+    color: #9a9b9d;
+    font-family: fantasy;
 }
 
 .nav-link {
     color: rgb(46, 46, 46);
 }
 
+
 /* Barra de búsqueda */
+
 .navbar-search-form {
     flex: 1;
     min-width: 0;
@@ -56,19 +58,22 @@
     background: #ffffff;
 }
 
+
 /* En móvil la búsqueda fuera del collapse ocupa el espacio disponible */
+
 @media (max-width: 991px) {
     .navbar-search-form {
         flex: 1;
         margin: 0 8px;
     }
-
     .navbar-search-form input {
         max-width: 100%;
     }
 }
 
+
 /* Contenedor de botones de usuario */
+
 .navbar-actions {
     display: flex;
     align-items: center;
@@ -76,7 +81,9 @@
     flex-shrink: 0;
 }
 
+
 /* En móvil los botones se apilan verticalmente dentro del collapse */
+
 @media (max-width: 991px) {
     .navbar-actions {
         flex-direction: column;
@@ -88,7 +95,9 @@
     }
 }
 
+
 /* Botón Login */
+
 .btn-login {
     height: 40px;
     padding: 0 18px;
@@ -114,7 +123,9 @@
     }
 }
 
+
 /* Botones Mi perfil y Vender (misma apariencia) */
+
 .btn-role,
 .btn-sell {
     height: 40px;
@@ -152,7 +163,9 @@
     }
 }
 
+
 /* Botón Panel Admin */
+
 .btn-admin {
     height: 36px;
     padding: 0 14px 0 11px;
@@ -180,15 +193,6 @@
     text-decoration: none;
 }
 
-@media (max-width: 991px) {
-    .btn-admin {
-        justify-content: center;
-        border-radius: 10px;
-        height: 40px;
-    }
-}
-
-/* Hamburguesa: color personalizado */
 .navbar-toggler {
     border-color: #00a082;
     flex-shrink: 0;
@@ -196,4 +200,96 @@
 
 .navbar-toggler:focus {
     box-shadow: 0 0 0 2px rgba(0, 160, 130, 0.25);
+}
+
+.btn-favorites {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #00a082;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart-icon {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    transition: opacity 0.2s ease;
+}
+
+.heart-hover {
+    opacity: 0;
+}
+
+.btn-favorites:hover .heart-hover {
+    opacity: 1;
+}
+
+.btn-favorites:hover .heart-icon:not(.heart-hover) {
+    opacity: 0;
+}
+
+.btn-messages {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #00a082;
+    background-color: white;
+    color: #00a082;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.btn-messages:hover {
+    background: linear-gradient(135deg, #00a082, #00c2a8);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
+}
+
+.sell-text {
+    display: inline;
+}
+
+@media (max-width: 991px) {
+    .btn-admin {
+        justify-content: center;
+        border-radius: 10px;
+        height: 40px;
+    }
+    .navbar-actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 12px 0 8px;
+        border-top: 1px solid #e8e8e8;
+        margin-top: 8px;
+    }
+    .btn-role {
+        flex: unset;
+        padding: 0 12px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+    .btn-favorites {
+        flex-shrink: 0;
+    }
+    .btn-sell {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        font-size: 16px;
+    }
+    .sell-text {
+        display: none;
+    }
 }

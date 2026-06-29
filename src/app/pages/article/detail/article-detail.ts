@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Article } from '../../../interfaces/article';
 import { User } from '../../../interfaces/user';
 import { ArticleService } from '../../../services/article';
@@ -9,22 +9,30 @@ import { UserService } from '../../../services/user';
 import { Auth } from '../../../services/auth';
 import { ReportService } from '../../../services/report';
 import { FavoriteService } from '../../../services/favorite';
+import { ConversationService } from '../../../services/conversation';
+import { RegisterComponent } from '../../../components/register/register.component';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-article-detail',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, RegisterComponent],
   templateUrl: './article-detail.html',
   styleUrl: './article-detail.css',
 })
+
 export class ArticleDetail implements OnInit {
 
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private articleService = inject(ArticleService);
   private userService = inject(UserService);
   private auth = inject(Auth);
   private reportService = inject(ReportService);
   private favoriteService = inject(FavoriteService);
+  private conversationService = inject(ConversationService);
   private cdr = inject(ChangeDetectorRef);
+  
 
   article: Article | null = null;
   seller: User | null = null;
@@ -49,6 +57,10 @@ export class ArticleDetail implements OnInit {
   favoriteId: number | null = null;
   favoriteLoading = false;
   favoriteError = '';
+
+  contactLoading = false;
+  contactError = '';
+
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -191,6 +203,67 @@ export class ArticleDetail implements OnInit {
     }
   }
 
+handleFavoriteClick() {
+  const currentUser = this.auth.currentUser();
+
+  if (!currentUser?.token) {
+    this.openLoginModal();
+    return;
+  }
+
+  this.toggleFavorite();
+}
+
+
+handleContactClick() {
+  const currentUser = this.auth.currentUser();
+
+  if (!currentUser?.token) {
+    this.openLoginModal();
+    return;
+  }
+
+  if (!this.article) return;
+
+  if (currentUser.id === this.article.user_id) {
+    this.contactError = 'No puedes iniciar un chat contigo mismo.';
+    this.cdr.detectChanges();
+    return;
+  }
+
+  this.contactLoading = true;
+  this.contactError = '';
+
+  this.conversationService.startOrGet(this.article.id, currentUser.token).subscribe({
+    next: (conversation) => {
+      this.contactLoading = false;
+      this.router.navigate(['/messages', conversation.id], {
+        state: {
+          chatContext: {
+            partnerName: this.seller?.username?.trim() || '',
+            articleTitle: this.article!.title,
+            articlePrice: Number(this.article!.price),
+            partnerId: this.seller?.id ?? conversation.seller_id,
+          },
+        },
+      });
+    },
+    error: (err) => {
+      this.contactLoading = false;
+      this.contactError = err?.error?.message || 'No se pudo iniciar la conversación.';
+      this.cdr.detectChanges();
+    },
+  });
+}
+
+openLoginModal(): void {
+  const modalEl = document.getElementById('loginModal');
+  if (modalEl) {
+    new bootstrap.Modal(modalEl).show();
+  }
+}
+
+
   openReportArticle() {
     this.showReportArticleForm = true;
     this.showReportUserForm = false;
@@ -274,4 +347,7 @@ export class ArticleDetail implements OnInit {
       }
     });
   }
+
+
+
 }
