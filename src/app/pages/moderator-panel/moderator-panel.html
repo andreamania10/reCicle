@@ -1,28 +1,36 @@
 <div *ngIf="isModerador; else noPermisos" class="moderator-panel">
-
+    <!-- HEADER -->
     <header class="panel-header">
         <div>
             <h1>Panel de moderación</h1>
-            <p>Revisa artículos y usuarios reportados</p>
+            <p>Gestiona artículos reportados y consulta usuarios reportados en modo solo lectura</p>
         </div>
 
         <div class="tabs">
-            <button (click)="tab = 'articles'" [class.active]="tab === 'articles'">Artículos</button>
-            <button (click)="tab = 'usuarios'" [class.active]="tab === 'usuarios'">Usuarios</button>
-            <button (click)="tab = 'historico'" [class.active]="tab === 'historico'">Histórico</button>
+            <button type="button" (click)="tab = 'articles'" [class.active]="tab === 'articles'">
+          Artículos
+        </button>
+
+            <button type="button" (click)="tab = 'usuarios'" [class.active]="tab === 'usuarios'">
+          Usuarios
+        </button>
         </div>
     </header>
 
+    <!-- ================= ARTÍCULOS ================= -->
+    <section *ngIf="tab === 'articles'" class="table-section">
+        <div class="section-title">
+            <h2>Artículos reportados</h2>
+            <span class="counter" *ngIf="!loadingArticles">
+          {{ articulosAgrupados.length }} elementos
+        </span>
+        </div>
 
-    <section *ngIf="tab === 'articles'">
+        <p class="empty-state" *ngIf="loadingArticles">
+            Cargando artículos...
+        </p>
 
-        <h2>Artículos reportados</h2>
-
-        <!-- LOADING -->
-        <p *ngIf="loadingArticles">Cargando artículos...</p>
-
-        <!-- DATA -->
-        <table *ngIf="!loadingArticles && articulosAgrupados.length; else sinArticulos">
+        <table *ngIf="!loadingArticles && articulosAgrupados.length > 0">
             <thead>
                 <tr>
                     <th>Artículo</th>
@@ -34,7 +42,6 @@
 
             <tbody>
                 <tr *ngFor="let item of articulosAgrupados">
-
                     <td>
                         <strong>{{ item.titulo || ('Artículo #' + item.targetId) }}</strong>
                         <br />
@@ -49,46 +56,63 @@
 
                     <td>
                         <span class="badge" [class.badge-strong]="item.totalReportes >= 3">
-                            {{ item.totalReportes }}
-                          </span>
+                {{ item.totalReportes }}
+              </span>
                     </td>
+
                     <td>
                         <div class="actions">
-                            <button (click)="observarArticulo(item)" class="secondary">
-                            Ver
-                          </button>
+                            <button type="button" (click)="observarArticulo(item)" class="secondary">
+                  Ver
+                </button>
 
-                            <button (click)="accionGrupo('eliminar', item)" class="danger">
-                            Eliminar
-                          </button>
+                            <button type="button" (click)="aceptarGrupo(item)" class="success">
+                  Aprobar
+                </button>
+
+                            <button type="button" (click)="rechazarGrupo(item)" class="warning">
+                  Rechazar
+                </button>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
 
+        <p class="empty-state" *ngIf="!loadingArticles && !articulosAgrupados.length">
+            No hay artículos reportados
+        </p>
     </section>
 
     <!-- ================= USUARIOS ================= -->
-    <section *ngIf="tab === 'usuarios'">
+    <section *ngIf="tab === 'usuarios'" class="table-section">
+        <div class="section-title">
+            <h2>Usuarios reportados</h2>
+            <span class="counter" *ngIf="!loadingUsers">
+          {{ usuariosAgrupados.length }} elementos
+        </span>
+        </div>
 
-        <h2>Usuarios reportados</h2>
+        <p class="empty-state" *ngIf="loadingUsers">
+            Cargando usuarios...
+        </p>
 
-        <table *ngIf="usuariosAgrupados.length; else sinUsuarios">
+        <table *ngIf="!loadingUsers && usuariosAgrupados.length > 0">
             <thead>
                 <tr>
                     <th>Usuario</th>
                     <th>Motivos</th>
                     <th>Reportes</th>
-                    <th>Acciones</th>
+                    <th>Modo</th>
                 </tr>
             </thead>
 
             <tbody>
                 <tr *ngFor="let item of usuariosAgrupados">
-
                     <td>
                         <strong>{{ item.nombre || ('Usuario #' + item.targetId) }}</strong>
+                        <br />
+                        <small>ID: {{ item.targetId }}</small>
                     </td>
 
                     <td>
@@ -98,64 +122,24 @@
                     </td>
 
                     <td>
-                        <span class="badge">{{ item.totalReportes }}</span>
+                        <span class="badge" [class.badge-strong]="item.totalReportes >= 3">
+                {{ item.totalReportes }}
+              </span>
                     </td>
 
                     <td>
-                        <button (click)="accionGrupo('suspender', item)" class="danger">
-                Suspender
-              </button>
-
-                        <button (click)="accionGrupo('rechazar', item)">
-                Descartar
-              </button>
+                        <span class="readonly-badge">Solo vista</span>
                     </td>
-
                 </tr>
             </tbody>
         </table>
 
+        <p class="empty-state" *ngIf="!loadingUsers && !usuariosAgrupados.length">
+            No hay usuarios reportados
+        </p>
     </section>
-
-    <!-- ================= HISTÓRICO ================= -->
-    <section *ngIf="tab === 'historico'">
-
-        <h2>Histórico</h2>
-
-        <table *ngIf="historico.length; else sinHistorico">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Resultado</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr *ngFor="let item of historico">
-                    <td>{{ item.tipo }}</td>
-                    <td>{{ item.resultado }}</td>
-                    <td>{{ item.fecha }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-    </section>
-
 </div>
 
-<ng-template #sinArticulos>
-    <p>No hay artículos reportados</p>
-</ng-template>
-
-<ng-template #sinUsuarios>
-    <p>No hay usuarios reportados</p>
-</ng-template>
-
-<ng-template #sinHistorico>
-    <p>No hay histórico</p>
-</ng-template>
-
 <ng-template #noPermisos>
-    <p>No tienes permisos</p>
+    <p class="empty-state">No tienes permisos</p>
 </ng-template>

@@ -5,6 +5,15 @@
     font-family: 'DM Sans', sans-serif;
 }
 
+
+/* =========================
+     HEADER
+     ========================= */
+
+.panel-header {
+    margin-bottom: 2rem;
+}
+
 .panel-header h1 {
     font-size: 2rem;
     font-weight: 700;
@@ -17,10 +26,16 @@
     margin-bottom: 1.5rem;
 }
 
+
+/* =========================
+     TABS
+     ========================= */
+
 .tabs {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .tabs button {
@@ -30,7 +45,11 @@
     background: #f1f1f1;
     cursor: pointer;
     font-size: 0.85rem;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+}
+
+.tabs button:hover {
+    background: #e7e7e7;
 }
 
 .tabs button.active {
@@ -39,12 +58,18 @@
     font-weight: 500;
 }
 
+
+/* =========================
+     CONTENEDOR DE TABLAS
+     ========================= */
+
 .table-section {
     background: white;
     border-radius: 14px;
     padding: 1.5rem;
     border: 1px solid #e8e8e8;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
 }
 
 .section-title {
@@ -64,7 +89,13 @@
     background: #f4f4f4;
     padding: 4px 10px;
     border-radius: 20px;
+    color: #555;
 }
+
+
+/* =========================
+     TABLAS
+     ========================= */
 
 table {
     width: 100%;
@@ -82,7 +113,17 @@ td {
     padding: 0.8rem 0;
     border-top: 1px solid #eee;
     font-size: 0.85rem;
+    vertical-align: middle;
 }
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+
+/* =========================
+     PILLS / BADGES / CHIPS
+     ========================= */
 
 .badge {
     background: #fee2e2;
@@ -90,6 +131,12 @@ td {
     font-size: 0.75rem;
     padding: 3px 8px;
     border-radius: 12px;
+    display: inline-block;
+}
+
+.badge-strong {
+    background: #dc2626;
+    color: white;
 }
 
 .chip {
@@ -98,6 +145,20 @@ td {
     font-size: 0.75rem;
     padding: 3px 8px;
     margin-right: 4px;
+    margin-bottom: 4px;
+    display: inline-block;
+}
+
+
+/* =========================
+     ACCIONES
+     ========================= */
+
+.actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .actions button {
@@ -106,12 +167,26 @@ td {
     font-size: 0.75rem;
     border-radius: 6px;
     cursor: pointer;
-    margin-right: 5px;
-    transition: 0.2s;
+    transition: all 0.15s ease;
+    font-weight: 500;
+    min-width: 90px;
 }
 
-.actions button {
+.actions button:hover {
+    transform: translateY(-1px);
+}
+
+.actions button:not(.secondary):not(.danger) {
     background: #f1f1f1;
+}
+
+.actions .secondary {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.actions .secondary:hover {
+    background: #bae6fd;
 }
 
 .actions .danger {
@@ -123,26 +198,23 @@ td {
     background: #fecaca;
 }
 
-.actions .secondary {
-    background: #e0f2fe;
-    color: #0369a1;
-}
 
-tbody tr:hover {
-    background: #f9fafb;
-}
+/* =========================
+     ESTADOS VACÍOS / MENSAJES
+     ========================= */
 
 .empty-state {
     text-align: center;
     font-size: 0.85rem;
     color: #888;
     margin-top: 1rem;
+    margin-bottom: 0;
 }
 
-.badge-strong {
-    background: #dc2626;
-    color: white;
-}
+
+/* =========================
+     SNACKBAR CLASSES
+     ========================= */
 
 .snackbar-success {
     background-color: #22c55e !important;
@@ -155,53 +227,146 @@ tbody tr:hover {
 }
 
 
-/* CONTENEDOR DE BOTONES */
+/* =========================
+     HISTÓRICO: ICONO + TIPO
+     ========================= */
+
+.history-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.history-type i {
+    font-size: 0.95rem;
+    color: #64748b;
+}
 
 
-/* CONTENED* BOTÓN BASE */
+/* =========================
+     BADGES DEL HISTÓRICO
+     ========================= */
 
-.actions button {
-    border: none;
-    padding: 0.4rem 0.7rem;
+.history-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
     font-size: 0.75rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    font-weight: 500;
+    font-weight: 600;
+    line-height: 1;
 }
 
-
-/* BOTÓN VER (SECUNDARIO) */
-
-.actions .secondary {
-    background: #e0f2fe;
-    color: #0369a1;
+.history-badge--success {
+    background: #dcfce7;
+    color: #166534;
 }
 
-.actions .secondary:hover {
-    background: #bae6fd;
-}
-
-
-/* BOTÓN ELIMINAR (PELIGRO) */
-
-.actions .danger {
+.history-badge--danger {
     background: #fee2e2;
     color: #b91c1c;
 }
 
-.actions .danger:hover {
-    background: #fecaca;
+.history-badge--warning {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.history-badge--neutral {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.history-badge--default {
+    background: #f1f5f9;
+    color: #475569;
 }
 
 
-/* EFECTO HOVER GENERAL */
+/* =========================
+     ANIMACIÓN AL ELIMINAR FILA
+     ========================= */
 
-.actions button:hover {
-    transform: translateY(-1px);
+tbody tr {
+    transition: opacity 0.22s ease, transform 0.22s ease, background-color 0.22s ease;
 }
 
-.actions {
-    display: flex;
-    gap: 6px;
+.row-removing {
+    opacity: 0;
+    transform: translateX(-10px);
+    background-color: #fff7ed !important;
+}
+
+
+/* =========================
+     RESPONSIVE
+     ========================= */
+
+@media (max-width: 768px) {
+    .moderator-panel {
+        padding: 1rem;
+    }
+    .section-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .tabs {
+        width: 100%;
+    }
+    .tabs button {
+        flex: 1 1 auto;
+    }
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+        display: block;
+        width: 100%;
+    }
+    thead {
+        display: none;
+    }
+    tr {
+        padding: 0.75rem 0;
+        border-top: 1px solid #eee;
+    }
+    td {
+        border-top: none;
+        padding: 0.4rem 0;
+    }
+    .actions {
+        margin-top: 0.5rem;
+    }
+}
+
+.actions .success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.actions .success:hover {
+    background: #bbf7d0;
+}
+
+.actions .warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.actions .warning:hover {
+    background: #fde68a;
+}
+
+.readonly-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #eef2ff;
+    color: #4338ca;
 }

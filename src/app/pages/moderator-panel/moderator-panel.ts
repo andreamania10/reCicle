@@ -1,277 +1,350 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ModeradorService } from '../../services/moderadorService';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { forkJoin } from 'rxjs';
+
+import { ModeradorService } from '../../services/moderadorService';
+import {
+  Report,
+  ApiListResponse,
+  GrupoArticulo,
+  GrupoUsuario
+} from '../../interfaces/report';
 
 @Component({
   selector: 'app-moderator-panel',
-  standalone: true, 
+  standalone: true,
   imports: [CommonModule, MatSnackBarModule],
-  templateUrl: './moderator-panel.html', 
+  templateUrl: './moderator-panel.html',
   styleUrls: ['./moderator-panel.css']
 })
-
 export class ModeratorPanel implements OnInit {
   private router = inject(Router);
   private moderadorService = inject(ModeradorService);
   private snackBar = inject(MatSnackBar);
 
+  tab: 'articles' | 'usuarios' = 'articles';
 
-  tab: 'articles' | 'usuarios' | 'historico' = 'articles';
+  articulosAgrupados: GrupoArticulo[] = [];
+  usuariosAgrupados: GrupoUsuario[] = [];
 
-  reportesArticulos: any[] = [];
-  reportesUsuarios: any[] = [];
-  historico: any[] = [];
   isModerador = false;
-  articulosAgrupados: any[] = [];
-  usuariosAgrupados: any[] = [];
   token = '';
+
   loadingArticles = true;
   loadingUsers = true;
-  loadingHistorico = true;
-
 
   ngOnInit(): void {
-const user = JSON.parse(localStorage.getItem('user') || '{}');
-this.isModerador = user.role === 'Moderador';
-this.token = user.token || ''
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const role = user?.role || '';
 
-  if (this.isModerador) {
+    this.isModerador = [
+      'Moderador',
+      'ROLE_MODERATOR',
+      'Administrador',
+      'ROLE_ADMIN'
+    ].includes(role);
+
+    this.token = user?.token || '';
+
+    if (!this.token) {
+      this.mostrarMensaje('Sesión inválida, vuelve a iniciar sesión');
+      return;
+    }
+
+    if (!this.isModerador) {
+      this.mostrarMensaje('No tienes permisos');
+      return;
+    }
+
     this.cargarDatos();
   }
-  
-  
-console.log('ROLE:', user.role);
-console.log('TOKEN:', this.token);
 
-if (!this.token) {
-  this.mostrarMensaje('Sesión inválida, vuelve a iniciar sesión');
-  return;
-}
+  /* =========================
+     NORMALIZACIÓN
+     ========================= */
 
+  private extractList<T>(data: ApiListResponse<T>): T[] {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.reports)) return data.reports;
+    if (Array.isArray(data?.results)) return data.results;
+    if (Array.isArray(data?.items)) return data.items;
+    return [];
   }
- 
+
+  private getMotivos(item: Report): string[] {
+    const motivosArray = Array.isArray(item.motivos) ? item.motivos : [];
+    const motivoSimple = item.report_reason ?? item.reason ?? item.motivo;
+
+    const motivos = [...motivosArray];
+    if (motivoSimple) {
+      motivos.push(motivoSimple);
+    }
+
+    return [...new Set(motivos.filter((m): m is string => Boolean(m)))];
+  }
+
+  private getReportIds(item: Report): number[] {
+    const idsArray = Array.isArray(item.reportIds) ? item.reportIds : [];
+    const idSimple = item.report_id ?? item.id ?? item.reportId;
+
+    const ids = [...idsArray];
+    if (idSimple != null) {
+      ids.push(idSimple);
+    }
+
+    return [...new Set(ids.filter((id): id is number => id != null))];
+  }
+
+  private getTotal(item: Report): number {
+    return (
+      item.totalReportes ??
+      item.reportsCount ??
+      item.total_reports ??
+      (this.getReportIds(item).length || 1)
+    );
+  }
+
+  /* =========================
+     MAPEO
+     ========================= */
+
+  private mapToArticulo(item: Report): GrupoArticulo | null {
+    const targetId =
+      item.article_id ??
+      item.articulo_id ??
+      item.articleId ??
+      item.reported_article_id ??
+      item.target_id ??
+      item.targetId ??
+      item.article?.id;
+
+    if (targetId == null) return null;
+
+    return {
+      targetId,
+      titulo:
+        item.title ??
+        item.titulo ??
+        item.article_title ??
+        item.article?.title ??
+        item.article?.titulo ??
+        `Artículo #${targetId}`,
+      totalReportes: this.getTotal(item),
+      motivos: this.getMotivos(item),
+      reportIds: this.getReportIds(item)
+    };
+  }
+
+  private mapToUsuario(item: Report): GrupoUsuario | null {
+    const targetId =
+      item.user_id ??
+      item.usuario_id ??
+      item.reported_user_id ??
+      item.target_id ??
+      item.targetId ??
+      item.user?.id ??
+      item.usuario?.id;
+
+    if (targetId == null) return null;
+
+    return {
+      targetId,
+      nombre:
+        item.username ??
+        item.name ??
+        item.nombre ??
+        item.user?.username ??
+        item.user?.name ??
+        item.user?.nombre ??
+        item.usuario?.username ??
+        item.usuario?.name ??
+        item.usuario?.nombre ??
+        `Usuario #${targetId}`,
+      totalReportes: this.getTotal(item),
+      motivos: this.getMotivos(item),
+      reportIds: this.getReportIds(item)
+    };
+  }
+
+  /* =========================
+     AGRUPACIÓN
+     ========================= */
+
+  private agruparArticulos(items: Report[]): GrupoArticulo[] {
+    const map = new Map<number, GrupoArticulo>();
+
+    items.forEach((item) => {
+      const grupo = this.mapToArticulo(item);
+      if (!grupo) return;
+
+      if (!map.has(grupo.targetId)) {
+        map.set(grupo.targetId, {
+          targetId: grupo.targetId,
+          titulo: grupo.titulo,
+          totalReportes: 0,
+          motivos: [],
+          reportIds: []
+        });
+      }
+
+      const actual = map.get(grupo.targetId)!;
+
+      actual.totalReportes += grupo.totalReportes;
+      actual.reportIds.push(...grupo.reportIds);
+
+      grupo.motivos.forEach((motivo) => {
+        if (!actual.motivos.includes(motivo)) {
+          actual.motivos.push(motivo);
+        }
+      });
+
+      actual.reportIds = [...new Set(actual.reportIds)];
+    });
+
+    return Array.from(map.values()).sort(
+      (a, b) => b.totalReportes - a.totalReportes
+    );
+  }
+
+  private agruparUsuarios(items: Report[]): GrupoUsuario[] {
+    const map = new Map<number, GrupoUsuario>();
+
+    items.forEach((item) => {
+      const grupo = this.mapToUsuario(item);
+      if (!grupo) return;
+
+      if (!map.has(grupo.targetId)) {
+        map.set(grupo.targetId, {
+          targetId: grupo.targetId,
+          nombre: grupo.nombre,
+          totalReportes: 0,
+          motivos: [],
+          reportIds: []
+        });
+      }
+
+      const actual = map.get(grupo.targetId)!;
+
+      actual.totalReportes += grupo.totalReportes;
+      actual.reportIds.push(...grupo.reportIds);
+
+      grupo.motivos.forEach((motivo) => {
+        if (!actual.motivos.includes(motivo)) {
+          actual.motivos.push(motivo);
+        }
+      });
+
+      actual.reportIds = [...new Set(actual.reportIds)];
+    });
+
+    return Array.from(map.values()).sort(
+      (a, b) => b.totalReportes - a.totalReportes
+    );
+  }
+
+  /* =========================
+     CARGA
+     ========================= */
+
   cargarDatos(): void {
     this.loadingArticles = true;
     this.loadingUsers = true;
-    this.loadingHistorico = true;
-  
+
     this.moderadorService.getReportesArticulos(this.token).subscribe({
-      next: (data) => {
-        const reportes = this.normalizarReportesArticulos(data);
-        this.reportesArticulos = reportes;
-        this.articulosAgrupados = this.agruparPorArticulo(reportes);
+      next: (data: ApiListResponse<Report>) => {
+        const list = this.extractList(data);
+        this.articulosAgrupados = this.agruparArticulos(list);
         this.loadingArticles = false;
       },
-      error: () => {
-        this.mostrarMensaje('Error al cargar reportes de artículos');
+      error: (err) => {
+        console.error('Error al cargar artículos:', err);
+        this.mostrarMensaje('Error al cargar artículos');
         this.loadingArticles = false;
       }
     });
-  
+
     this.moderadorService.getReportesUsuarios(this.token).subscribe({
-      next: (data) => {
-        const reportes = this.normalizarReportesUsuarios(data);
-        this.reportesUsuarios = reportes;
-        this.usuariosAgrupados = this.agruparPorUsuario(reportes);
+      next: (data: ApiListResponse<Report>) => {
+        const list = this.extractList(data);
+        this.usuariosAgrupados = this.agruparUsuarios(list);
         this.loadingUsers = false;
       },
-      error: () => {
-        this.mostrarMensaje('Error al cargar reportes de usuarios');
+      error: (err) => {
+        console.error('Error al cargar usuarios:', err);
+        this.mostrarMensaje('Error al cargar usuarios');
         this.loadingUsers = false;
-      }
-    });
-  
-    this.moderadorService.getHistorico(this.token).subscribe({
-      next: (data: any) => {
-        this.historico = Array.isArray(data) ? data : (data?.results || []);
-        this.loadingHistorico = false;
-      },
-      error: () => {
-        this.mostrarMensaje('Error al cargar histórico');
-        this.loadingHistorico = false;
       }
     });
   }
 
-  agruparPorArticulo(reportes: any[]): any[] {
-    if (!Array.isArray(reportes)) return [];
-  
-    const mapa = new Map<number, any>();
-  
-    reportes.forEach((reporte) => {
-      const articuloId = reporte.articuloId;
-  
-      if (!articuloId) {
-        console.warn('Reporte de artículo sin articuloId:', reporte);
-        return;
-      }
-  
-      if (!mapa.has(articuloId)) {
-        mapa.set(articuloId, {
-          targetId: articuloId,
-          titulo: reporte.titulo || `Artículo ${articuloId}`,
-          totalReportes: 0,
-          motivos: [],
-          reportIds: []
-        });
-      }
-  
-      const grupo = mapa.get(articuloId);
-  
-      grupo.totalReportes++;
-      grupo.reportIds.push(reporte.id);
-  
-      if (reporte.motivo && !grupo.motivos.includes(reporte.motivo)) {
-        grupo.motivos.push(reporte.motivo);
-      }
-    });
-  
-    return Array.from(mapa.values()).sort((a, b) => b.totalReportes - a.totalReportes);
-  }  
+  /* =========================
+     ACCIONES ARTÍCULOS
+     ========================= */
 
-  agruparPorUsuario(reportes: any[]): any[] {
-    if (!Array.isArray(reportes)) return [];
-  
-    const mapa = new Map<number, any>();
-  
-    reportes.forEach((reporte) => {
-      const usuarioId = reporte.usuarioId;
-  
-      if (!usuarioId) {
-        console.warn('Reporte de usuario sin usuarioId:', reporte);
-        return;
-      }
-  
-      if (!mapa.has(usuarioId)) {
-        mapa.set(usuarioId, {
-          targetId: usuarioId,
-          nombre: reporte.nombre || `Usuario ${usuarioId}`,
-          totalReportes: 0,
-          motivos: [],
-          reportIds: []
-        });
-      }
-  
-      const grupo = mapa.get(usuarioId);
-  
-      grupo.totalReportes++;
-      grupo.reportIds.push(reporte.id);
-  
-      if (reporte.motivo && !grupo.motivos.includes(reporte.motivo)) {
-        grupo.motivos.push(reporte.motivo);
-      }
-    });
-  
-    return Array.from(mapa.values()).sort((a, b) => b.totalReportes - a.totalReportes);
-  }
-
-  observarArticulo(grupo: any): void {
+  observarArticulo(grupo: GrupoArticulo): void {
     this.router.navigate(['/articles', grupo.targetId]);
   }
 
-  accionGrupo(
-    tipo: 'eliminar' | 'aceptar' | 'rechazar' | 'suspender',
-    grupo: any
-  ): void {
-  
-    let mensaje = '';
-  
-    switch (tipo) {
-      case 'eliminar':
-        mensaje = `Artículo eliminado (${grupo.totalReportes} reportes)`;
-        break;
-  
-      case 'aceptar':
-        mensaje = `Reportes aceptados (${grupo.totalReportes})`;
-        break;
-  
-      case 'rechazar':
-        mensaje = `Reportes rechazados`;
-        break;
-  
-      case 'suspender':
-        mensaje = `Usuario suspendido`;
-        break;
+  aceptarGrupo(grupo: GrupoArticulo): void {
+    if (!grupo.reportIds.length) {
+      this.mostrarMensaje('No hay reportes para aprobar');
+      return;
     }
-  
-    this.mostrarMensaje(mensaje);
+
+    const calls = grupo.reportIds.map((id) =>
+      this.moderadorService.resolverReporte(id, 'accept', this.token)
+    );
+
+    forkJoin(calls).subscribe({
+      next: () => {
+        this.articulosAgrupados = this.articulosAgrupados.filter(
+          (a) => a.targetId !== grupo.targetId
+        );
+        this.mostrarMensaje('Reportes aprobados');
+      },
+      error: (err) => {
+        console.error('Error al aprobar reportes:', err);
+        this.mostrarMensaje('Error al aprobar');
+      }
+    });
   }
 
-  eliminarArticulo(grupo: any): void {
-    this.moderadorService
-      .eliminarArticulo(grupo.targetId, this.token)
-      .subscribe({
-        next: () => {
-          this.articulosAgrupados =
-            this.articulosAgrupados.filter(a => a.targetId !== grupo.targetId);
-  
-          this.mostrarMensaje('Artículo eliminado correctamente');
-        },
-        error: (err) => {
-          console.error(err);
-          this.mostrarMensaje('Error al eliminar artículo');
-        }
-      });
-  }
-  
-  
-  aceptarGrupo(grupo: any): void {
-    this.mostrarMensaje(`Reportes aceptados (${grupo.totalReportes})`);
-  }
-  
-  rechazarGrupo(grupo: any): void {
-    this.mostrarMensaje(`Reportes rechazados`);
-  }
-  
-  suspenderUsuario(grupo: any): void {
-    this.moderadorService
-      .suspenderUsuario(grupo.targetId, this.token)
-      .subscribe({
-        next: () => {
-  
-          this.usuariosAgrupados =
-            this.usuariosAgrupados.filter(u => u.targetId !== grupo.targetId);
-  
-          this.mostrarMensaje('Usuario suspendido correctamente');
-        },
-        error: (err) => {
-          console.error(err);
-          this.mostrarMensaje('Error al suspender usuario');
-        }
-      });
+  rechazarGrupo(grupo: GrupoArticulo): void {
+    if (!grupo.reportIds.length) {
+      this.mostrarMensaje('No hay reportes para rechazar');
+      return;
+    }
+
+    const calls = grupo.reportIds.map((id) =>
+      this.moderadorService.resolverReporte(id, 'reject', this.token)
+    );
+
+    forkJoin(calls).subscribe({
+      next: () => {
+        this.articulosAgrupados = this.articulosAgrupados.filter(
+          (a) => a.targetId !== grupo.targetId
+        );
+        this.mostrarMensaje('Reportes rechazados');
+      },
+      error: (err) => {
+        console.error('Error al rechazar reportes:', err);
+        this.mostrarMensaje('Error al rechazar');
+      }
+    });
   }
 
-  mostrarMensaje(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', {
+  /* =========================
+     UI
+     ========================= */
+
+  mostrarMensaje(msg: string): void {
+    this.snackBar.open(msg, 'Cerrar', {
       duration: 3000,
       horizontalPosition: 'right',
       verticalPosition: 'top'
     });
-  }
-
-  normalizarReportesArticulos(data: any): any[] {
-    const reportes = Array.isArray(data) ? data : data?.results || [];
-  
-    return reportes.map((item: any) => ({
-      id: item.report_id,
-      motivo: item.report_reason,
-      fecha: item.report_created_at,
-      articuloId: item.article_id || item.articulo_id || item.article?.id || item.articleId,
-      titulo: item.title || item.titulo || item.article_title
-    }));
-  }
-  
-  normalizarReportesUsuarios(data: any): any[] {
-    const reportes = Array.isArray(data) ? data : data?.results || [];
-  
-    return reportes.map((item: any) => ({
-      id: item.report_id,
-      motivo: item.report_reason,
-      fecha: item.report_created_at,
-      usuarioId: item.user_id || item.usuario_id || item.reported_user_id || item.usuarioId,
-      nombre: item.username || item.name || item.nombre
-    }));
   }
 }
