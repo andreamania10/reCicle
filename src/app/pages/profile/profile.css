@@ -335,55 +335,6 @@
     cursor: not-allowed;
 }
 
-.profile-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.profile-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.8rem;
-    border-radius: 0.5rem;
-    border: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.15s ease;
-    background-color: #f1f3f5;
-    color: #333;
-    &:hover {
-        background-color: #e2e6ea;
-    }
-}
-
-.btn-action i {
-    font-size: 0.9rem;
-}
-
-.btn-action:not(.btn-danger) {
-    background-color: #eef6ff;
-    color: #0d6efd;
-    &:hover {
-        background-color: #dceaff;
-    }
-}
-
-.btn-action--moderator {
-    background: linear-gradient(135deg, #eaf4ff, #dbeaff);
-    border: 1px solid #c6defc;
-}
-
 @media (max-width: 768px) {
     .profile-grid {
         grid-template-columns: 1fr;
@@ -394,15 +345,6 @@
     .info-item {
         grid-template-columns: 1fr;
         gap: 0.25rem;
-    }
-    .profile-title-row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .profile-actions {
-        width: 100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
     }
 }
 
