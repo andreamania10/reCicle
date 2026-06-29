@@ -97,8 +97,8 @@
     text-align: center;
 }
 
-.profile-card--password {
-    grid-column: 1 / -1;
+.profile-card--articles {
+    margin-top: 1.25rem;
 }
 
 .card-title {
@@ -346,6 +346,213 @@
         grid-template-columns: 1fr;
         gap: 0.25rem;
     }
+}
+
+/* Botón gestión de contraseña */
+.info-item--password dt {
+    align-self: center;
+}
+
+.btn-change-password {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: #f4f4f4;
+    color: #1a1a1a;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.45rem 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-change-password:hover {
+    background: #eaeaea;
+    border-color: #ccc;
+}
+
+/* Mis productos */
+.articles-loading,
+.articles-empty,
+.articles-error {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #777;
+    padding: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.articles-error {
+    color: #c0392b;
+}
+
+.articles-empty a {
+    color: #00a082;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.article-mini-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.article-mini-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+    transform: translateY(-2px);
+}
+
+.article-mini-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f4f4f4;
+}
+
+.article-mini-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.article-mini-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-size: 2rem;
+}
+
+.article-mini-info {
+    padding: 0.7rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.article-mini-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.article-mini-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #00a082;
+}
+
+.article-mini-status {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    width: fit-content;
+    background: #f4f4f4;
+    color: #666;
+}
+
+.article-mini-status.status-publicado { background: #d1fae5; color: #065f46; }
+.article-mini-status.status-vendido { background: #dbeafe; color: #1d4ed8; }
+.article-mini-status.status-en-revisión { background: #fef3c7; color: #92400e; }
+.article-mini-status.status-retirado { background: #fee2e2; color: #991b1b; }
+
+/* Modales de contraseña */
+.modal-password .modal-content {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+.modal-password {
+    border-radius: 14px;
+    border: none;
+}
+
+.confirm-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #444;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.btn-modal-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-modal-primary:hover {
+    background: #333;
+}
+
+.btn-modal-secondary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: #fff;
+    color: #1a1a1a;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.55rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-modal-secondary:hover {
+    background: #f4f4f4;
+    border-color: #ccc;
+}
+
+.btn-close-modal {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+}
+
+.btn-close-modal:hover {
+    color: #1a1a1a;
 }
 
 @media (max-width: 500px) {
