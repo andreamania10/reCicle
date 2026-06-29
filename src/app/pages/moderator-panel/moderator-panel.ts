@@ -27,6 +27,10 @@ export class ModeratorPanel implements OnInit {
   articulosAgrupados: any[] = [];
   usuariosAgrupados: any[] = [];
   token = '';
+  loadingArticles = true;
+  loadingUsers = true;
+  loadingHistorico = true;
+
 
   ngOnInit(): void {
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -49,20 +53,20 @@ if (!this.token) {
   }
  
   cargarDatos(): void {
+    this.loadingArticles = true;
+    this.loadingUsers = true;
+    this.loadingHistorico = true;
+  
     this.moderadorService.getReportesArticulos(this.token).subscribe({
       next: (data) => {
-        console.log('RESPONSE COMPLETA ARTÍCULOS:', data);
-  
         const reportes = this.normalizarReportesArticulos(data);
-  
-        console.log('REPORTES NORMALIZADOS ARTÍCULOS:', reportes);
-  
         this.reportesArticulos = reportes;
         this.articulosAgrupados = this.agruparPorArticulo(reportes);
+        this.loadingArticles = false;
       },
-      error: (err) => {
-        console.error('ERROR COMPLETO ARTÍCULOS:', err);
+      error: () => {
         this.mostrarMensaje('Error al cargar reportes de artículos');
+        this.loadingArticles = false;
       }
     });
   
@@ -71,22 +75,22 @@ if (!this.token) {
         const reportes = this.normalizarReportesUsuarios(data);
         this.reportesUsuarios = reportes;
         this.usuariosAgrupados = this.agruparPorUsuario(reportes);
+        this.loadingUsers = false;
       },
-      error: (err) => {
-        console.error('ERROR COMPLETO USUARIOS:', err);
+      error: () => {
         this.mostrarMensaje('Error al cargar reportes de usuarios');
+        this.loadingUsers = false;
       }
     });
   
     this.moderadorService.getHistorico(this.token).subscribe({
       next: (data: any) => {
-        const reportes = this.historico = Array.isArray(data) ? data : (data?.results || []);
-        this.reportesUsuarios = reportes;
-        this.usuariosAgrupados = this.agruparPorUsuario(reportes)
+        this.historico = Array.isArray(data) ? data : (data?.results || []);
+        this.loadingHistorico = false;
       },
-      error: (err) => {
-        console.error('ERROR COMPLETO HISTÓRICO:', err);
+      error: () => {
         this.mostrarMensaje('Error al cargar histórico');
+        this.loadingHistorico = false;
       }
     });
   }
@@ -196,8 +200,22 @@ if (!this.token) {
   }
 
   eliminarArticulo(grupo: any): void {
-    this.mostrarMensaje(`Artículo eliminado (${grupo.totalReportes} reportes procesados)`);
+    this.moderadorService
+      .eliminarArticulo(grupo.targetId, this.token)
+      .subscribe({
+        next: () => {
+          this.articulosAgrupados =
+            this.articulosAgrupados.filter(a => a.targetId !== grupo.targetId);
+  
+          this.mostrarMensaje('Artículo eliminado correctamente');
+        },
+        error: (err) => {
+          console.error(err);
+          this.mostrarMensaje('Error al eliminar artículo');
+        }
+      });
   }
+  
   
   aceptarGrupo(grupo: any): void {
     this.mostrarMensaje(`Reportes aceptados (${grupo.totalReportes})`);
@@ -208,7 +226,21 @@ if (!this.token) {
   }
   
   suspenderUsuario(grupo: any): void {
-    this.mostrarMensaje(`Usuario suspendido`);
+    this.moderadorService
+      .suspenderUsuario(grupo.targetId, this.token)
+      .subscribe({
+        next: () => {
+  
+          this.usuariosAgrupados =
+            this.usuariosAgrupados.filter(u => u.targetId !== grupo.targetId);
+  
+          this.mostrarMensaje('Usuario suspendido correctamente');
+        },
+        error: (err) => {
+          console.error(err);
+          this.mostrarMensaje('Error al suspender usuario');
+        }
+      });
   }
 
   mostrarMensaje(mensaje: string): void {

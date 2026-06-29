@@ -13,11 +13,16 @@
         </div>
     </header>
 
+
     <section *ngIf="tab === 'articles'">
 
         <h2>Artículos reportados</h2>
 
-        <table *ngIf="articulosAgrupados.length; else sinArticulos">
+        <!-- LOADING -->
+        <p *ngIf="loadingArticles">Cargando artículos...</p>
+
+        <!-- DATA -->
+        <table *ngIf="!loadingArticles && articulosAgrupados.length; else sinArticulos">
             <thead>
                 <tr>
                     <th>Artículo</th>

@@ -60,4 +60,27 @@ export class ModeradorService {
       { headers: this.getHeaders(token) }
     );
   }
+
+  eliminarArticulo(articleId: number, token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+  
+    return this.http.delete(
+      `${environment.apiUrl}/api/articles/${articleId}`,
+      { headers }
+    );
+  }
+  
+  suspenderUsuario(userId: number, token: string) {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+  
+    return this.http.patch(
+      `${environment.apiUrl}/api/users/${userId}/suspend`,
+      {},
+      { headers }
+    );
+  }
 }
