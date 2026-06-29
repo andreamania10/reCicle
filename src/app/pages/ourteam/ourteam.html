@@ -2,11 +2,7 @@
     <div class="about-container">
 
         <header class="about-header">
-            <img
-                class="unir-logo"
-                src="/assets/imagenes/Unir_2021_logo_color.svg"
-                alt="Logo UNIR"
-            />
+            <img class="unir-logo" src="/assets/imagenes/Unir_2021_logo_color.svg" alt="Logo UNIR" />
             <h1>Sobre Nosotros</h1>
             <p class="about-intro">
                 Proyecto desarrollado en el marco del Máster en Desarrollo de Aplicaciones Web del Grupo UNIR.
@@ -20,9 +16,7 @@
                 </div>
                 <h2>Nuestro equipo</h2>
                 <p>
-                    Desarrolladores comprometidos con la creación de soluciones tecnológicas innovadoras y sostenibles.
-                    Trabajamos de forma colaborativa, combinando conocimientos técnicos y creatividad para ofrecer una
-                    plataforma útil, intuitiva y accesible.
+                    Desarrolladores comprometidos con la creación de soluciones tecnológicas innovadoras y sostenibles. Trabajamos de forma colaborativa, combinando conocimientos técnicos y creatividad para ofrecer una plataforma útil, intuitiva y accesible.
                 </p>
             </article>
 
@@ -32,9 +26,7 @@
                 </div>
                 <h2>Nuestra misión</h2>
                 <p>
-                    Fomentar la reutilización de productos mediante una plataforma digital que facilite la compraventa
-                    responsable, contribuyendo a la reducción de residuos y promoviendo la economía circular y el
-                    consumo consciente.
+                    Fomentar la reutilización de productos mediante una plataforma digital que facilite la compraventa responsable, contribuyendo a la reducción de residuos y promoviendo la economía circular y el consumo consciente.
                 </p>
             </article>
 
@@ -44,7 +36,7 @@
                 </div>
                 <h2>Nuestros valores</h2>
                 <ul class="values-list">
-                    <li><i class="bi bi-leaf"></i> Sostenibilidad y respeto por el medio ambiente</li>
+                    <li><i class="bi bi-globe"></i> Sostenibilidad y respeto por el medio ambiente</li>
                     <li><i class="bi bi-universal-access"></i> Accesibilidad e inclusión digital</li>
                     <li><i class="bi bi-arrow-repeat"></i> Colaboración y mejora continua</li>
                     <li><i class="bi bi-hand-thumbs-up"></i> Responsabilidad social</li>
@@ -60,21 +52,16 @@
 
             <div class="team-grid">
                 @for (member of teamMembers; track member.name) {
-                    <article class="member-card">
-                        <div class="member-card__photo-wrap">
-                            <img
-                                [src]="member.photo"
-                                [alt]="member.name"
-                                [class.member-card__photo--placeholder]="member.photo === defaultPhoto"
-                                loading="lazy"
-                            />
-                        </div>
-                        <div class="member-card__body">
-                            <h3>{{ member.name }}</h3>
-                            <span class="member-card__role">{{ member.role }}</span>
-                            <p class="member-card__focus">{{ member.focus }}</p>
-                        </div>
-                    </article>
+                <article class="member-card">
+                    <div class="member-card__photo-wrap">
+                        <img [src]="member.photo" [alt]="member.name" [class.member-card__photo--placeholder]="member.photo === defaultPhoto" loading="lazy" />
+                    </div>
+                    <div class="member-card__body">
+                        <h3>{{ member.name }}</h3>
+                        <span class="member-card__role">{{ member.role }}</span>
+                        <p class="member-card__focus">{{ member.focus }}</p>
+                    </div>
+                </article>
                 }
             </div>
         </section>
