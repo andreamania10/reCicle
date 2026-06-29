@@ -8,9 +8,9 @@
             <div class="profile-title-row">
                 <h1 class="profile-title">Mi perfil</h1>
                 <button type="button" class="btn-logout" (click)="logout()">
-            <i class="bi bi-box-arrow-right"></i>
-            Cerrar sesión
-          </button>
+                    <i class="bi bi-box-arrow-right"></i>
+                    Cerrar sesión
+                </button>
             </div>
             <p class="profile-subtitle">Gestiona tu información personal y la seguridad de tu cuenta.</p>
         </div>
@@ -22,7 +22,8 @@
                 <h2 class="card-title">Foto de perfil</h2>
                 <div class="avatar-wrapper">
                     @if (profile.avatar_url) {
-                    <img class="avatar-image" [src]="profile.avatar_url" [alt]="'Avatar de ' + profile.username" /> } @else {
+                    <img class="avatar-image" [src]="profile.avatar_url" [alt]="'Avatar de ' + profile.username" />
+                    } @else {
                     <div class="avatar-placeholder">
                         <i class="bi bi-person-circle"></i>
                     </div>
@@ -52,66 +53,163 @@
                     <div class="info-item">
                         <dt>Valoración media</dt>
                         <dd class="rating-value">
-                            <i class="bi bi-star-fill"></i> {{ profile.avg_rating }}
+                            <i class="bi bi-star-fill"></i> {{ profile.avg_rating || '—' }}
                         </dd>
                     </div>
                     <div class="info-item">
                         <dt>Localización</dt>
                         <dd>
-                            <i class="bi bi-geo-alt"></i> {{ profile.location }}
+                            <i class="bi bi-geo-alt"></i> {{ profile.location || '—' }}
+                        </dd>
+                    </div>
+                    <!-- Botón gestión de contraseña -->
+                    <div class="info-item info-item--password">
+                        <dt>Contraseña</dt>
+                        <dd>
+                            <button type="button" class="btn-change-password" (click)="openPasswordConfirmModal()">
+                                <i class="bi bi-lock"></i> Gestión de contraseña
+                            </button>
                         </dd>
                     </div>
                 </dl>
             </section>
 
-            <!-- Bloque 3: Cambiar contraseña -->
-            <section class="profile-card profile-card--password">
-                <h2 class="card-title">Cambiar contraseña</h2>
-                <p class="card-description">Actualiza tu contraseña para mantener tu cuenta segura.</p>
+        </div>
 
+        <!-- Mis productos -->
+        <section class="profile-card profile-card--articles">
+            <h2 class="card-title">Mis productos</h2>
+
+            @if (loadingArticles) {
+            <div class="articles-loading">
+                <span class="spinner-border spinner-border-sm"></span> Cargando productos...
+            </div>
+            } @else if (articlesError) {
+            <p class="articles-error">{{ articlesError }}</p>
+            } @else if (myArticles.length === 0) {
+            <p class="articles-empty">Aún no has publicado ningún producto. <a routerLink="/sellProduct">¡Publica el primero!</a></p>
+            } @else {
+            <div class="articles-grid">
+                @for (article of myArticles; track article.id) {
+                <a class="article-mini-card" [routerLink]="['/articles', article.id]">
+                    <div class="article-mini-img">
+                        @if (article.main_photo || (article.photos && article.photos.length > 0)) {
+                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" />
+                        } @else {
+                        <div class="article-mini-placeholder"><i class="bi bi-image"></i></div>
+                        }
+                    </div>
+                    <div class="article-mini-info">
+                        <span class="article-mini-title">{{ article.title }}</span>
+                        <span class="article-mini-price">{{ article.price | currency:'EUR':'symbol':'1.0-2' }}</span>
+                        <span class="article-mini-status" [class]="'status-' + (article.status || 'Borrador').toLowerCase().replace(' ', '-')">{{ article.status || 'Borrador' }}</span>
+                    </div>
+                </a>
+                }
+            </div>
+            }
+        </section>
+
+    </div>
+</div>
+
+<!-- Pop up 1: Confirmación cambio de contraseña -->
+<div class="modal fade" id="passwordConfirmModal" tabindex="-1" aria-labelledby="passwordConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content modal-password">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="passwordConfirmLabel">
+                    <i class="bi bi-shield-lock me-2"></i>Cambiar contraseña
+                </h5>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-text">Estás a punto de cambiar tu contraseña. ¿Deseas continuar?</p>
+            </div>
+            <div class="modal-footer border-0 pt-0 gap-2">
+                <button type="button" class="btn-modal-secondary" (click)="cancelPasswordChange()">
+                    No
+                </button>
+                <button type="button" class="btn-modal-primary" (click)="confirmChangePassword()">
+                    Sí, quiero
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pop up 2: Formulario cambio de contraseña -->
+<div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-password">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="passwordChangeLabel">
+                    <i class="bi bi-lock me-2"></i>Nueva contraseña
+                </h5>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
                 <form #passwordForm="ngForm" (ngSubmit)="onChangePassword(passwordForm)" novalidate class="password-form">
+
                     <div class="form-group">
                         <label for="currentPassword" class="form-label">Contraseña actual</label>
                         <div class="password-input-wrapper">
-                            <input [type]="showPasswords.current ? 'text' : 'password'" id="currentPassword" name="currentPassword" class="form-control" [(ngModel)]="passwordData.currentPassword" #currentField="ngModel" required placeholder="Introduce tu contraseña actual" [class.is-invalid]="currentField.invalid && currentField.touched"
-                            />
-                            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('current')" [attr.aria-label]="showPasswords.current ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-                  <i class="bi" [class.bi-eye]="!showPasswords.current" [class.bi-eye-slash]="showPasswords.current"></i>
-                </button>
+                            <input [type]="showPasswords.current ? 'text' : 'password'"
+                                   id="currentPassword" name="currentPassword"
+                                   class="form-control"
+                                   [(ngModel)]="passwordData.currentPassword"
+                                   #currentField="ngModel"
+                                   required
+                                   placeholder="Introduce tu contraseña actual"
+                                   [class.is-invalid]="currentField.invalid && currentField.touched" />
+                            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('current')">
+                                <i class="bi" [class.bi-eye]="!showPasswords.current" [class.bi-eye-slash]="showPasswords.current"></i>
+                            </button>
                         </div>
                         <div class="invalid-feedback" *ngIf="currentField.invalid && currentField.touched">
                             La contraseña actual es obligatoria.
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="newPassword" class="form-label">Nueva contraseña</label>
-                            <div class="password-input-wrapper">
-                                <input [type]="showPasswords.new ? 'text' : 'password'" id="newPassword" name="newPassword" class="form-control" [(ngModel)]="passwordData.newPassword" #newField="ngModel" required minlength="6" placeholder="Mínimo 6 caracteres" [class.is-invalid]="newField.invalid && newField.touched"
-                                />
-                                <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('new')" [attr.aria-label]="showPasswords.new ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-                    <i class="bi" [class.bi-eye]="!showPasswords.new" [class.bi-eye-slash]="showPasswords.new"></i>
-                  </button>
-                            </div>
-                            <div class="invalid-feedback" *ngIf="newField.invalid && newField.touched">
-                                <span *ngIf="newField.errors?.['required']">La nueva contraseña es obligatoria.</span>
-                                <span *ngIf="newField.errors?.['minlength']">Mínimo 6 caracteres.</span>
-                            </div>
+                    <div class="form-group">
+                        <label for="newPassword" class="form-label">Nueva contraseña</label>
+                        <div class="password-input-wrapper">
+                            <input [type]="showPasswords.new ? 'text' : 'password'"
+                                   id="newPassword" name="newPassword"
+                                   class="form-control"
+                                   [(ngModel)]="passwordData.newPassword"
+                                   #newField="ngModel"
+                                   required minlength="6"
+                                   placeholder="Mínimo 6 caracteres"
+                                   [class.is-invalid]="newField.invalid && newField.touched" />
+                            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('new')">
+                                <i class="bi" [class.bi-eye]="!showPasswords.new" [class.bi-eye-slash]="showPasswords.new"></i>
+                            </button>
                         </div>
+                        <div class="invalid-feedback" *ngIf="newField.invalid && newField.touched">
+                            <span *ngIf="newField.errors?.['required']">La nueva contraseña es obligatoria.</span>
+                            <span *ngIf="newField.errors?.['minlength']">Mínimo 6 caracteres.</span>
+                        </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-                            <div class="password-input-wrapper">
-                                <input [type]="showPasswords.confirm ? 'text' : 'password'" id="confirmPassword" name="confirmPassword" class="form-control" [(ngModel)]="passwordData.confirmPassword" #confirmField="ngModel" required placeholder="Repite la nueva contraseña" [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
-                                />
-                                <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('confirm')" [attr.aria-label]="showPasswords.confirm ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-                    <i class="bi" [class.bi-eye]="!showPasswords.confirm" [class.bi-eye-slash]="showPasswords.confirm"></i>
-                  </button>
-                            </div>
-                            <div class="invalid-feedback" *ngIf="passwordMismatch">
-                                Las contraseñas no coinciden.
-                            </div>
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                        <div class="password-input-wrapper">
+                            <input [type]="showPasswords.confirm ? 'text' : 'password'"
+                                   id="confirmPassword" name="confirmPassword"
+                                   class="form-control"
+                                   [(ngModel)]="passwordData.confirmPassword"
+                                   #confirmField="ngModel"
+                                   required
+                                   placeholder="Repite la nueva contraseña"
+                                   [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch" />
+                            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('confirm')">
+                                <i class="bi" [class.bi-eye]="!showPasswords.confirm" [class.bi-eye-slash]="showPasswords.confirm"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback" *ngIf="passwordMismatch">
+                            Las contraseñas no coinciden.
                         </div>
                     </div>
 
@@ -123,15 +221,14 @@
                     </div>
 
                     <button type="submit" class="btn-submit" [disabled]="isChangingPassword || passwordForm.invalid || passwordMismatch">
-              <span *ngIf="!isChangingPassword">Actualizar contraseña</span>
-              <span *ngIf="isChangingPassword" class="d-flex align-items-center justify-content-center gap-2">
-                <span class="spinner-border spinner-border-sm" role="status"></span>
-                Actualizando...
-              </span>
-            </button>
+                        <span *ngIf="!isChangingPassword">Actualizar contraseña</span>
+                        <span *ngIf="isChangingPassword" class="d-flex align-items-center justify-content-center gap-2">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                            Actualizando...
+                        </span>
+                    </button>
                 </form>
-            </section>
-
+            </div>
         </div>
     </div>
 </div>

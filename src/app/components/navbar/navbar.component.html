@@ -47,6 +47,11 @@
                     <i class="bi bi-shield-check"></i> Panel Admin
                 </a>
                 }
+                @if (user.role === 'Moderador') {
+                <a class="btn-admin" routerLink="/moderator">
+                    <i class="bi bi-clipboard-check"></i> Panel Moderador
+                </a>
+                }
 
                 <button class="btn-favorites" (click)="goToFavorites()">
                     <img src="assets/imagenes/heart.png" class="heart-icon" />
