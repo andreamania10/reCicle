@@ -39,24 +39,24 @@
 
             <div class="navbar-actions">
                 <button class="btn-favorites" (click)="goToFavorites()">
-                            ...
-                        </button>
+                    <img src="assets/imagenes/heart.png" class="heart-icon" />
+                    <img src="assets/imagenes/heart hover.png" class="heart-icon heart-hover" />
+                </button>
 
-                <button class="btn-messages" type="button" (click)="goToMessages()">
-                            ...
-                        </button>
+                <button class="btn-messages" type="button" (click)="goToMessages()" title="Mensajes">
+                    <i class="bi bi-chat-dots"></i>
+                </button>
 
                 <button class="btn-role" (click)="goToProfile(user.id)">
-                            <i class="bi bi-person"></i>
-                            Mi perfil
-                        </button>
+                    <i class="bi bi-person"></i>
+                    Mi perfil
+                </button>
 
                 <button class="btn-sell" (click)="sellProducts()">
-                            ...
-                        </button>
-            </div>
+                    <span class="sell-text"> + Vender</span>
+                </button>
 
-            } @else if (user.role === 'Moderador') {
+            </div> } @else if (user.role === 'Moderador') {
 
             <button class="btn-role" (click)="goToProfile(user.id)">
                         <i class="bi bi-person"></i>
