@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import {
   ArticleReportDetail,
   PendingArticleReport,
@@ -16,7 +15,7 @@ type ReportsTab = 'articles' | 'users' | 'history';
 
 @Component({
   selector: 'app-moderator-panel',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './moderator-panel.html',
   styleUrls: ['./moderator-panel.css']
 })

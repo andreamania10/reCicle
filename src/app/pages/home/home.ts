@@ -34,9 +34,9 @@ export class Home implements OnInit {
   location: string = '';
 
   slides = [
-    { image: '/assets/imagenes/banner-tablet.jpg' },
-    { image: '/assets/imagenes/banner-home.jpg' },
-    { image: '/assets/imagenes/banner-buy.jpg' },
+    { image: 'assets/imagenes/banner-home.jpg' },
+    { image: 'assets/imagenes/banner-buy.jpg' },
+    { image: 'assets/imagenes/banner-tablet.jpg' },
   ];
 
   currentIndex = 0;
@@ -246,5 +246,15 @@ export class Home implements OnInit {
     };
 
     return icons[category.id] ?? 'bi-tag';
+  }
+
+  onSlideImageError(index: number): void {
+    const fallback = 'assets/imagenes/banner-home.jpg';
+    const slide = this.slides[index];
+
+    if (slide && slide.image !== fallback) {
+      slide.image = fallback;
+      this.cdr.detectChanges();
+    }
   }
 }

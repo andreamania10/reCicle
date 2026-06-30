@@ -3,6 +3,7 @@ import { adminGuard, authGuard, moderatorGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
+  { path: 'home', loadComponent: () => import('./pages/home/home').then(m => m.Home) },
   { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) },
   { path: 'categories', loadComponent: () => import('./pages/categories/categories').then(m => m.Categories) },
   {

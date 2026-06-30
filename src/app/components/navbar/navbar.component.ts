@@ -53,9 +53,8 @@ export class NavbarComponent implements OnInit{
   }
 
   
-goHome() {
-  const link = this.auth.currentUser() ? '/home' : '/';
-  window.location.href = link;
+goHome(): void {
+  this.router.navigate([this.auth.currentUser() ? '/home' : '/']);
 }
 
   
