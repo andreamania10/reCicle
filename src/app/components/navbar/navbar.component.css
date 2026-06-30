@@ -16,15 +16,16 @@
 }
 
 .brand-logo {
-    width: 34px;
-    height: 34px;
-    object-fit: contain;
+    width: 70px;
+    height: 70px;
+    margin-top: -20px; margin-bottom: -20px;
+    /* object-fit: contain;
+    display: block; */
 }
 
 .brand-name {
     font-size: 20px;
     color: #9a9b9d;
-    font-family: fantasy;
 }
 
 .nav-link {

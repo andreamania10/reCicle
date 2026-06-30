@@ -71,8 +71,8 @@ goHome() {
     }
   }
 
-  goToProfile(userId: number): void {
-    this.router.navigate(['/profile', userId]);
+  goToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 
   sellProducts(){

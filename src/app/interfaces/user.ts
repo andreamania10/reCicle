@@ -35,7 +35,8 @@ export interface RegisterResponse {
 }
 
 export interface JwtPayload {
-  userId: number;
+  userId?: number;
+  id?: number;
   role: string;
   exp?: number;
   iat?: number;

@@ -58,7 +58,7 @@ export class Register {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (user) => {
-          this.router.navigate(['/profile', user.id]);
+          this.router.navigate(['/profile']);
         },
         error: (err: Error) => {
           this.errorMessage.set(err.message || 'Error al registrarse');

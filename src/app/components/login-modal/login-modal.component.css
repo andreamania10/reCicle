@@ -33,7 +33,6 @@
 }
 
 .brand-name {
-  font-family: 'Syne', sans-serif;
   font-weight: 700;
   font-size: 1rem;
   color: #1a1a1a;
@@ -41,7 +40,6 @@
 }
 
 .modal-title {
-  font-family: 'Syne', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -50,7 +48,6 @@
 }
 
 .login-subtitle {
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.9rem;
   color: #888;
   margin: 0;
@@ -90,7 +87,6 @@
 }
 
 .form-label {
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem;
   font-weight: 500;
   color: #444;
@@ -108,7 +104,6 @@
   background: none;
   border: none;
   padding: 0;
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.8rem;
   color: #888;
   text-decoration: underline;
@@ -151,7 +146,6 @@
 }
 
 .form-control {
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.9rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -182,7 +176,6 @@
   border: 1px solid #fecaca;
   color: #c0392b;
   font-size: 0.83rem;
-  font-family: 'DM Sans', sans-serif;
   padding: 0.55rem 0.85rem;
   border-radius: 8px;
   display: flex;
@@ -191,7 +184,6 @@
 }
 
 .btn-submit {
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.92rem;
   font-weight: 500;
   background-color: #1a1a1a;
@@ -228,7 +220,6 @@
 }
 
 .register-prompt {
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.87rem;
   color: #888;
   margin: 0;
@@ -238,7 +229,6 @@
   background: none;
   border: none;
   padding: 0;
-  font-family: 'DM Sans', sans-serif;
   font-size: 0.87rem;
   font-weight: 500;
   color: #1a1a1a;

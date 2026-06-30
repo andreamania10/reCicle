@@ -3,8 +3,7 @@
 
         <!-- Logo: siempre visible -->
         <a class="navbar-brand" (click)="goHome(); $event.preventDefault()">
-            <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="Recycle" />
-            <span class="brand-name">Recycle</span>
+            <img class="brand-logo" src="assets/imagenes/logo-recycle.png" alt="Recycle" />
         </a>
 
         <!-- Barra de búsqueda: SOLO MÓVIL (fuera del collapse) -->
@@ -29,6 +28,9 @@
 
             <!-- Links de navegación -->
             <ul class="navbar-nav me-auto my-2 my-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Inicio</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/ourteam">Quienes somos</a>
                 </li>
@@ -78,7 +80,7 @@
                 </button>
                 }
 
-                <button class="btn-role" type="button" (click)="goToProfile(user.id)">
+                <button class="btn-role" type="button" (click)="goToProfile()">
                     <i class="bi bi-person"></i>
                     Mi perfil
                 </button>

@@ -6,7 +6,7 @@
 
 .profile-container {
     width: 100%;
-    max-width: 960px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
@@ -15,7 +15,6 @@
 }
 
 .back-link {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     color: #888;
     text-decoration: none;
@@ -39,7 +38,6 @@
 }
 
 .profile-title {
-    font-family: 'Syne', sans-serif;
     font-size: 1.75rem;
     font-weight: 700;
     color: #1a1a1a;
@@ -48,7 +46,6 @@
 }
 
 .btn-logout {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;
     color: #c0392b;
@@ -71,7 +68,6 @@
 }
 
 .profile-subtitle {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.92rem;
     color: #777;
     margin: 0;
@@ -79,8 +75,9 @@
 
 .profile-grid {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1.25rem;
+    align-items: stretch;
 }
 
 .profile-card {
@@ -88,13 +85,19 @@
     border: 1px solid #e8e8e8;
     border-radius: 14px;
     padding: 1.75rem;
+    min-height: 100%;
 }
 
 .profile-card--avatar {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: stretch;
+    text-align: left;
+}
+
+.profile-card--info {
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-card--articles {
@@ -102,7 +105,6 @@
 }
 
 .card-title {
-    font-family: 'Syne', sans-serif;
     font-size: 1.05rem;
     font-weight: 700;
     color: #1a1a1a;
@@ -110,41 +112,95 @@
     letter-spacing: -0.02em;
 }
 
+.avatar-hint {
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.avatar-url-group {
+    width: 100%;
+    margin-top: auto;
+    text-align: left;
+}
+
+.profile-loading,
+.profile-error {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.profile-error {
+    color: #c0392b;
+}
+
+.profile-error--banner {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+}
+
+.info-list--readonly {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #eee;
+}
+
+.alert-success {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    background: #d1e7dd;
+    color: #0a3622;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
 .card-description {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.87rem;
     color: #777;
     margin: -0.75rem 0 1.25rem;
 }
 
 .avatar-wrapper {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 25%;
     overflow: hidden;
-    border: 3px solid #f0f0f0;
-    margin-bottom: 1rem;
+    border: 1px solid #ececec;
+    margin-bottom: 1.25rem;
+    background: #f4f4f4;
+    flex-shrink: 0;
 }
 
 .avatar-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    border-radius: 25%;
 }
 
 .avatar-placeholder {
     width: 100%;
     height: 100%;
+    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #f4f4f4;
     color: #bbb;
-    font-size: 5rem;
+    font-size: clamp(3rem, 12vw, 6rem);
+    border-radius: 25%;
 }
 
 .avatar-hint {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.78rem;
     color: #aaa;
     margin: 0;
@@ -166,7 +222,6 @@
 }
 
 .info-item dt {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.82rem;
     font-weight: 500;
     color: #888;
@@ -174,7 +229,6 @@
 }
 
 .info-item dd {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.92rem;
     color: #1a1a1a;
     margin: 0;
@@ -221,7 +275,6 @@
 }
 
 .form-label {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;
     color: #444;
@@ -229,7 +282,6 @@
 }
 
 .form-control {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -289,7 +341,6 @@
     border: 1px solid #fecaca;
     color: #c0392b;
     font-size: 0.83rem;
-    font-family: 'DM Sans', sans-serif;
     padding: 0.55rem 0.85rem;
     border-radius: 8px;
     display: flex;
@@ -302,7 +353,6 @@
     border: 1px solid #bbf7d0;
     color: #166534;
     font-size: 0.83rem;
-    font-family: 'DM Sans', sans-serif;
     padding: 0.55rem 0.85rem;
     border-radius: 8px;
     display: flex;
@@ -311,7 +361,6 @@
 }
 
 .btn-submit {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.92rem;
     font-weight: 500;
     background-color: #1a1a1a;
@@ -354,7 +403,6 @@
 }
 
 .btn-change-password {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;
     background: #f4f4f4;
@@ -378,7 +426,6 @@
 .articles-loading,
 .articles-empty,
 .articles-error {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     color: #777;
     padding: 1rem 0;
@@ -451,7 +498,6 @@
 }
 
 .article-mini-title {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.88rem;
     font-weight: 500;
     color: #1a1a1a;
@@ -461,14 +507,12 @@
 }
 
 .article-mini-price {
-    font-family: 'Syne', sans-serif;
     font-size: 0.92rem;
     font-weight: 700;
     color: #00a082;
 }
 
 .article-mini-status {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.75rem;
     font-weight: 500;
     padding: 2px 8px;
@@ -497,7 +541,6 @@
 }
 
 .confirm-text {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.95rem;
     color: #444;
     margin: 0;
@@ -505,7 +548,6 @@
 }
 
 .btn-modal-primary {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
     background: #1a1a1a;
@@ -522,7 +564,6 @@
 }
 
 .btn-modal-secondary {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
     background: #fff;
@@ -553,6 +594,22 @@
 
 .btn-close-modal:hover {
     color: #1a1a1a;
+}
+
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card--avatar {
+        min-height: auto;
+    }
+
+    .avatar-wrapper {
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 @media (max-width: 500px) {

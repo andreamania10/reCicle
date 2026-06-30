@@ -2,9 +2,6 @@
     <div class="profile-container">
 
         <div class="profile-header">
-            <a routerLink="/home" class="back-link">
-                <i class="bi bi-arrow-left"></i> Volver al inicio
-            </a>
             <div class="profile-title-row">
                 <h1 class="profile-title">Mi perfil</h1>
                 <button type="button" class="btn-logout" (click)="requestLogout()">
@@ -15,67 +12,148 @@
             <p class="profile-subtitle">Gestiona tu información personal y la seguridad de tu cuenta.</p>
         </div>
 
-        <div class="profile-grid">
+        @if (loadingProfile) {
+        <div class="profile-loading">
+            <span class="spinner-border spinner-border-sm"></span>
+            Cargando perfil...
+        </div>
+        } @else {
+        @if (profileError) {
+        <p class="profile-error profile-error--banner">{{ profileError }}</p>
+        }
+        <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)" novalidate>
+            <div class="profile-grid">
 
-            <!-- Bloque 1: Avatar -->
-            <section class="profile-card profile-card--avatar">
-                <h2 class="card-title">Foto de perfil</h2>
-                <div class="avatar-wrapper">
-                    @if (profile.avatar_url) {
-                    <img class="avatar-image" [src]="profile.avatar_url" [alt]="'Avatar de ' + profile.username" /> } @else {
-                    <div class="avatar-placeholder">
-                        <i class="bi bi-person-circle"></i>
+                <section class="profile-card profile-card--avatar">
+                    <h2 class="card-title">Foto de perfil</h2>
+                    <div class="avatar-wrapper">
+                        @if (editData.avatar_url) {
+                        <img
+                            class="avatar-image"
+                            [src]="editData.avatar_url"
+                            [alt]="'Avatar de ' + editData.username"
+                            (error)="$any($event.target).style.display='none'"
+                        />
+                        } @else {
+                        <div class="avatar-placeholder">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        }
+                    </div>
+
+                    <div class="form-group avatar-url-group">
+                        <label for="avatarUrl" class="form-label">URL de la imagen</label>
+                        <input
+                            type="url"
+                            id="avatarUrl"
+                            name="avatarUrl"
+                            class="form-control"
+                            [(ngModel)]="editData.avatar_url"
+                            placeholder="https://ejemplo.com/mi-foto.jpg"
+                        />
+                        <small class="avatar-hint">Pega aquí la URL de tu foto de perfil.</small>
+                    </div>
+                </section>
+
+                <section class="profile-card profile-card--info">
+                    <h2 class="card-title">Información personal</h2>
+
+                    <div class="form-group">
+                        <label for="username" class="form-label">Nombre de usuario</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            class="form-control"
+                            [(ngModel)]="editData.username"
+                            #usernameField="ngModel"
+                            required
+                            [class.is-invalid]="usernameField.invalid && usernameField.touched"
+                        />
+                        @if (usernameField.invalid && usernameField.touched) {
+                        <div class="invalid-feedback">El nombre de usuario es obligatorio.</div>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            [(ngModel)]="editData.email"
+                            #emailField="ngModel"
+                            required
+                            email
+                            [class.is-invalid]="emailField.invalid && emailField.touched"
+                        />
+                        @if (emailField.invalid && emailField.touched) {
+                        <div class="invalid-feedback">Introduce un correo válido.</div>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location" class="form-label">Ubicación</label>
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            class="form-control"
+                            [(ngModel)]="editData.location"
+                            placeholder="Ciudad, país"
+                        />
+                    </div>
+
+                    <dl class="info-list info-list--readonly">
+                        <div class="info-item">
+                            <dt>Rol</dt>
+                            <dd>
+                                <span class="role-badge">{{ getRoleLabel(profile.role) }}</span>
+                            </dd>
+                        </div>
+                        <div class="info-item">
+                            <dt>Valoración media</dt>
+                            <dd class="rating-value">
+                                <i class="bi bi-star-fill"></i> {{ profile.avg_rating || '—' }}
+                            </dd>
+                        </div>
+                        <div class="info-item info-item--password">
+                            <dt>Contraseña</dt>
+                            <dd>
+                                <button type="button" class="btn-change-password" (click)="openPasswordConfirmModal()">
+                                    <i class="bi bi-lock"></i> Gestión de contraseña
+                                </button>
+                            </dd>
+                        </div>
+                    </dl>
+
+                    @if (profileSaveError) {
+                    <div class="alert-error">
+                        <i class="bi bi-exclamation-circle"></i> {{ profileSaveError }}
                     </div>
                     }
-                </div>
-                <p class="avatar-hint">La imagen se actualizará cuando el servicio de perfil esté disponible.</p>
-            </section>
+                    @if (profileMessage) {
+                    <div class="alert-success">
+                        <i class="bi bi-check-circle"></i> {{ profileMessage }}
+                    </div>
+                    }
 
-            <!-- Bloque 2: Datos del usuario -->
-            <section class="profile-card profile-card--info">
-                <h2 class="card-title">Información personal</h2>
-                <dl class="info-list">
-                    <div class="info-item">
-                        <dt>Usuario</dt>
-                        <dd>{{ profile.username }}</dd>
-                    </div>
-                    <div class="info-item">
-                        <dt>Correo electrónico</dt>
-                        <dd>{{ profile.email }}</dd>
-                    </div>
-                    <div class="info-item">
-                        <dt>Rol</dt>
-                        <dd>
-                            <span class="role-badge">{{ getRoleLabel(profile.role) }}</span>
-                        </dd>
-                    </div>
-                    <div class="info-item">
-                        <dt>Valoración media</dt>
-                        <dd class="rating-value">
-                            <i class="bi bi-star-fill"></i> {{ profile.avg_rating || '—' }}
-                        </dd>
-                    </div>
-                    <div class="info-item">
-                        <dt>Localización</dt>
-                        <dd>
-                            <i class="bi bi-geo-alt"></i> {{ profile.location || '—' }}
-                        </dd>
-                    </div>
-                    <!-- Botón gestión de contraseña -->
-                    <div class="info-item info-item--password">
-                        <dt>Contraseña</dt>
-                        <dd>
-                            <button type="button" class="btn-change-password" (click)="openPasswordConfirmModal()">
-                                <i class="bi bi-lock"></i> Gestión de contraseña
-                            </button>
-                        </dd>
-                    </div>
-                </dl>
-            </section>
+                    <button type="submit" class="btn-submit" [disabled]="isSavingProfile || profileForm.invalid">
+                        @if (!isSavingProfile) {
+                        Guardar cambios
+                        } @else {
+                        <span class="d-flex align-items-center justify-content-center gap-2">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                            Guardando...
+                        </span>
+                        }
+                    </button>
+                </section>
 
-        </div>
+            </div>
+        </form>
 
-        <!-- Mis productos -->
         <section class="profile-card profile-card--articles">
             <h2 class="card-title">Mis productos</h2>
 
@@ -93,7 +171,8 @@
                 <a class="article-mini-card" [routerLink]="['/articles', article.id]">
                     <div class="article-mini-img">
                         @if (article.main_photo || (article.photos && article.photos.length > 0)) {
-                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" /> } @else {
+                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" />
+                        } @else {
                         <div class="article-mini-placeholder"><i class="bi bi-image"></i></div>
                         }
                     </div>
@@ -107,6 +186,7 @@
             </div>
             }
         </section>
+        }
 
     </div>
 </div>

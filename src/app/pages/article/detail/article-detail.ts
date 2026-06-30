@@ -277,18 +277,20 @@ export class ArticleDetail implements OnInit {
     this.favoriteLoading = true;
     this.favoriteError = '';
 
+    const token = currentUser.token;
+
     if (this.isFavorite) {
-      this.removeFavorite(currentUser.token);
+      this.removeFavorite(token);
       return;
     }
 
-    this.favoriteService.add(currentUser.id, this.article.id, currentUser.token).subscribe({
+    this.favoriteService.add(currentUser.id, this.article.id, token).subscribe({
       next: (created) => {
         this.isFavorite = true;
         this.favoriteId = this.favoriteService.extractFavoriteId(created);
 
         if (!this.favoriteId) {
-          this.favoriteService.getUserFavorites(currentUser.token).subscribe({
+          this.favoriteService.getUserFavorites(token).subscribe({
             next: (response) => {
               this.favoriteId = this.favoriteService.findFavoriteIdForArticle(
                 this.article!.id,

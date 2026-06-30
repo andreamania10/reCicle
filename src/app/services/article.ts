@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Article, ArticleResponse } from '../interfaces/article';
 
@@ -91,14 +91,10 @@ export class ArticleService {
   
 
   
-  createWithMedia(formData: FormData, token: string) {
-  const headers = { Authorization: `Bearer ${token}` };
-  return this.http.post(this.apiUrl, formData, {
-    headers,
-    reportProgress: true,
-    observe: 'events'
-  });
-}
+  createWithMedia(formData: FormData, token: string): Observable<Article> {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.post<Article>(this.apiUrl, formData, { headers });
+  }
 
   getMyArticles(token: string): Observable<Article[]> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
