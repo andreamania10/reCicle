@@ -23,16 +23,6 @@ export interface AdminUser {
   created_at: string;
 }
 
-export interface Report {
-  id: number;
-  type: string;
-  reason: string;
-  reporter_id: number;
-  article_id?: number;
-  reported_user_id?: number;
-  created_at: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private readonly apiUrl = environment.apiUrl;
@@ -73,11 +63,6 @@ export class AdminService {
 
   deleteUser(userId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/api/admin/users/${userId}`, { headers: this.getHeaders() });
-  }
-
-  // Reportes
-  getReports(): Observable<Report[]> {
-    return this.http.get<Report[]>(`${this.apiUrl}/api/reports`, { headers: this.getHeaders() });
   }
 
   // Categorías

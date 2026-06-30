@@ -1,145 +1,215 @@
-<div *ngIf="isModerador; else noPermisos" class="moderator-panel">
-    <!-- HEADER -->
-    <header class="panel-header">
-        <div>
-            <h1>Panel de moderación</h1>
-            <p>Gestiona artículos reportados y consulta usuarios reportados en modo solo lectura</p>
-        </div>
+<div class="moderator-wrapper">
+  <div class="moderator-header">
+    <a routerLink="/home" class="back-link">
+      <i class="bi bi-arrow-left"></i> Volver al inicio
+    </a>
+    <h1>Panel de moderación</h1>
+    <p>Gestiona reportes de artículos y usuarios.</p>
+  </div>
 
-        <div class="tabs">
-            <button type="button" (click)="tab = 'articles'" [class.active]="tab === 'articles'">
-          Artículos
-        </button>
+  @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+  }
+  @if (errorMessage()) {
+    <div class="alert alert-danger">{{ errorMessage() }}</div>
+  }
 
-            <button type="button" (click)="tab = 'usuarios'" [class.active]="tab === 'usuarios'">
-          Usuarios
-        </button>
-        </div>
-    </header>
+  <div class="moderator-tabs">
+    <button type="button" [class.active]="activeTab() === 'articles'" (click)="setTab('articles')">
+      Artículos pendientes
+    </button>
+    <button type="button" [class.active]="activeTab() === 'users'" (click)="setTab('users')">
+      Usuarios pendientes
+    </button>
+    <button type="button" [class.active]="activeTab() === 'history'" (click)="setTab('history')">
+      Historial
+    </button>
+  </div>
 
-    <!-- ================= ARTÍCULOS ================= -->
-    <section *ngIf="tab === 'articles'" class="table-section">
-        <div class="section-title">
-            <h2>Artículos reportados</h2>
-            <span class="counter" *ngIf="!loadingArticles">
-          {{ articulosAgrupados.length }} elementos
-        </span>
-        </div>
-
-        <p class="empty-state" *ngIf="loadingArticles">
-            Cargando artículos...
-        </p>
-
-        <table *ngIf="!loadingArticles && articulosAgrupados.length > 0">
-            <thead>
-                <tr>
-                    <th>Artículo</th>
-                    <th>Motivos</th>
-                    <th>Reportes</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr *ngFor="let item of articulosAgrupados">
-                    <td>
-                        <strong>{{ item.titulo || ('Artículo #' + item.targetId) }}</strong>
-                        <br />
-                        <small>ID: {{ item.targetId }}</small>
-                    </td>
-
-                    <td>
-                        <span *ngFor="let motivo of item.motivos" class="chip">
-                {{ motivo }}
-              </span>
-                    </td>
-
-                    <td>
-                        <span class="badge" [class.badge-strong]="item.totalReportes >= 3">
-                {{ item.totalReportes }}
-              </span>
-                    </td>
-
-                    <td>
-                        <div class="actions">
-                            <button type="button" (click)="observarArticulo(item)" class="secondary">
-                  Ver
-                </button>
-
-                            <button type="button" (click)="aceptarGrupo(item)" class="success">
-                  Aprobar
-                </button>
-
-                            <button type="button" (click)="rechazarGrupo(item)" class="warning">
-                  Rechazar
-                </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
+  <div class="tab-content">
+    @if (loading()) {
+      <p class="loading-text">Cargando reportes...</p>
+    } @else if (activeTab() === 'articles') {
+      @if (pendingArticles().length === 0) {
+        <p class="loading-text">No hay reportes de artículos pendientes.</p>
+      } @else {
+        <table class="moderator-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Artículo</th>
+              <th>Precio</th>
+              <th>Reportado por</th>
+              <th>Motivo</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (report of pendingArticles(); track report.report_id) {
+              <tr class="clickable-row" (click)="openArticleDetail(report)">
+                <td>{{ report.report_id }}</td>
+                <td>{{ report.article_title }}</td>
+                <td>{{ report.article_price }} €</td>
+                <td>{{ report.reporter_username }}</td>
+                <td>{{ report.report_reason }}</td>
+                <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            }
+          </tbody>
         </table>
+      }
+    } @else if (activeTab() === 'users') {
+      @if (pendingUsers().length === 0) {
+        <p class="loading-text">No hay reportes de usuarios pendientes.</p>
+      } @else {
+        <table class="moderator-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario reportado</th>
+              <th>Reportado por</th>
+              <th>Motivo</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (report of pendingUsers(); track report.report_id) {
+              <tr class="clickable-row" (click)="openUserDetail(report)">
+                <td>{{ report.report_id }}</td>
+                <td>{{ report.reported_username }}</td>
+                <td>{{ report.reporter_username }}</td>
+                <td>{{ report.report_reason }}</td>
+                <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    } @else {
+      @if (history().length === 0) {
+        <p class="loading-text">No hay reportes resueltos.</p>
+      } @else {
+        <table class="moderator-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tipo</th>
+              <th>Motivo</th>
+              <th>Resolución</th>
+              <th>Moderador</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (report of history(); track report.report_id) {
+              <tr>
+                <td>{{ report.report_id }}</td>
+                <td><span class="badge">{{ report.report_type }}</span></td>
+                <td>{{ report.report_reason }}</td>
+                <td>{{ report.resolution_note }}</td>
+                <td>{{ report.moderator_username }}</td>
+                <td>{{ report.resolution_date | date: 'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  </div>
 
-        <p class="empty-state" *ngIf="!loadingArticles && !articulosAgrupados.length">
-            No hay artículos reportados
-        </p>
-    </section>
+  @if (selectedArticleReport(); as report) {
+    <div class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3>Reporte de artículo #{{ report.report_id }}</h3>
+        <p><strong>Artículo:</strong> {{ report.title }}</p>
+        <p><strong>Precio:</strong> {{ report.price }} €</p>
+        <p><strong>Estado:</strong> {{ report.status }} (anterior: {{ report.previous_status }})</p>
+        <p><strong>Vendedor:</strong> {{ report.seller_username }}</p>
+        <p><strong>Ubicación:</strong> {{ report.location }}</p>
+        <p><strong>Motivo:</strong> {{ report.reason }}</p>
+        <p><strong>Fecha:</strong> {{ report.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
 
-    <!-- ================= USUARIOS ================= -->
-    <section *ngIf="tab === 'usuarios'" class="table-section">
-        <div class="section-title">
-            <h2>Usuarios reportados</h2>
-            <span class="counter" *ngIf="!loadingUsers">
-          {{ usuariosAgrupados.length }} elementos
-        </span>
+        @if (report.photos.length) {
+          <img class="report-photo" [src]="report.photos[0].url" [alt]="report.title" />
+        }
+
+        <div class="resolution-form">
+          <label class="form-label">Nota del moderador</label>
+          <textarea
+            class="form-control"
+            rows="3"
+            [(ngModel)]="moderatorNote"
+            placeholder="Explica por qué aceptas o rechazas el reporte..."
+          ></textarea>
         </div>
 
-        <p class="empty-state" *ngIf="loadingUsers">
-            Cargando usuarios...
-        </p>
+        <div class="modal-actions modal-actions--split">
+          <button type="button" class="btn-cancel" (click)="closeDetail()">Cancelar</button>
+          <button
+            type="button"
+            class="btn-reject"
+            [disabled]="resolving() || !moderatorNote.trim()"
+            (click)="resolveArticleReport('reject')"
+          >
+            {{ resolving() ? 'Procesando...' : 'Rechazar reporte' }}
+          </button>
+          <button
+            type="button"
+            class="btn-accept"
+            [disabled]="resolving() || !moderatorNote.trim()"
+            (click)="resolveArticleReport('accept')"
+          >
+            {{ resolving() ? 'Procesando...' : 'Aceptar reporte' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
-        <table *ngIf="!loadingUsers && usuariosAgrupados.length > 0">
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Motivos</th>
-                    <th>Reportes</th>
-                    <th>Modo</th>
-                </tr>
-            </thead>
+  @if (selectedUserReport(); as report) {
+    <div class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3>Reporte de usuario #{{ report.report_id }}</h3>
+        <div class="user-detail">
+          <img
+            class="report-avatar"
+            [src]="report.reported_user_avatar || '/assets/imagenes/sin_foto.png'"
+            [alt]="report.reported_user_username"
+          />
+          <div>
+            <p><strong>Usuario reportado:</strong> {{ report.reported_user_username }}</p>
+            <p><strong>Email:</strong> {{ report.reported_user_email }}</p>
+          </div>
+        </div>
+        <p><strong>Reportado por:</strong> {{ report.reporter_user_username }}</p>
+        <p><strong>Motivo:</strong> {{ report.reason }}</p>
+        <p><strong>Fecha:</strong> {{ report.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
 
-            <tbody>
-                <tr *ngFor="let item of usuariosAgrupados">
-                    <td>
-                        <strong>{{ item.nombre || ('Usuario #' + item.targetId) }}</strong>
-                        <br />
-                        <small>ID: {{ item.targetId }}</small>
-                    </td>
+        <div class="resolution-form">
+          <label class="form-label">Nota del moderador</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="moderatorNote" placeholder="Explica la decisión..."></textarea>
+        </div>
 
-                    <td>
-                        <span *ngFor="let motivo of item.motivos" class="chip">
-                {{ motivo }}
-              </span>
-                    </td>
-
-                    <td>
-                        <span class="badge" [class.badge-strong]="item.totalReportes >= 3">
-                {{ item.totalReportes }}
-              </span>
-                    </td>
-
-                    <td>
-                        <span class="readonly-badge">Solo vista</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p class="empty-state" *ngIf="!loadingUsers && !usuariosAgrupados.length">
-            No hay usuarios reportados
-        </p>
-    </section>
+        <div class="modal-actions modal-actions--split">
+          <button type="button" class="btn-cancel" (click)="closeDetail()">Cancelar</button>
+          <button
+            type="button"
+            class="btn-reject"
+            [disabled]="resolving() || !moderatorNote.trim()"
+            (click)="resolveUserReport('reject')"
+          >
+            {{ resolving() ? 'Procesando...' : 'Rechazar reporte' }}
+          </button>
+          <button
+            type="button"
+            class="btn-accept"
+            [disabled]="resolving() || !moderatorNote.trim()"
+            (click)="resolveUserReport('accept')"
+          >
+            {{ resolving() ? 'Procesando...' : 'Aceptar reporte' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
-
-<ng-template #noPermisos>
-    <p class="empty-state">No tienes permisos</p>
-</ng-template>

@@ -12,10 +12,6 @@
             <input class="form-control" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..." />
         </form>
 
-        <!-- Botón Login visible en móvil cuando NO hay sesión -->
-        @if (!auth.currentUser()) {
-        <button class="btn-login d-lg-none" type="button" (click)="openLoginModal()">Login</button> }
-
         <!-- Botón hamburguesa: solo móvil -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -55,38 +51,11 @@
                             ...
                         </button>
             </div>
-
-            } @else if (user.role === 'Moderador') {
-
-            <button class="btn-role" (click)="goToProfile(user.id)">
-                        <i class="bi bi-person"></i>
-                        Mi perfil
-                    </button>
-
-            <a class="btn-admin" routerLink="/moderator">
-                <i class="bi bi-clipboard-check"></i> Panel Moderador
-            </a>
-
-            } @else if (user.role === 'Administrador') {
-
-            <button class="btn-role" (click)="goToProfile(user.id)">
-                        <i class="bi bi-person"></i>
-                        Mi perfil
-                    </button>
-
-            <a class="btn-admin" routerLink="/moderator">
-                <i class="bi bi-clipboard-check"></i> Panel Moderador
-            </a>
-
-            <a class="btn-admin" routerLink="/admin">
-                <i class="bi bi-shield-check"></i> Panel Admin
-            </a>
-
-            } } @else {
-
-            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">
-                    Login
-                </button> }
+            } @else {
+            <div class="navbar-actions navbar-actions--guest">
+                <button class="btn-login" type="button" (click)="openLoginModal()">Login</button>
+            </div>
+            }
 
         </div>
     </div>

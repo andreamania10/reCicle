@@ -1,366 +1,208 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { forkJoin } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
-
-
-import { ModeradorService } from '../../services/moderadorService';
+import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
-  Report,
-  ApiListResponse,
-  GrupoArticulo,
-  GrupoUsuario
+  ArticleReportDetail,
+  PendingArticleReport,
+  PendingUserReport,
+  ReportHistoryItem,
+  UserReportDetail,
 } from '../../interfaces/report';
+import { Auth } from '../../services/auth';
+import { ReportService } from '../../services/report';
+
+type ReportsTab = 'articles' | 'users' | 'history';
 
 @Component({
   selector: 'app-moderator-panel',
-  standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './moderator-panel.html',
   styleUrls: ['./moderator-panel.css']
 })
 export class ModeratorPanel implements OnInit {
-  private router = inject(Router);
-  private moderadorService = inject(ModeradorService);
-  private snackBar = inject(MatSnackBar);
+  private auth = inject(Auth);
+  private reportService = inject(ReportService);
+  private cdr = inject(ChangeDetectorRef);
 
-  tab: 'articles' | 'usuarios' = 'articles';
+  activeTab = signal<ReportsTab>('articles');
+  loading = signal(false);
+  resolving = signal(false);
+  errorMessage = signal('');
+  successMessage = signal('');
 
-  articulosAgrupados: GrupoArticulo[] = [];
-  usuariosAgrupados: GrupoUsuario[] = [];
+  pendingArticles = signal<PendingArticleReport[]>([]);
+  pendingUsers = signal<PendingUserReport[]>([]);
+  history = signal<ReportHistoryItem[]>([]);
 
-  isModerador = false;
-  token = '';
-
-  loadingArticles = true;
-  loadingUsers = true;
+  selectedArticleReport = signal<ArticleReportDetail | null>(null);
+  selectedUserReport = signal<UserReportDetail | null>(null);
+  moderatorNote = '';
 
   ngOnInit(): void {
-    
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const role = user?.role || '';
-
-    this.isModerador = [
-      'Moderador',
-      'ROLE_MODERATOR',
-      'Administrador',
-      'ROLE_ADMIN'
-    ].includes(role);
-
-    this.token = user?.token || '';
-
-    if (!this.token) {
-      this.mostrarMensaje('Sesión inválida, vuelve a iniciar sesión');
-      return;
-    }
-
-    if (!this.isModerador) {
-      this.mostrarMensaje('No tienes permisos');
-      return;
-    }
-
-    this.cargarDatos();
+    this.auth.isLoggedIn();
+    this.loadActiveTab();
   }
 
-  constructor (
-    private cd: ChangeDetectorRef
-  ) {}
-  /* =========================
-     NORMALIZACIÓN
-     ========================= */
-
-  private extractList<T>(data: ApiListResponse<T>): T[] {
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.data)) return data.data;
-    if (Array.isArray(data?.reports)) return data.reports;
-    if (Array.isArray(data?.results)) return data.results;
-    if (Array.isArray(data?.items)) return data.items;
-    return [];
+  setTab(tab: ReportsTab): void {
+    this.activeTab.set(tab);
+    this.closeDetail();
+    this.clearMessages();
+    this.loadActiveTab();
   }
 
-  private getMotivos(item: Report): string[] {
-    const motivosArray = Array.isArray(item.motivos) ? item.motivos : [];
-    const motivoSimple = item.report_reason ?? item.reason ?? item.motivo;
+  openArticleDetail(report: PendingArticleReport): void {
+    const token = this.auth.currentUser()?.token;
+    if (!token) return;
 
-    const motivos = [...motivosArray];
-    if (motivoSimple) {
-      motivos.push(motivoSimple);
-    }
+    this.loading.set(true);
+    this.errorMessage.set('');
 
-    return [...new Set(motivos.filter((m): m is string => Boolean(m)))];
-  }
-
-  private getReportIds(item: Report): number[] {
-    const idsArray = Array.isArray(item.reportIds) ? item.reportIds : [];
-    const idSimple = item.report_id ?? item.id ?? item.reportId;
-
-    const ids = [...idsArray];
-    if (idSimple != null) {
-      ids.push(idSimple);
-    }
-
-    return [...new Set(ids.filter((id): id is number => id != null))];
-  }
-
-  private getTotal(item: Report): number {
-    return (
-      item.totalReportes ??
-      item.reportsCount ??
-      item.total_reports ??
-      (this.getReportIds(item).length || 1)
-    );
-  }
-
-  /* =========================
-     MAPEO
-     ========================= */
-
-  private mapToArticulo(item: Report): GrupoArticulo | null {
-    const targetId =
-      item.article_id ??
-      item.articulo_id ??
-      item.articleId ??
-      item.reported_article_id ??
-      item.target_id ??
-      item.targetId ??
-      item.article?.id;
-
-    if (targetId == null) return null;
-
-    return {
-      targetId,
-      titulo:
-        item.title ??
-        item.titulo ??
-        item.article_title ??
-        item.article?.title ??
-        item.article?.titulo ??
-        `Artículo #${targetId}`,
-      totalReportes: this.getTotal(item),
-      motivos: this.getMotivos(item),
-      reportIds: this.getReportIds(item)
-    };
-  }
-
-  private mapToUsuario(item: Report): GrupoUsuario | null {
-    const targetId =
-      item.user_id ??
-      item.usuario_id ??
-      item.reported_user_id ??
-      item.target_id ??
-      item.targetId ??
-      item.user?.id ??
-      item.usuario?.id;
-
-    if (targetId == null) return null;
-
-    return {
-      targetId,
-      nombre:
-        item.username ??
-        item.name ??
-        item.nombre ??
-        item.user?.username ??
-        item.user?.name ??
-        item.user?.nombre ??
-        item.usuario?.username ??
-        item.usuario?.name ??
-        item.usuario?.nombre ??
-        `Usuario #${targetId}`,
-      totalReportes: this.getTotal(item),
-      motivos: this.getMotivos(item),
-      reportIds: this.getReportIds(item)
-    };
-  }
-
-  /* =========================
-     AGRUPACIÓN
-     ========================= */
-
-  private agruparArticulos(items: Report[]): GrupoArticulo[] {
-    const map = new Map<number, GrupoArticulo>();
-
-    items.forEach((item) => {
-      const grupo = this.mapToArticulo(item);
-      if (!grupo) return;
-
-      if (!map.has(grupo.targetId)) {
-        map.set(grupo.targetId, {
-          targetId: grupo.targetId,
-          titulo: grupo.titulo,
-          totalReportes: 0,
-          motivos: [],
-          reportIds: []
-        });
-      }
-
-      const actual = map.get(grupo.targetId)!;
-
-      actual.totalReportes += grupo.totalReportes;
-      actual.reportIds.push(...grupo.reportIds);
-
-      grupo.motivos.forEach((motivo) => {
-        if (!actual.motivos.includes(motivo)) {
-          actual.motivos.push(motivo);
-        }
-      });
-
-      actual.reportIds = [...new Set(actual.reportIds)];
-    });
-
-    return Array.from(map.values()).sort(
-      (a, b) => b.totalReportes - a.totalReportes
-    );
-  }
-
-  private agruparUsuarios(items: Report[]): GrupoUsuario[] {
-    const map = new Map<number, GrupoUsuario>();
-
-    items.forEach((item) => {
-      const grupo = this.mapToUsuario(item);
-      if (!grupo) return;
-
-      if (!map.has(grupo.targetId)) {
-        map.set(grupo.targetId, {
-          targetId: grupo.targetId,
-          nombre: grupo.nombre,
-          totalReportes: 0,
-          motivos: [],
-          reportIds: []
-        });
-      }
-
-      const actual = map.get(grupo.targetId)!;
-
-      actual.totalReportes += grupo.totalReportes;
-      actual.reportIds.push(...grupo.reportIds);
-
-      grupo.motivos.forEach((motivo) => {
-        if (!actual.motivos.includes(motivo)) {
-          actual.motivos.push(motivo);
-        }
-      });
-
-      actual.reportIds = [...new Set(actual.reportIds)];
-    });
-
-    return Array.from(map.values()).sort(
-      (a, b) => b.totalReportes - a.totalReportes
-    );
-  }
-  
-
-  /* =========================
-     CARGA
-     ========================= */
-
-  cargarDatos(): void {
-
-    this.loadingArticles = true;
-    this.loadingUsers = true;
-    
-    console.time('Articulos');
-
-    this.moderadorService.getReportesArticulos(this.token).subscribe({
-      next: (data: ApiListResponse<Report>) => {
-        console.timeEnd('Articulos');
-        const list = this.extractList(data);
-        this.articulosAgrupados = this.agruparArticulos(list);
-        this.loadingArticles = false;
-        this.cd.detectChanges();
+    this.reportService.getPendingArticleDetail(report.report_id, token).subscribe({
+      next: (detail) => {
+        this.selectedArticleReport.set(detail);
+        this.selectedUserReport.set(null);
+        this.moderatorNote = '';
+        this.loading.set(false);
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error al cargar artículos:', err);
-        this.mostrarMensaje('Error al cargar artículos');
-        this.loadingArticles = false;
-      }
-    });
-
-    this.moderadorService.getReportesUsuarios(this.token).subscribe({
-      next: (data: ApiListResponse<Report>) => {
-        const list = this.extractList(data);
-        this.usuariosAgrupados = this.agruparUsuarios(list);
-        this.loadingUsers = false;
-        this.cd.detectChanges();
+      error: () => {
+        this.errorMessage.set('No se pudo cargar el detalle del reporte.');
+        this.loading.set(false);
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error al cargar usuarios:', err);
-        this.mostrarMensaje('Error al cargar usuarios');
-        this.loadingUsers = false;
-      }
     });
   }
 
-  /* =========================
-     ACCIONES ARTÍCULOS
-     ========================= */
+  openUserDetail(report: PendingUserReport): void {
+    const token = this.auth.currentUser()?.token;
+    if (!token) return;
 
-  observarArticulo(grupo: GrupoArticulo): void {
-    this.router.navigate(['/articles', grupo.targetId]);
+    this.loading.set(true);
+    this.errorMessage.set('');
+
+    this.reportService.getPendingUserDetail(report.report_id, token).subscribe({
+      next: (detail) => {
+        this.selectedUserReport.set(detail);
+        this.selectedArticleReport.set(null);
+        this.moderatorNote = '';
+        this.loading.set(false);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMessage.set('No se pudo cargar el detalle del reporte.');
+        this.loading.set(false);
+        this.cdr.detectChanges();
+      },
+    });
   }
 
-  aceptarGrupo(grupo: GrupoArticulo): void {
-    if (!grupo.reportIds.length) {
-      this.mostrarMensaje('No hay reportes para aprobar');
-      return;
-    }
+  closeDetail(): void {
+    this.selectedArticleReport.set(null);
+    this.selectedUserReport.set(null);
+    this.moderatorNote = '';
+  }
 
-    const calls = grupo.reportIds.map((id) =>
-      this.moderadorService.resolverReporte(id, 'accept', this.token)
-    );
+  resolveArticleReport(action: 'accept' | 'reject'): void {
+    const report = this.selectedArticleReport();
+    this.resolveReportById(report?.report_id, action);
+  }
 
-    forkJoin(calls).subscribe({
+  resolveUserReport(action: 'accept' | 'reject'): void {
+    const report = this.selectedUserReport();
+    this.resolveReportById(report?.report_id, action);
+  }
+
+  private resolveReportById(reportId: number | undefined, action: 'accept' | 'reject'): void {
+    const token = this.auth.currentUser()?.token;
+    if (!token || !reportId || !this.moderatorNote.trim()) return;
+
+    this.resolving.set(true);
+    this.errorMessage.set('');
+
+    const request =
+      action === 'accept'
+        ? this.reportService.acceptReport(reportId, this.moderatorNote.trim(), token)
+        : this.reportService.rejectReport(reportId, this.moderatorNote.trim(), token);
+
+    request.subscribe({
       next: () => {
-        setTimeout(() => {
-          this.articulosAgrupados = this.articulosAgrupados.filter(
-            (a) => a.targetId !== grupo.targetId
-          );
-          this.cd.detectChanges();
-          this.mostrarMensaje('Reportes aprobados');
-        });
+        const message =
+          action === 'accept'
+            ? 'Reporte aceptado. El artículo ha sido retirado.'
+            : 'Reporte rechazado. El artículo mantiene su estado.';
+        this.successMessage.set(message);
+        this.resolving.set(false);
+        this.closeDetail();
+        this.loadActiveTab();
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al aprobar reportes:', err);
-        this.mostrarMensaje('Error al aprobar');
-      }
+        this.errorMessage.set(err?.error?.message || 'No se pudo resolver el reporte.');
+        this.resolving.set(false);
+        this.cdr.detectChanges();
+      },
     });
   }
 
-  rechazarGrupo(grupo: GrupoArticulo): void {
-    if (!grupo.reportIds.length) {
-      this.mostrarMensaje('No hay reportes para rechazar');
+  private loadActiveTab(): void {
+    const token = this.auth.currentUser()?.token;
+    if (!token) return;
+
+    this.loading.set(true);
+    this.errorMessage.set('');
+
+    const tab = this.activeTab();
+
+    if (tab === 'articles') {
+      this.reportService.getPendingArticles(token).subscribe({
+        next: (reports) => {
+          this.pendingArticles.set(reports);
+          this.loading.set(false);
+          this.cdr.detectChanges();
+        },
+        error: (err) =>
+          this.handleLoadError(
+            err?.error?.message || 'No se pudieron cargar los reportes de artículos.',
+          ),
+      });
       return;
     }
 
-    const calls = grupo.reportIds.map((id) =>
-      this.moderadorService.resolverReporte(id, 'reject', this.token)
-    );
+    if (tab === 'users') {
+      this.reportService.getPendingUsers(token).subscribe({
+        next: (reports) => {
+          this.pendingUsers.set(reports);
+          this.loading.set(false);
+          this.cdr.detectChanges();
+        },
+        error: (err) =>
+          this.handleLoadError(
+            err?.error?.message || 'No se pudieron cargar los reportes de usuarios.',
+          ),
+      });
+      return;
+    }
 
-    forkJoin(calls).subscribe({
-      next: () => {
-        this.articulosAgrupados = this.articulosAgrupados.filter(
-          (a) => a.targetId !== grupo.targetId
-        );
-        this.mostrarMensaje('Reportes rechazados');
+    this.reportService.getHistory(token).subscribe({
+      next: (reports) => {
+        this.history.set(reports);
+        this.loading.set(false);
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error al rechazar reportes:', err);
-        this.mostrarMensaje('Error al rechazar');
-      }
+      error: (err) =>
+        this.handleLoadError(err?.error?.message || 'No se pudo cargar el historial de reportes.'),
     });
   }
 
-  /* =========================
-     UI
-     ========================= */
+  private handleLoadError(message: string): void {
+    this.errorMessage.set(message);
+    this.loading.set(false);
+    this.cdr.detectChanges();
+  }
 
-  mostrarMensaje(msg: string): void {
-    this.snackBar.open(msg, 'Cerrar', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+  private clearMessages(): void {
+    this.successMessage.set('');
+    this.errorMessage.set('');
   }
 }

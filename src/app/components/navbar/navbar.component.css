@@ -117,7 +117,20 @@
 }
 
 @media (max-width: 991px) {
-    /* El login fuera del collapse no necesita margen extra */
+    .navbar-actions--guest {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 0 8px;
+        border-top: 1px solid #e8e8e8;
+        margin-top: 8px;
+    }
+
+    .navbar-actions--guest .btn-login {
+        width: 100%;
+    }
+}
+
+@media (max-width: 991px) {
     .btn-login {
         padding: 0 14px;
     }
