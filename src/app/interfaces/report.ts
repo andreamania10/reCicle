@@ -96,3 +96,14 @@ export interface HistoricoItem {
   created_at?: string;
   updated_at?: string;
 }
+export interface CreateArticleReportPayload {
+  type: 'Articulo';
+  article_id: number;
+  reason: string;
+}
+
+export interface CreateUserReportPayload {
+  type: 'Usuario';
+  reported_user_id: number;
+  reason: string;
+}

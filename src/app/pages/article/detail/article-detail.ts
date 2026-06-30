@@ -11,6 +11,7 @@ import { ReportService } from '../../../services/report';
 import { FavoriteService } from '../../../services/favorite';
 import { ConversationService } from '../../../services/conversation';
 import { RegisterComponent } from '../../../components/register/register.component';
+import { CreateArticleReportPayload, CreateUserReportPayload } from '../../../interfaces/report';
 
 declare var bootstrap: any;
 
@@ -105,6 +106,26 @@ export class ArticleDetail implements OnInit {
     return isOwner || isStaff;
   }
 
+  isOwner(): boolean {
+    const currentUser = this.auth.currentUser();
+    if (!currentUser || !this.article) return false;
+    return currentUser.id === this.article.user_id;
+  }
+
+  goToEditArticle(): void {
+    if (!this.article) return;
+    this.router.navigate(['/articles/edit', this.article.id]);
+  }
+
+  isModeratorOrAdmin(): boolean {
+  const currentUser = this.auth.currentUser();
+  return currentUser?.role === 'Moderador' || currentUser?.role === 'Administrador';
+  }
+
+  goToModeratorPanel(): void {
+  this.router.navigate(['/moderator']);
+  }   
+
   isLoggedIn(): boolean {
     return this.auth.currentUser() !== null;
   }
@@ -143,19 +164,14 @@ export class ArticleDetail implements OnInit {
 
     this.favoriteService.getUserFavorites(currentUser.token).subscribe({
       next: (response) => {
-        console.log('Favoritos recibidos:', response);
-        console.log('Buscando article.id:', this.article!.id);
         const found = response.results.find(f => f.favoriteArticleId === this.article!.id);
-        console.log('Encontrado:', found);
         if (found) {
           this.isFavorite = true;
           this.favoriteId = found.favoriteId;
         }
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.log('ERROR checkIfFavorite:', err.error);
-      }
+      error: () => {}
     });
   }
 
@@ -193,8 +209,7 @@ export class ArticleDetail implements OnInit {
           this.favoriteLoading = false;
           this.cdr.detectChanges();
         },
-        error: (err) => {
-          console.log('ERROR FAVORITOS:', err.error);
+        error: () => {
           this.favoriteError = 'No se pudo guardar en favoritos.';
           this.favoriteLoading = false;
           this.cdr.detectChanges();
@@ -297,11 +312,13 @@ openLoginModal(): void {
     this.sendingReport = true;
     this.reportError = '';
 
-    this.reportService.reportArticle({
+    const payload: CreateArticleReportPayload = {
       type: 'Articulo',
       article_id: this.article.id,
       reason: this.reportReason
-    }, currentUser.token).subscribe({
+    };
+
+    this.reportService.reportArticle(payload, currentUser.token).subscribe({
       next: () => {
         this.reportSuccess = 'Artículo reportado correctamente.';
         this.sendingReport = false;
@@ -328,12 +345,13 @@ openLoginModal(): void {
     this.sendingReport = true;
     this.reportError = '';
 
-    this.reportService.reportUser({
+    const payload: CreateUserReportPayload = {
       type: 'Usuario',
       reported_user_id: this.seller.id,
-      article_id: this.article.id,
       reason: this.reportReason
-    }, currentUser.token).subscribe({
+    };
+
+    this.reportService.reportUser(payload, currentUser.token).subscribe({
       next: () => {
         this.reportSuccess = 'Usuario reportado correctamente.';
         this.sendingReport = false;
@@ -347,7 +365,5 @@ openLoginModal(): void {
       }
     });
   }
-
-
 
 }

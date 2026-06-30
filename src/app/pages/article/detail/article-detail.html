@@ -1,7 +1,15 @@
 <div class="container py-5">
-    <a [routerLink]="['/articles']" class="btn btn-outline-secondary mb-4">
-    ← Volver a artículos
-  </a> @if (loading) {
+    <div class="d-flex gap-2 mb-4">
+        <a [routerLink]="['/articles']" class="btn btn-outline-secondary">
+          ← Volver a artículos
+        </a>
+        @if (isModeratorOrAdmin()) {
+        <button class="btn btn-outline-dark" (click)="goToModeratorPanel()">
+          ← Volver al panel de reportes
+        </button>
+        }
+    </div>
+    @if (loading) {
     <div class="text-center py-5">
         <div class="spinner-border text-dark" role="status"></div>
         <p class="text-muted mt-3">Cargando artículo...</p>
@@ -98,9 +106,15 @@
             <hr> }
 
             <div class="d-flex gap-2 mt-4">
+                @if (isOwner()) {
+                <button class="btn btn-outline-dark" type="button" (click)="goToEditArticle()">
+                  ✏️ Editar artículo
+                </button>
+                } @if (!isOwner()) {
                 <button class="btn-contact" type="button" (click)="handleContactClick()" [disabled]="contactLoading">
               {{ contactLoading ? 'Abriendo chat...' : 'Contactar vendedor' }}
           </button>
+                }
                 <button class="btn" [class.btn-danger]="isFavorite" [class.btn-outline-danger]="!isFavorite" (click)="handleFavoriteClick()" [disabled]="favoriteLoading">
               {{ isFavorite ? '❤️ Guardado' : '❤️ Guardar' }}
           </button> @if (contactError) {
