@@ -129,7 +129,9 @@ export class Auth {
   }
 
   private isRegisterSuccessful(response: RegisterResponse): boolean {
-    return response?.affectedRows === 1 || !!response?.insertId;
+    // Cualquier respuesta 2xx del backend indica éxito:
+    // puede venir con affectedRows/insertId (MySQL directo) o solo con message
+    return response?.affectedRows === 1 || !!response?.insertId || !!response?.message;
   }
 
   private decodeToken(token: string): JwtPayload | null {

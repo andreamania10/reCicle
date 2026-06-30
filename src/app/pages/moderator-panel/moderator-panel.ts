@@ -18,7 +18,7 @@ type ReportsTab = 'articles' | 'users' | 'history';
   selector: 'app-moderator-panel',
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './moderator-panel.html',
-  styleUrl: './moderator-panel.css',
+  styleUrls: ['./moderator-panel.css']
 })
 export class ModeratorPanel implements OnInit {
   private auth = inject(Auth);
