@@ -35,15 +35,15 @@ export class Home implements OnInit {
 
   slides = [
     {
-      image: '/assets/imagenes/tablet.jpg',
+      image: '/assets/imagenes/banner-tablet.jpg',
       action: 'sell'
     },
     {
-      image: '/assets/imagenes/hogar.jpg',
+      image: '/assets/imagenes/banner-home.jpg',
       action: 'home'
     },
     {
-      image: '/assets/imagenes/buy.jpg',
+      image: '/assets/imagenes/banner-buy.jpg',
       action: 'search'
     }
   ];
