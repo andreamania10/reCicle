@@ -31,46 +31,62 @@
                 </li>
             </ul>
 
-            @if (auth.currentUser(); as user) {
-            <!-- Barra de búsqueda: SOLO DESKTOP (dentro del collapse) -->
+            @if (auth.currentUser(); as user) { @if (user.role === 'Usuario') {
+
             <form class="navbar-search-form d-none d-lg-flex" role="search">
                 <input class="form-control" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..." />
             </form>
 
-            <!-- Botones de usuario (en hamburguesa en móvil, inline en desktop) -->
             <div class="navbar-actions">
-                @if (user.role === 'Administrador') {
-                <a class="btn-admin" routerLink="/admin">
-                    <i class="bi bi-shield-check"></i> Panel Admin
-                </a>
-                }
-                @if (user.role === 'Moderador') {
-                <a class="btn-admin" routerLink="/moderator">
-                    <i class="bi bi-clipboard-check"></i> Panel Moderador
-                </a>
-                }
-
                 <button class="btn-favorites" (click)="goToFavorites()">
-                    <img src="assets/imagenes/heart.png" class="heart-icon" />
-                    <img src="assets/imagenes/heart hover.png" class="heart-icon heart-hover" />
-                </button>
+                            ...
+                        </button>
 
-                <button class="btn-messages" type="button" (click)="goToMessages()" title="Mensajes">
-                    <i class="bi bi-chat-dots"></i>
-                </button>
+                <button class="btn-messages" type="button" (click)="goToMessages()">
+                            ...
+                        </button>
 
-                <button class="btn-role" type="button" (click)="goToProfile(user.id)">
-                    <i class="bi bi-person"></i>
-                    Mi perfil
-                </button>
+                <button class="btn-role" (click)="goToProfile(user.id)">
+                            <i class="bi bi-person"></i>
+                            Mi perfil
+                        </button>
+
                 <button class="btn-sell" (click)="sellProducts()">
-                    <i class="bi bi-plus-lg"></i>
-                    <span class="sell-text">Vender</span>
-                </button>
+                            ...
+                        </button>
             </div>
-            } @else {
-            <!-- Login SOLO DESKTOP (en móvil ya está fuera del collapse) -->
-            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">Login</button> }
+
+            } @else if (user.role === 'Moderador') {
+
+            <button class="btn-role" (click)="goToProfile(user.id)">
+                        <i class="bi bi-person"></i>
+                        Mi perfil
+                    </button>
+
+            <a class="btn-admin" routerLink="/moderator">
+                <i class="bi bi-clipboard-check"></i> Panel Moderador
+            </a>
+
+            } @else if (user.role === 'Administrador') {
+
+            <button class="btn-role" (click)="goToProfile(user.id)">
+                        <i class="bi bi-person"></i>
+                        Mi perfil
+                    </button>
+
+            <a class="btn-admin" routerLink="/moderator">
+                <i class="bi bi-clipboard-check"></i> Panel Moderador
+            </a>
+
+            <a class="btn-admin" routerLink="/admin">
+                <i class="bi bi-shield-check"></i> Panel Admin
+            </a>
+
+            } } @else {
+
+            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">
+                    Login
+                </button> }
 
         </div>
     </div>

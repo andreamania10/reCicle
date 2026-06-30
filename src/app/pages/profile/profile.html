@@ -22,8 +22,7 @@
                 <h2 class="card-title">Foto de perfil</h2>
                 <div class="avatar-wrapper">
                     @if (profile.avatar_url) {
-                    <img class="avatar-image" [src]="profile.avatar_url" [alt]="'Avatar de ' + profile.username" />
-                    } @else {
+                    <img class="avatar-image" [src]="profile.avatar_url" [alt]="'Avatar de ' + profile.username" /> } @else {
                     <div class="avatar-placeholder">
                         <i class="bi bi-person-circle"></i>
                     </div>
@@ -94,8 +93,7 @@
                 <a class="article-mini-card" [routerLink]="['/articles', article.id]">
                     <div class="article-mini-img">
                         @if (article.main_photo || (article.photos && article.photos.length > 0)) {
-                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" />
-                        } @else {
+                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" /> } @else {
                         <div class="article-mini-placeholder"><i class="bi bi-image"></i></div>
                         }
                     </div>
@@ -155,14 +153,8 @@
                     <div class="form-group">
                         <label for="currentPassword" class="form-label">Contraseña actual</label>
                         <div class="password-input-wrapper">
-                            <input [type]="showPasswords.current ? 'text' : 'password'"
-                                   id="currentPassword" name="currentPassword"
-                                   class="form-control"
-                                   [(ngModel)]="passwordData.currentPassword"
-                                   #currentField="ngModel"
-                                   required
-                                   placeholder="Introduce tu contraseña actual"
-                                   [class.is-invalid]="currentField.invalid && currentField.touched" />
+                            <input [type]="showPasswords.current ? 'text' : 'password'" id="currentPassword" name="currentPassword" class="form-control" [(ngModel)]="passwordData.currentPassword" #currentField="ngModel" required placeholder="Introduce tu contraseña actual" [class.is-invalid]="currentField.invalid && currentField.touched"
+                            />
                             <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('current')">
                                 <i class="bi" [class.bi-eye]="!showPasswords.current" [class.bi-eye-slash]="showPasswords.current"></i>
                             </button>
@@ -175,14 +167,8 @@
                     <div class="form-group">
                         <label for="newPassword" class="form-label">Nueva contraseña</label>
                         <div class="password-input-wrapper">
-                            <input [type]="showPasswords.new ? 'text' : 'password'"
-                                   id="newPassword" name="newPassword"
-                                   class="form-control"
-                                   [(ngModel)]="passwordData.newPassword"
-                                   #newField="ngModel"
-                                   required minlength="6"
-                                   placeholder="Mínimo 6 caracteres"
-                                   [class.is-invalid]="newField.invalid && newField.touched" />
+                            <input [type]="showPasswords.new ? 'text' : 'password'" id="newPassword" name="newPassword" class="form-control" [(ngModel)]="passwordData.newPassword" #newField="ngModel" required minlength="6" placeholder="Mínimo 6 caracteres" [class.is-invalid]="newField.invalid && newField.touched"
+                            />
                             <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('new')">
                                 <i class="bi" [class.bi-eye]="!showPasswords.new" [class.bi-eye-slash]="showPasswords.new"></i>
                             </button>
@@ -196,14 +182,8 @@
                     <div class="form-group">
                         <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
                         <div class="password-input-wrapper">
-                            <input [type]="showPasswords.confirm ? 'text' : 'password'"
-                                   id="confirmPassword" name="confirmPassword"
-                                   class="form-control"
-                                   [(ngModel)]="passwordData.confirmPassword"
-                                   #confirmField="ngModel"
-                                   required
-                                   placeholder="Repite la nueva contraseña"
-                                   [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch" />
+                            <input [type]="showPasswords.confirm ? 'text' : 'password'" id="confirmPassword" name="confirmPassword" class="form-control" [(ngModel)]="passwordData.confirmPassword" #confirmField="ngModel" required placeholder="Repite la nueva contraseña" [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
+                            />
                             <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility('confirm')">
                                 <i class="bi" [class.bi-eye]="!showPasswords.confirm" [class.bi-eye-slash]="showPasswords.confirm"></i>
                             </button>
