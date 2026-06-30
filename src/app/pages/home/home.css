@@ -24,7 +24,6 @@
     opacity: 0;
     transition: opacity 0.5s ease;
     z-index: 0;
-    cursor: pointer;
 }
 
 .slide.active {
@@ -196,6 +195,12 @@
     justify-content: space-between;
     align-items: end;
     margin-bottom: 18px;
+}
+
+.section-subtitle {
+    margin: 0.25rem 0 0;
+    color: #666;
+    font-size: 0.95rem;
 }
 
 .articles-grid {

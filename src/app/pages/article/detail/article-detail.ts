@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Article } from '../../../interfaces/article';
+import { ArticlePhoto } from '../../../interfaces/article-photo';
 import { User } from '../../../interfaces/user';
 import { ArticleService } from '../../../services/article';
 import { UserService } from '../../../services/user';
@@ -62,6 +63,7 @@ export class ArticleDetail implements OnInit {
   contactLoading = false;
   contactError = '';
 
+  currentPhotoIndex = 0;
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -69,6 +71,7 @@ export class ArticleDetail implements OnInit {
     this.articleService.getById(id).subscribe({
       next: (data) => {
         this.article = data;
+        this.currentPhotoIndex = 0;
         this.newStatus = data.status || '';
         this.loading = false;
         this.loadSeller(data.user_id);
@@ -130,6 +133,39 @@ export class ArticleDetail implements OnInit {
     return this.auth.currentUser() !== null;
   }
 
+  get articlePhotos(): { url: string }[] {
+    if (!this.article) return [];
+
+    if (this.article.photos?.length) {
+      return [...this.article.photos]
+        .sort((a, b) => a.order - b.order)
+        .map((photo: ArticlePhoto) => ({ url: photo.url }));
+    }
+
+    const fallback = this.article.main_photo || this.article.image;
+    if (fallback) return [{ url: fallback }];
+
+    return [{ url: 'https://placehold.co/600x400' }];
+  }
+
+  prevPhoto(): void {
+    const total = this.articlePhotos.length;
+    if (total <= 1) return;
+    this.currentPhotoIndex = (this.currentPhotoIndex - 1 + total) % total;
+  }
+
+  nextPhoto(): void {
+    const total = this.articlePhotos.length;
+    if (total <= 1) return;
+    this.currentPhotoIndex = (this.currentPhotoIndex + 1) % total;
+  }
+
+  goToPhoto(index: number): void {
+    if (index >= 0 && index < this.articlePhotos.length) {
+      this.currentPhotoIndex = index;
+    }
+  }
+
   updateStatus() {
     if (!this.article) return;
 
@@ -164,14 +200,68 @@ export class ArticleDetail implements OnInit {
 
     this.favoriteService.getUserFavorites(currentUser.token).subscribe({
       next: (response) => {
-        const found = response.results.find(f => f.favoriteArticleId === this.article!.id);
-        if (found) {
+        const favoriteId = this.favoriteService.findFavoriteIdForArticle(
+          this.article!.id,
+          response.results,
+        );
+
+        if (favoriteId) {
           this.isFavorite = true;
-          this.favoriteId = found.favoriteId;
+          this.favoriteId = favoriteId;
+        } else {
+          this.isFavorite = false;
+          this.favoriteId = null;
         }
         this.cdr.detectChanges();
       },
       error: () => {}
+    });
+  }
+
+  private removeFavorite(token: string): void {
+    const removeById = (favoriteId: number) => {
+      this.favoriteService.remove(favoriteId, token).subscribe({
+        next: () => {
+          this.isFavorite = false;
+          this.favoriteId = null;
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.favoriteError = 'No se pudo quitar de favoritos.';
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+        },
+      });
+    };
+
+    if (this.favoriteId) {
+      removeById(this.favoriteId);
+      return;
+    }
+
+    this.favoriteService.getUserFavorites(token).subscribe({
+      next: (response) => {
+        const favoriteId = this.favoriteService.findFavoriteIdForArticle(
+          this.article!.id,
+          response.results,
+        );
+
+        if (!favoriteId) {
+          this.isFavorite = false;
+          this.favoriteLoading = false;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        this.favoriteId = favoriteId;
+        removeById(favoriteId);
+      },
+      error: () => {
+        this.favoriteError = 'No se pudo quitar de favoritos.';
+        this.favoriteLoading = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -187,35 +277,43 @@ export class ArticleDetail implements OnInit {
     this.favoriteLoading = true;
     this.favoriteError = '';
 
-    if (this.isFavorite && this.favoriteId) {
-      this.favoriteService.remove(this.favoriteId, currentUser.token).subscribe({
-        next: () => {
-          this.isFavorite = false;
-          this.favoriteId = null;
-          this.favoriteLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.favoriteError = 'No se pudo quitar de favoritos.';
-          this.favoriteLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
-    } else {
-      this.favoriteService.add(currentUser.id, this.article.id, currentUser.token).subscribe({
-        next: (created) => {
-          this.isFavorite = true;
-          this.favoriteId = created.id;
-          this.favoriteLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.favoriteError = 'No se pudo guardar en favoritos.';
-          this.favoriteLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+    if (this.isFavorite) {
+      this.removeFavorite(currentUser.token);
+      return;
     }
+
+    this.favoriteService.add(currentUser.id, this.article.id, currentUser.token).subscribe({
+      next: (created) => {
+        this.isFavorite = true;
+        this.favoriteId = this.favoriteService.extractFavoriteId(created);
+
+        if (!this.favoriteId) {
+          this.favoriteService.getUserFavorites(currentUser.token).subscribe({
+            next: (response) => {
+              this.favoriteId = this.favoriteService.findFavoriteIdForArticle(
+                this.article!.id,
+                response.results,
+              );
+              this.favoriteLoading = false;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.favoriteLoading = false;
+              this.cdr.detectChanges();
+            },
+          });
+          return;
+        }
+
+        this.favoriteLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.favoriteError = 'No se pudo guardar en favoritos.';
+        this.favoriteLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
 handleFavoriteClick() {

@@ -42,6 +42,7 @@ export class Profile implements OnInit {
   passwordMessage = '';
   passwordError = '';
   showPasswords = { current: false, new: false, confirm: false };
+  showLogoutConfirm = false;
 
   constructor(
     private auth: Auth,
@@ -91,7 +92,18 @@ export class Profile implements OnInit {
     }
   }
 
-  logout(): void {
+  requestLogout(): void {
+    this.showLogoutConfirm = true;
+    this.cdr.detectChanges();
+  }
+
+  cancelLogout(): void {
+    this.showLogoutConfirm = false;
+    this.cdr.detectChanges();
+  }
+
+  confirmLogout(): void {
+    this.showLogoutConfirm = false;
     this.auth.logout();
     this.router.navigate(['/']);
   }

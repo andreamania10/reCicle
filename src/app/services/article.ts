@@ -9,12 +9,24 @@ import { Article, ArticleResponse } from '../interfaces/article';
 })
 export class ArticleService {
   private readonly apiUrl = `${environment.apiUrl}/api/articles`;
+  private readonly defaultPageSize = 12;
 
   constructor(private http: HttpClient) {}
 
   getArticles(): Observable<Article[]> {
-    return this.http.get<ArticleResponse | Article[]>(this.apiUrl).pipe(
-      map((response) => (Array.isArray(response) ? response : response.results ?? [])),
+    return this.http
+      .get<ArticleResponse | Article[]>(this.apiUrl, { params: this.buildListParams() })
+      .pipe(
+        map((response) => (Array.isArray(response) ? response : response.results ?? [])),
+      );
+  }
+
+  searchArticles(search: string): Observable<Article[]> {
+    const term = search.trim();
+    const params = this.buildListParams(term ? { search: term } : undefined);
+
+    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
+      map((response) => response.results ?? []),
     );
   }
 
@@ -33,11 +45,25 @@ export class ArticleService {
       throw new Error('category_id debe ser un número entero válido');
     }
 
-    const params = new HttpParams().set('category_id', String(id));
+    const params = this.buildListParams({ category_id: String(id) });
 
     return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
       map((response) => response.results ?? []),
     );
+  }
+
+  private buildListParams(filters?: Record<string, string>): HttpParams {
+    let params = new HttpParams().set('page', '1').set('pageSize', String(this.defaultPageSize));
+
+    if (filters) {
+      for (const [key, value] of Object.entries(filters)) {
+        if (value) {
+          params = params.set(key, value);
+        }
+      }
+    }
+
+    return params;
   }
 
   getById(id: number) {

@@ -42,17 +42,29 @@
               <th>Reportado por</th>
               <th>Motivo</th>
               <th>Fecha</th>
+              <th class="col-actions">Ver</th>
             </tr>
           </thead>
           <tbody>
             @for (report of pendingArticles(); track report.report_id) {
-              <tr class="clickable-row" (click)="openArticleDetail(report)">
+              <tr>
                 <td>{{ report.report_id }}</td>
                 <td>{{ report.article_title }}</td>
                 <td>{{ report.article_price }} €</td>
                 <td>{{ report.reporter_username }}</td>
                 <td>{{ report.report_reason }}</td>
                 <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td class="col-actions">
+                  <button
+                    type="button"
+                    class="btn-icon btn-view"
+                    title="Ver detalle del reporte"
+                    aria-label="Ver detalle del reporte"
+                    (click)="openArticleDetail(report)"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </td>
               </tr>
             }
           </tbody>
@@ -89,6 +101,28 @@
       @if (history().length === 0) {
         <p class="loading-text">No hay reportes resueltos.</p>
       } @else {
+        <div class="history-filters">
+          <label class="history-filter">
+            <input
+              type="checkbox"
+              [checked]="historyShowArticles()"
+              (change)="onHistoryArticlesChange($any($event.target).checked)"
+            />
+            Artículos
+          </label>
+          <label class="history-filter">
+            <input
+              type="checkbox"
+              [checked]="historyShowUsers()"
+              (change)="onHistoryUsersChange($any($event.target).checked)"
+            />
+            Usuarios
+          </label>
+        </div>
+
+        @if (filteredHistory().length === 0) {
+          <p class="loading-text">No hay reportes con los filtros seleccionados.</p>
+        } @else {
         <table class="moderator-table">
           <thead>
             <tr>
@@ -101,7 +135,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (report of history(); track report.report_id) {
+            @for (report of filteredHistory(); track report.report_id) {
               <tr>
                 <td>{{ report.report_id }}</td>
                 <td><span class="badge">{{ report.report_type }}</span></td>
@@ -113,6 +147,7 @@
             }
           </tbody>
         </table>
+        }
       }
     }
   </div>

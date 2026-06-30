@@ -17,8 +17,51 @@
     } @if (!loading && article) {
     <div class="row g-4">
         <div class="col-md-6">
-            <img [src]="article.photos?.[0]?.url || article.main_photo || article.image || 'https://placehold.co/600x400'" [alt]="article.title" class="img-fluid rounded shadow-sm w-100 article-main-image"> @if (isLoggedIn())
-            {
+            <div class="article-gallery">
+                <div class="article-gallery__slides">
+                    @for (photo of articlePhotos; track photo.url; let i = $index) {
+                    <div class="article-gallery__slide" [class.active]="i === currentPhotoIndex">
+                        <img
+                            [src]="photo.url"
+                            [alt]="article.title + ' - foto ' + (i + 1)"
+                            class="img-fluid rounded shadow-sm w-100 article-main-image"
+                        />
+                    </div>
+                    }
+                </div>
+
+                @if (articlePhotos.length > 1) {
+                <button
+                    type="button"
+                    class="article-gallery__nav article-gallery__nav--prev"
+                    (click)="prevPhoto()"
+                    aria-label="Foto anterior"
+                >
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button
+                    type="button"
+                    class="article-gallery__nav article-gallery__nav--next"
+                    (click)="nextPhoto()"
+                    aria-label="Foto siguiente"
+                >
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+                <div class="article-gallery__dots">
+                    @for (photo of articlePhotos; track photo.url; let i = $index) {
+                    <button
+                        type="button"
+                        class="article-gallery__dot"
+                        [class.active]="i === currentPhotoIndex"
+                        (click)="goToPhoto(i)"
+                        [attr.aria-label]="'Ir a foto ' + (i + 1)"
+                    ></button>
+                    }
+                </div>
+                }
+            </div>
+
+            @if (isLoggedIn()) {
             <div class="report-section mt-3">
 
                 @if (reportSuccess) {

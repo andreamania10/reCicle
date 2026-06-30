@@ -3,7 +3,7 @@
         <div class="container">
             <div class="hero-banner">
                 <div class="slides">
-                    <div class="slide" *ngFor="let slide of slides; let i = index" [class.active]="i === currentIndex" (click)="onSlideClick(slide)">
+                    <div class="slide" *ngFor="let slide of slides; let i = index" [class.active]="i === currentIndex">
                         <img [src]="slide.image" alt="banner" />
                     </div>
                 </div>
@@ -55,7 +55,14 @@
     <section class="section-articles">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Artículos recientes</h2>
+                <div>
+                    <h2 class="section-title">
+                        {{ activeSearch() ? 'Resultados de búsqueda' : 'Artículos recientes' }}
+                    </h2>
+                    @if (activeSearch()) {
+                    <p class="section-subtitle">Mostrando resultados para "{{ activeSearch() }}"</p>
+                    }
+                </div>
 
                 @if (auth.currentUser()) {
                 <button class="filter-button" (click)="toggleFilters()">
@@ -110,7 +117,9 @@
                     } @else if (articlesError()) {
                     <p class="articles-error">No se pudieron cargar los artículos.</p>
                     } @else if (items().length === 0) {
-                    <p class="articles-status">No hay artículos para mostrar.</p>
+                    <p class="articles-status">
+                        {{ activeSearch() ? 'No se encontraron artículos para tu búsqueda.' : 'No hay artículos para mostrar.' }}
+                    </p>
                     } @else {
                     <div class="articles-grid">
                         @for (item of items(); track item.id) {
