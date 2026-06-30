@@ -12,10 +12,6 @@
             <input class="form-control" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..." />
         </form>
 
-        <!-- Botón Login visible en móvil cuando NO hay sesión -->
-        @if (!auth.currentUser()) {
-        <button class="btn-login d-lg-none" type="button" (click)="openLoginModal()">Login</button> }
-
         <!-- Botón hamburguesa: solo móvil -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -64,8 +60,10 @@
                 </button>
             </div>
             } @else {
-            <!-- Login SOLO DESKTOP (en móvil ya está fuera del collapse) -->
-            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">Login</button> }
+            <div class="navbar-actions navbar-actions--guest">
+                <button class="btn-login" type="button" (click)="openLoginModal()">Login</button>
+            </div>
+            }
 
         </div>
     </div>

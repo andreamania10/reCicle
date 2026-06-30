@@ -331,7 +331,6 @@ openLoginModal(): void {
     this.reportService.reportUser({
       type: 'Usuario',
       reported_user_id: this.seller.id,
-      article_id: this.article.id,
       reason: this.reportReason
     }, currentUser.token).subscribe({
       next: () => {
