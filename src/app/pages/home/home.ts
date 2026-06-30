@@ -73,6 +73,7 @@ export class Home implements OnInit {
       next: (categories) => {
         this.categories.set(categories);
         this.isLoadingCategories.set(false);
+        this.cdr.detectChanges();
       },
       error: () => {
         this.categoriesError.set(true);
@@ -155,6 +156,7 @@ export class Home implements OnInit {
   private loadRecentArticles(): void {
     this.isLoadingArticles.set(true);
     this.articlesError.set(false);
+    this.cdr.detectChanges();
 
     this.articleService
       .getArticles()
