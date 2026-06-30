@@ -7,7 +7,7 @@
             </a>
             <div class="profile-title-row">
                 <h1 class="profile-title">Mi perfil</h1>
-                <button type="button" class="btn-logout" (click)="logout()">
+                <button type="button" class="btn-logout" (click)="requestLogout()">
                     <i class="bi bi-box-arrow-right"></i>
                     Cerrar sesión
                 </button>
@@ -212,3 +212,16 @@
         </div>
     </div>
 </div>
+
+@if (showLogoutConfirm) {
+  <div class="logout-modal-overlay" (click)="cancelLogout()">
+    <div class="logout-modal" (click)="$event.stopPropagation()">
+      <h3>Cerrar sesión</h3>
+      <p>¿Deseas cerrar sesión?</p>
+      <div class="logout-modal-actions">
+        <button type="button" class="btn-logout-cancel" (click)="cancelLogout()">No</button>
+        <button type="button" class="btn-logout-confirm" (click)="confirmLogout()">Sí, cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+}

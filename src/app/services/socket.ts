@@ -42,6 +42,29 @@ export class SocketService {
     this.socket.off('new_message');
   }
 
+  joinUserRoom(userId: number): void {
+    this.connect().emit('join_user', userId);
+  }
+
+  onNewNotification(handler: (notification: unknown) => void): void {
+    const socket = this.connect();
+    socket.on('new_notification', handler);
+    socket.on('nueva_notificacion', handler);
+  }
+
+  offNewNotification(handler?: (notification: unknown) => void): void {
+    if (!this.socket) return;
+
+    if (handler) {
+      this.socket.off('new_notification', handler);
+      this.socket.off('nueva_notificacion', handler);
+      return;
+    }
+
+    this.socket.off('new_notification');
+    this.socket.off('nueva_notificacion');
+  }
+
   disconnect(): void {
     this.socket?.disconnect();
     this.socket = null;

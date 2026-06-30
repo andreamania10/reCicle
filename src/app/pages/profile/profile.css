@@ -567,3 +567,61 @@
         max-width: none;
     }
 }
+
+.logout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    padding: 1rem;
+}
+
+.logout-modal {
+    width: min(400px, 100%);
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.logout-modal h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+}
+
+.logout-modal p {
+    margin: 0 0 1.25rem;
+    color: #555;
+}
+
+.logout-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.btn-logout-cancel,
+.btn-logout-confirm {
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-logout-cancel {
+    background: #eee;
+    color: #333;
+}
+
+.btn-logout-confirm {
+    background: #dc3545;
+    color: #fff;
+}
+
+.btn-logout-confirm:hover {
+    background: #c82333;
+}

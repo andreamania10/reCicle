@@ -17,14 +17,24 @@
 
         <div class="form-group">
             <label>Categoría</label>
-            <select [(ngModel)]="product.category_id" name="category_id" [class.error]="formSubmitted && !product.name" required>
-          <option [ngValue]="null">Selecciona categoría</option>
-          <option [ngValue]="1">Tecnología</option>
-          <option [ngValue]="2">Ropa</option>
-          <option [ngValue]="3">Hogar</option>
-          <option [ngValue]="4">Deporte</option>
-          <option [ngValue]="5">Vehículos</option>
-        </select>
+            <select
+                [(ngModel)]="product.category_id"
+                name="category_id"
+                [class.error]="formSubmitted && !product.category_id"
+                [disabled]="loadingCategories"
+                required
+            >
+                <option [ngValue]="null">Selecciona categoría</option>
+                @if (loadingCategories) {
+                <option disabled>Cargando categorías...</option>
+                } @else if (categoriesError) {
+                <option disabled>No se pudieron cargar las categorías</option>
+                } @else {
+                @for (category of categories; track category.id) {
+                <option [ngValue]="category.id">{{ category.name }}</option>
+                }
+                }
+            </select>
         </div>
 
         <div class="form-group">
@@ -48,34 +58,43 @@
             <small>Puedes subir una imagen o un vídeo del artículo.</small>
         </div>
 
-        <div class="preview" *ngIf="previewUrl">
-            <img *ngIf="isImage" [src]="previewUrl" alt="Vista previa del producto" />
-
-            <video *ngIf="isVideo" [src]="previewUrl" controls></video>
+        @if (previewUrl) {
+        <div class="preview">
+            @if (isImage) {
+            <img [src]="previewUrl" alt="Vista previa del producto" />
+            }
+            @if (isVideo) {
+            <video [src]="previewUrl" controls></video>
+            }
         </div>
+        }
 
 
         <div class="buttons">
             <button type="submit" [disabled]="isPublishing">
                 {{ buttonText }}
             </button>
-            <p class="success-message" *ngIf="successMessage">
+            @if (successMessage) {
+            <p class="success-message">
                 {{ successMessage }}
             </p>
+            }
             <button type="button" class="secondary" (click)="resetForm()">
               Restablecer
             </button>
         </div>
 
     </form>
-    <p class="error-message" *ngIf="formSubmitted && (
+    @if (formSubmitted && (
   !product.name ||
   !product.description ||
   !product.price ||
   !product.category_id ||
   !product.condition ||
   !product.location
-)">
+)) {
+    <p class="error-message">
         ⚠️ Por favor, completa todos los campos obligatorios.
     </p>
+    }
 </div>

@@ -1,26 +1,45 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { ArticleService } from '../../services/article';
 import { Auth } from '../../services/auth';
+import { CategoryService } from '../../services/category';
+import { Category } from '../../interfaces/category';
 import { HttpEventType, HttpUploadProgressEvent } from '@angular/common/http';
 
 @Component({
   selector: 'app-sell-products',
   standalone: true,
-  imports: [FormsModule, NgIf],
+  imports: [CommonModule, FormsModule],
   templateUrl: './sell-products.html',
   styleUrls: ['./sell-products.css']
 })
-export class SellProducts {
+export class SellProducts implements OnInit {
   private articleService = inject(ArticleService);
+  private categoryService = inject(CategoryService);
   private router = inject(Router);
   private auth = inject(Auth);
   isPublishing = false;
   successMessage = '';
   uploadProgress = 0;
   formSubmitted = false;
+  categories: Category[] = [];
+  loadingCategories = true;
+  categoriesError = false;
+
+  ngOnInit(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        this.loadingCategories = false;
+      },
+      error: () => {
+        this.categoriesError = true;
+        this.loadingCategories = false;
+      },
+    });
+  }
 
   get buttonText(): string {
     if (this.isPublishing) {

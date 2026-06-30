@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -35,6 +35,20 @@ export class ModeratorPanel implements OnInit {
   pendingUsers = signal<PendingUserReport[]>([]);
   history = signal<ReportHistoryItem[]>([]);
 
+  historyShowArticles = signal(true);
+  historyShowUsers = signal(true);
+
+  filteredHistory = computed(() => {
+    const showArticles = this.historyShowArticles();
+    const showUsers = this.historyShowUsers();
+
+    return this.history().filter((item) => {
+      if (item.report_type === 'Articulo') return showArticles;
+      if (item.report_type === 'Usuario') return showUsers;
+      return showArticles || showUsers;
+    });
+  });
+
   selectedArticleReport = signal<ArticleReportDetail | null>(null);
   selectedUserReport = signal<UserReportDetail | null>(null);
   moderatorNote = '';
@@ -48,7 +62,18 @@ export class ModeratorPanel implements OnInit {
     this.activeTab.set(tab);
     this.closeDetail();
     this.clearMessages();
+    if (tab === 'history') {
+      this.resetHistoryFilters();
+    }
     this.loadActiveTab();
+  }
+
+  onHistoryArticlesChange(checked: boolean): void {
+    this.historyShowArticles.set(checked);
+  }
+
+  onHistoryUsersChange(checked: boolean): void {
+    this.historyShowUsers.set(checked);
   }
 
   openArticleDetail(report: PendingArticleReport): void {
@@ -204,5 +229,10 @@ export class ModeratorPanel implements OnInit {
   private clearMessages(): void {
     this.successMessage.set('');
     this.errorMessage.set('');
+  }
+
+  private resetHistoryFilters(): void {
+    this.historyShowArticles.set(true);
+    this.historyShowUsers.set(true);
   }
 }

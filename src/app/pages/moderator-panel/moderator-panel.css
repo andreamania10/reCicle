@@ -70,6 +70,35 @@
   font-weight: 600;
 }
 
+.col-actions {
+  width: 56px;
+  text-align: center;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn-view {
+  color: #00a082;
+  border-color: #00a082;
+}
+
+.btn-view:hover {
+  background: #00a082;
+  color: #fff;
+}
+
 .clickable-row {
   cursor: pointer;
 }
@@ -81,6 +110,35 @@
 .loading-text {
   color: #777;
   padding: 1rem 0;
+}
+
+.history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.history-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.92rem;
+  color: #444;
+  cursor: pointer;
+  user-select: none;
+}
+
+.history-filter input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #00a082;
+  cursor: pointer;
 }
 
 .badge {
