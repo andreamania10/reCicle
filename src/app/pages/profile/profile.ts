@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
 import { User } from '../../interfaces/user';
 import { Article } from '../../interfaces/article';
 import { Auth } from '../../services/auth';
-import { UserService } from '../../services/user';
+import { UpdateProfilePayload, UserService } from '../../services/user';
 import { ArticleService } from '../../services/article';
 
 declare var bootstrap: any;
@@ -27,6 +28,19 @@ export class Profile implements OnInit {
     location: '',
     avg_rating: '',
   };
+
+  editData: UpdateProfilePayload = {
+    username: '',
+    email: '',
+    location: '',
+    avatar_url: '',
+  };
+
+  loadingProfile = true;
+  profileError = '';
+  isSavingProfile = false;
+  profileMessage = '';
+  profileSaveError = '';
 
   myArticles: Article[] = [];
   loadingArticles = true;
@@ -53,42 +67,125 @@ export class Profile implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const currentUser = this.auth.currentUser();
-    if (!currentUser) {
+    if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/']);
       return;
     }
 
-    // Cargar datos reales del perfil
-    this.userService.getProfile().subscribe({
-      next: (user) => {
-        this.profile = { ...user, token: currentUser.token };
+    this.loadProfile();
+    this.loadMyArticles();
+  }
+
+  loadMyArticles(): void {
+    const token = this.auth.currentUser()?.token;
+    if (!token) {
+      this.loadingArticles = false;
+      return;
+    }
+
+    this.articleService.getMyArticles(token).subscribe({
+      next: (articles) => {
+        this.myArticles = articles;
+        this.loadingArticles = false;
         this.cdr.detectChanges();
       },
       error: () => {
-        this.profile = currentUser;
+        this.articlesError = 'No se pudieron cargar tus artículos.';
+        this.loadingArticles = false;
         this.cdr.detectChanges();
       },
     });
+  }
 
-    // Cargar mis artículos (en paralelo con getProfile)
-    const token = currentUser.token;
-    if (token) {
-      this.articleService.getMyArticles(token).subscribe({
-        next: (articles) => {
-          this.myArticles = articles;
-          this.loadingArticles = false;
+  loadProfile(): void {
+    const sessionUser = this.auth.currentUser();
+    if (!sessionUser?.token || !sessionUser.id) {
+      this.profileError = 'Debes iniciar sesión para ver tu perfil.';
+      this.loadingProfile = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.loadingProfile = true;
+    this.profileError = '';
+
+    this.userService
+      .getById(sessionUser.id)
+      .pipe(
+        finalize(() => {
+          this.loadingProfile = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (user) => {
+          this.applyProfile(user, sessionUser.token);
           this.cdr.detectChanges();
         },
-        error: () => {
-          this.articlesError = 'No se pudieron cargar tus artículos.';
-          this.loadingArticles = false;
+        error: (err) => {
+          this.applyProfile(sessionUser, sessionUser.token);
+          this.profileError =
+            err?.error?.message ||
+            'No se pudo cargar tu perfil desde el servidor. Mostrando datos de sesión.';
           this.cdr.detectChanges();
         },
       });
-    } else {
-      this.loadingArticles = false;
-      this.cdr.detectChanges();
+  }
+
+  saveProfile(form: NgForm): void {
+    if (form.invalid) {
+      Object.values(form.controls).forEach((control) => control.markAsTouched());
+      return;
+    }
+
+    this.isSavingProfile = true;
+    this.profileSaveError = '';
+    this.profileMessage = '';
+
+    const payload: UpdateProfilePayload = {
+      username: this.editData.username.trim(),
+      email: this.editData.email.trim(),
+      location: this.editData.location.trim(),
+      avatar_url: this.editData.avatar_url.trim(),
+    };
+
+    this.userService
+      .updateProfile(payload)
+      .pipe(
+        finalize(() => {
+          this.isSavingProfile = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (user) => {
+          this.applyProfile(user);
+          this.profileMessage = 'Perfil actualizado correctamente.';
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.profileSaveError =
+            err?.error?.message || 'No se pudo actualizar el perfil.';
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  private applyProfile(user: User | null | undefined, token?: string): void {
+    if (!user) return;
+
+    const sessionToken = token ?? this.auth.currentUser()?.token;
+
+    this.profile = { ...user, token: sessionToken };
+    this.editData = {
+      username: user.username ?? '',
+      email: user.email ?? '',
+      location: user.location ?? '',
+      avatar_url: user.avatar_url ?? '',
+    };
+
+    if (sessionToken) {
+      this.auth.setUser({ ...user, token: sessionToken });
     }
   }
 
@@ -133,13 +230,11 @@ export class Profile implements OnInit {
     this.showPasswords[field] = !this.showPasswords[field];
   }
 
-  // Abre el primer pop up de confirmación
   openPasswordConfirmModal(): void {
     const el = document.getElementById('passwordConfirmModal');
     if (el) new bootstrap.Modal(el).show();
   }
 
-  // Desde el pop up de confirmación → "Sí, quiero"
   confirmChangePassword(): void {
     const confirmEl = document.getElementById('passwordConfirmModal');
     if (confirmEl) bootstrap.Modal.getInstance(confirmEl)?.hide();
@@ -154,7 +249,6 @@ export class Profile implements OnInit {
     }, 300);
   }
 
-  // Desde el pop up de confirmación → "No"
   cancelPasswordChange(): void {
     const el = document.getElementById('passwordConfirmModal');
     if (el) bootstrap.Modal.getInstance(el)?.hide();

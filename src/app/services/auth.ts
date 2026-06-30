@@ -10,9 +10,10 @@ import {
   RegisterResponse,
   User,
 } from '../interfaces/user';
+import { USER_STORAGE_KEY } from '../constants/storage';
 
-/** Clave en localStorage para la sesión iniciada */
-export const USER_STORAGE_KEY = 'user';
+/** @deprecated Import from constants/storage */
+export { USER_STORAGE_KEY } from '../constants/storage';
 
 @Injectable({
   providedIn: 'root',
@@ -101,20 +102,21 @@ export class Auth {
   private fetchUserAfterLogin(response: LoginResponse): Observable<User> {
     const token = this.extractToken(response);
     const payload = this.decodeToken(token);
+    const userId = payload?.userId ?? payload?.id;
 
-    if (!payload?.userId) {
+    if (!userId) {
       throw new Error('No se pudo obtener el usuario del token');
     }
 
     return this.http
-      .get<User>(`${this.apiUrl}/${payload.userId}`, {
+      .get<User>(`${this.apiUrl}/${userId}`, {
         headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
       })
       .pipe(
         map((user) => ({
           ...user,
-          id: user.id ?? payload.userId,
-          role: user.role ?? payload.role ?? response.role ?? '',
+          id: user.id ?? userId,
+          role: user.role ?? payload?.role ?? response.role ?? '',
           token,
         })),
       );
