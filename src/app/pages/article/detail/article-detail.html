@@ -9,7 +9,7 @@
     } @if (!loading && article) {
     <div class="row g-4">
         <div class="col-md-6">
-            <img [src]="article.photos?.[0]?.url || article.main_photo || article.image || 'https://placehold.co/600x400'" [alt]="article.title" class="img-fluid rounded shadow-sm w-100" style="max-height: 400px; object-fit: cover;"> @if (isLoggedIn())
+            <img [src]="article.photos?.[0]?.url || article.main_photo || article.image || 'https://placehold.co/600x400'" [alt]="article.title" class="img-fluid rounded shadow-sm w-100 article-main-image"> @if (isLoggedIn())
             {
             <div class="report-section mt-3">
 

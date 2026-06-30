@@ -97,7 +97,18 @@
         font-size: 0.9rem;
     }
 }
+.article-main-image {
+  max-height: 400px;
+  object-fit: cover;
+}
 
+@media (max-width: 991px) {
+  .article-main-image {
+    max-height: 320px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+  }
+}
 @media (max-width: 991px) and (orientation: landscape) {
     .d-flex.gap-2 {
         flex-direction: row;
