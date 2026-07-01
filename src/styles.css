@@ -59,3 +59,14 @@ button {
   margin: 0 auto;
   padding: 0 1.25rem;
 }
+
+/*
+ * Algunos navegadores (Edge) añaden su propio icono de "mostrar/ocultar
+ * contraseña" dentro del input, que se solapa con el icono de ojo (bi-eye)
+ * ya usado en el proyecto y da la sensación de que hay "dos ojos". Lo
+ * desactivamos globalmente para quedarnos solo con el icono propio.
+ */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear {
+  display: none;
+}

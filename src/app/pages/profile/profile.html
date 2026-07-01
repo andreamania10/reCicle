@@ -27,12 +27,12 @@
                 <section class="profile-card profile-card--avatar">
                     <h2 class="card-title">Foto de perfil</h2>
                     <div class="avatar-wrapper">
-                        @if (editData.avatar_url) {
+                        @if (avatarPreviewUrl && !avatarPreviewError) {
                         <img
                             class="avatar-image"
-                            [src]="editData.avatar_url"
+                            [src]="avatarPreviewUrl"
                             [alt]="'Avatar de ' + editData.username"
-                            (error)="$any($event.target).style.display='none'"
+                            (error)="onAvatarPreviewError()"
                         />
                         } @else {
                         <div class="avatar-placeholder">
@@ -43,15 +43,26 @@
 
                     <div class="form-group avatar-url-group">
                         <label for="avatarUrl" class="form-label">URL de la imagen</label>
-                        <input
-                            type="url"
-                            id="avatarUrl"
-                            name="avatarUrl"
-                            class="form-control"
-                            [(ngModel)]="editData.avatar_url"
-                            placeholder="https://ejemplo.com/mi-foto.jpg"
-                        />
-                        <small class="avatar-hint">Pega aquí la URL de tu foto de perfil.</small>
+                        <div class="avatar-url-row">
+                            <input
+                                type="url"
+                                id="avatarUrl"
+                                name="avatarUrl"
+                                class="form-control"
+                                [(ngModel)]="editData.avatar_url"
+                                placeholder="https://ejemplo.com/mi-foto.jpg"
+                            />
+                            <button type="button" class="btn-preview-avatar" (click)="previewAvatar()">
+                                <i class="bi bi-eye"></i> Vista previa
+                            </button>
+                        </div>
+                        @if (avatarPreviewError) {
+                        <small class="avatar-hint avatar-hint--error">
+                            <i class="bi bi-exclamation-circle"></i> No se pudo cargar esa imagen. Comprueba la URL.
+                        </small>
+                        } @else {
+                        <small class="avatar-hint">Pega la URL, pulsa "Vista previa" y guarda los cambios para aplicarla.</small>
+                        }
                     </div>
                 </section>
 

@@ -119,6 +119,46 @@
     display: block;
 }
 
+.avatar-hint--error {
+    color: #c0392b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.avatar-url-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.avatar-url-row .form-control {
+    flex: 1;
+    min-width: 0;
+}
+
+.btn-preview-avatar {
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: #f4f4f4;
+    color: #1a1a1a;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-preview-avatar:hover {
+    background: #eaeaea;
+    border-color: #ccc;
+}
+
 .avatar-url-group {
     width: 100%;
     margin-top: auto;
@@ -527,6 +567,7 @@
 .article-mini-status.status-vendido { background: #dbeafe; color: #1d4ed8; }
 .article-mini-status.status-en-revisión { background: #fef3c7; color: #92400e; }
 .article-mini-status.status-retirado { background: #fee2e2; color: #991b1b; }
+.article-mini-status.status-borrador { background: #e5e7eb; color: #374151; }
 
 /* Modales de contraseña */
 .modal-password .modal-content {

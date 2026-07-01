@@ -46,6 +46,9 @@ export class Profile implements OnInit {
   loadingArticles = true;
   articlesError = '';
 
+  avatarPreviewUrl: string | null = null;
+  avatarPreviewError = false;
+
   passwordData = {
     currentPassword: '',
     newPassword: '',
@@ -184,9 +187,23 @@ export class Profile implements OnInit {
       avatar_url: user.avatar_url ?? '',
     };
 
+    // La foto guardada siempre se refleja como vista previa activa.
+    this.avatarPreviewUrl = this.editData.avatar_url || null;
+    this.avatarPreviewError = false;
+
     if (sessionToken) {
       this.auth.setUser({ ...user, token: sessionToken });
     }
+  }
+
+  previewAvatar(): void {
+    const url = this.editData.avatar_url?.trim() || '';
+    this.avatarPreviewError = false;
+    this.avatarPreviewUrl = url || null;
+  }
+
+  onAvatarPreviewError(): void {
+    this.avatarPreviewError = true;
   }
 
   requestLogout(): void {

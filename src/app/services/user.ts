@@ -41,7 +41,7 @@ export class UserService {
 
   updatePassword(currentPassword: string, newPassword: string) {
     return this.http.put(
-      `${this.apiUrl}/password`,
+      `${this.apiUrl}/change-password`,
       { currentPassword, newPassword },
       { headers: this.buildHeaders() },
     );
