@@ -2,6 +2,9 @@
     <div class="profile-container">
 
         <div class="profile-header">
+            <a [routerLink]="['/articles']" class="btn btn-outline-secondary">
+                ← Volver a artículos
+              </a>
             <div class="profile-title-row">
                 <h1 class="profile-title">Mi perfil</h1>
                 <button type="button" class="btn-logout" (click)="requestLogout()">
@@ -14,27 +17,19 @@
 
         @if (loadingProfile) {
         <div class="profile-loading">
-            <span class="spinner-border spinner-border-sm"></span>
-            Cargando perfil...
+            <span class="spinner-border spinner-border-sm"></span> Cargando perfil...
         </div>
-        } @else {
-        @if (profileError) {
+        } @else { @if (profileError) {
         <p class="profile-error profile-error--banner">{{ profileError }}</p>
         }
-        <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)" novalidate>
+        <form class="profile-grid-container" #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)" novalidate>
             <div class="profile-grid">
 
                 <section class="profile-card profile-card--avatar">
                     <h2 class="card-title">Foto de perfil</h2>
                     <div class="avatar-wrapper">
-                        @if (avatarPreviewUrl && !avatarPreviewError) {
-                        <img
-                            class="avatar-image"
-                            [src]="avatarPreviewUrl"
-                            [alt]="'Avatar de ' + editData.username"
-                            (error)="onAvatarPreviewError()"
-                        />
-                        } @else {
+                        @if (avatarPreviewUrl && !avatarPreviewError) { <img class="avatar-image" [src]="avatarPreviewUrl" [alt]="'Avatar de ' + editData.username" (error)="onAvatarPreviewError()" /> } @else { ======= @if (editData.avatar_url) {
+                        <img class="avatar-image" [src]="editData.avatar_url" [alt]="'Avatar de ' + editData.username" (error)="$any($event.target).style.display='none'" /> } @else { >>>>>>> andrea
                         <div class="avatar-placeholder">
                             <i class="bi bi-person-circle"></i>
                         </div>
@@ -44,14 +39,7 @@
                     <div class="form-group avatar-url-group">
                         <label for="avatarUrl" class="form-label">URL de la imagen</label>
                         <div class="avatar-url-row">
-                            <input
-                                type="url"
-                                id="avatarUrl"
-                                name="avatarUrl"
-                                class="form-control"
-                                [(ngModel)]="editData.avatar_url"
-                                placeholder="https://ejemplo.com/mi-foto.jpg"
-                            />
+                            <input type="url" id="avatarUrl" name="avatarUrl" class="form-control" [(ngModel)]="editData.avatar_url" placeholder="https://ejemplo.com/mi-foto.jpg" />
                             <button type="button" class="btn-preview-avatar" (click)="previewAvatar()">
                                 <i class="bi bi-eye"></i> Vista previa
                             </button>
@@ -59,11 +47,19 @@
                         @if (avatarPreviewError) {
                         <small class="avatar-hint avatar-hint--error">
                             <i class="bi bi-exclamation-circle"></i> No se pudo cargar esa imagen. Comprueba la URL.
-                        </small>
-                        } @else {
-                        <small class="avatar-hint">Pega la URL, pulsa "Vista previa" y guarda los cambios para aplicarla.</small>
-                        }
+                        </small> } @else {
+                        <small class="avatar-hint">Pega la URL, pulsa "Vista previa" y guarda los cambios para aplicarla.</small> }
                     </div>
+                    <button type="submit" class="btn-submit" [disabled]="isSavingProfile || profileForm.invalid">
+                        @if (!isSavingProfile) {
+                        Guardar cambios
+                        } @else {
+                        <span class="d-flex align-items-center justify-content-center gap-2">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                            Guardando...
+                        </span>
+                        }
+                    </button>
                 </section>
 
                 <section class="profile-card profile-card--info">
@@ -71,49 +67,23 @@
 
                     <div class="form-group">
                         <label for="username" class="form-label">Nombre de usuario</label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            class="form-control"
-                            [(ngModel)]="editData.username"
-                            #usernameField="ngModel"
-                            required
-                            [class.is-invalid]="usernameField.invalid && usernameField.touched"
-                        />
-                        @if (usernameField.invalid && usernameField.touched) {
+                        <input type="text" id="username" name="username" class="form-control" [(ngModel)]="editData.username" #usernameField="ngModel" required [class.is-invalid]="usernameField.invalid && usernameField.touched" /> @if (usernameField.invalid
+                        && usernameField.touched) {
                         <div class="invalid-feedback">El nombre de usuario es obligatorio.</div>
                         }
                     </div>
 
                     <div class="form-group">
                         <label for="email" class="form-label">Correo electrónico</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="form-control"
-                            [(ngModel)]="editData.email"
-                            #emailField="ngModel"
-                            required
-                            email
-                            [class.is-invalid]="emailField.invalid && emailField.touched"
-                        />
-                        @if (emailField.invalid && emailField.touched) {
+                        <input type="email" id="email" name="email" class="form-control" [(ngModel)]="editData.email" #emailField="ngModel" required email [class.is-invalid]="emailField.invalid && emailField.touched" /> @if (emailField.invalid && emailField.touched)
+                        {
                         <div class="invalid-feedback">Introduce un correo válido.</div>
                         }
                     </div>
 
                     <div class="form-group">
                         <label for="location" class="form-label">Ubicación</label>
-                        <input
-                            type="text"
-                            id="location"
-                            name="location"
-                            class="form-control"
-                            [(ngModel)]="editData.location"
-                            placeholder="Ciudad, país"
-                        />
+                        <input type="text" id="location" name="location" class="form-control" [(ngModel)]="editData.location" placeholder="Ciudad, país" />
                     </div>
 
                     <dl class="info-list info-list--readonly">
@@ -143,27 +113,17 @@
                     <div class="alert-error">
                         <i class="bi bi-exclamation-circle"></i> {{ profileSaveError }}
                     </div>
-                    }
-                    @if (profileMessage) {
+                    } @if (profileMessage) {
                     <div class="alert-success">
                         <i class="bi bi-check-circle"></i> {{ profileMessage }}
                     </div>
                     }
-
-                    <button type="submit" class="btn-submit" [disabled]="isSavingProfile || profileForm.invalid">
-                        @if (!isSavingProfile) {
-                        Guardar cambios
-                        } @else {
-                        <span class="d-flex align-items-center justify-content-center gap-2">
-                            <span class="spinner-border spinner-border-sm" role="status"></span>
-                            Guardando...
-                        </span>
-                        }
-                    </button>
                 </section>
 
             </div>
         </form>
+
+        @if (profile.role === 'Usuario') {
 
         <section class="profile-card profile-card--articles">
             <h2 class="card-title">Mis productos</h2>
@@ -172,32 +132,54 @@
             <div class="articles-loading">
                 <span class="spinner-border spinner-border-sm"></span> Cargando productos...
             </div>
+
             } @else if (articlesError) {
+
             <p class="articles-error">{{ articlesError }}</p>
+
             } @else if (myArticles.length === 0) {
-            <p class="articles-empty">Aún no has publicado ningún producto. <a routerLink="/sellProduct">¡Publica el primero!</a></p>
+
+            <p class="articles-empty">
+                Aún no has publicado ningún producto.
+                <a routerLink="/sellProduct">¡Publica el primero!</a>
+            </p>
+
             } @else {
+
             <div class="articles-grid">
                 @for (article of myArticles; track article.id) {
                 <a class="article-mini-card" [routerLink]="['/articles', article.id]">
+
                     <div class="article-mini-img">
                         @if (article.main_photo || (article.photos && article.photos.length > 0)) {
-                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" />
-                        } @else {
-                        <div class="article-mini-placeholder"><i class="bi bi-image"></i></div>
+                        <img [src]="article.main_photo || article.photos![0].url" [alt]="article.title" loading="lazy" /> } @else {
+                        <div class="article-mini-placeholder">
+                            <i class="bi bi-image"></i>
+                        </div>
                         }
                     </div>
+
                     <div class="article-mini-info">
                         <span class="article-mini-title">{{ article.title }}</span>
-                        <span class="article-mini-price">{{ article.price | currency:'EUR':'symbol':'1.0-2' }}</span>
-                        <span class="article-mini-status" [class]="'status-' + (article.status || 'Borrador').toLowerCase().replace(' ', '-')">{{ article.status || 'Borrador' }}</span>
+
+                        <span class="article-mini-price">
+                                {{ article.price | currency:'EUR':'symbol':'1.0-2' }}
+                            </span>
+
+                        <span class="article-mini-status" [class]="'status-' + (article.status || 'Borrador').toLowerCase().replace(' ', '-')">
+                                {{ article.status || 'Borrador' }}
+                            </span>
                     </div>
+
                 </a>
                 }
             </div>
+
             }
+
         </section>
-        }
+
+        } }
 
     </div>
 </div>
@@ -305,14 +287,14 @@
 </div>
 
 @if (showLogoutConfirm) {
-  <div class="logout-modal-overlay" (click)="cancelLogout()">
+<div class="logout-modal-overlay" (click)="cancelLogout()">
     <div class="logout-modal" (click)="$event.stopPropagation()">
-      <h3>Cerrar sesión</h3>
-      <p>¿Deseas cerrar sesión?</p>
-      <div class="logout-modal-actions">
-        <button type="button" class="btn-logout-cancel" (click)="cancelLogout()">No</button>
-        <button type="button" class="btn-logout-confirm" (click)="confirmLogout()">Sí, cerrar sesión</button>
-      </div>
+        <h3>Cerrar sesión</h3>
+        <p>¿Deseas cerrar sesión?</p>
+        <div class="logout-modal-actions">
+            <button type="button" class="btn-logout-cancel" (click)="cancelLogout()">No</button>
+            <button type="button" class="btn-logout-confirm" (click)="confirmLogout()">Sí, cerrar sesión</button>
+        </div>
     </div>
-  </div>
+</div>
 }

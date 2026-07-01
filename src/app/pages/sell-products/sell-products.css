@@ -1,7 +1,7 @@
 .sell-page {
     min-height: calc(100vh - 120px);
     background: #f9f9f7;
-    padding: 2.5rem 1rem 4rem;
+    padding: 1.5rem 1rem 4rem;
 }
 
 .sell-container {
@@ -356,15 +356,42 @@ textarea {
     background-color: #fff5f5;
 }
 
+.btn-contact {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1.5px solid #dee2e6;
+    background-color: white;
+    color: #00bfa5;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-contact,
+.btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border-color: #00bfa5;
+    color: #00a082;
+    margin-bottom: 15px;
+}
+
+.btn-contact:hover {
+    background-color: #f8f9fa;
+    border-color: #17b8a2;
+}
+
+.btn-contact:active {
+    transform: scale(0.97);
+}
+
 @media (max-width: 900px) {
     .sell-layout {
         grid-template-columns: 1fr;
     }
-
     .form-row {
         grid-template-columns: 1fr;
     }
-
     .condition-options {
         grid-template-columns: 1fr 1fr;
     }
