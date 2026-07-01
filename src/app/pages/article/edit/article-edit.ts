@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Article } from '../../../interfaces/article';
+import { Category } from '../../../interfaces/category';
 import { ArticleService } from '../../../services/article';
+import { CategoryService } from '../../../services/category';
 import { Auth } from '../../../services/auth';
 
 @Component({
@@ -17,6 +19,7 @@ export class ArticleEdit implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private articleService = inject(ArticleService);
+  private categoryService = inject(CategoryService);
   private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
 
@@ -32,9 +35,21 @@ export class ArticleEdit implements OnInit {
   condition: string = '';
   status: string = '';
   location: string = '';
+  category_id: number | null = null;
+
+  conditionOptions = ['Nuevo', 'Como nuevo', 'Buen estado', 'Aceptable'];
+  categories: Category[] = [];
 
   ngOnInit() {
     this.articleId = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.categoryService.getCategories().subscribe({
+      next: (cats) => {
+        this.categories = cats;
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
 
     this.articleService.getById(this.articleId).subscribe({
       next: (data: Article) => {
@@ -44,6 +59,7 @@ export class ArticleEdit implements OnInit {
         this.condition = data.condition || '';
         this.status = data.status || '';
         this.location = data.location || '';
+        this.category_id = data.category_id || null;
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -72,6 +88,7 @@ export class ArticleEdit implements OnInit {
       condition: this.condition,
       status: this.status,
       location: this.location,
+      category_id: this.category_id || undefined,
     };
 
     this.articleService.update(this.articleId, updatedArticle as Article, currentUser.token).subscribe({

@@ -1,105 +1,97 @@
 <div class="moderator-wrapper">
-  <div class="moderator-header">
-    <h1>Panel de moderación</h1>
-    <p>Gestiona reportes de artículos y usuarios.</p>
-  </div>
+    <div class="moderator-header">
 
-  @if (successMessage()) {
+        <a [routerLink]="['/articles']" class="btn btn-outline-secondary">
+        ← Volver a artículos
+      </a>
+        <h1>Panel de moderación</h1>
+        <p>Gestiona reportes de artículos y usuarios.</p>
+    </div>
+
+    @if (successMessage()) {
     <div class="alert alert-success">{{ successMessage() }}</div>
-  }
-  @if (errorMessage()) {
+    } @if (errorMessage()) {
     <div class="alert alert-danger">{{ errorMessage() }}</div>
-  }
+    }
 
-  <div class="moderator-tabs">
-    <button type="button" [class.active]="activeTab() === 'articles'" (click)="setTab('articles')">
+    <div class="moderator-tabs">
+        <button type="button" [class.active]="activeTab() === 'articles'" (click)="setTab('articles')">
       Artículos pendientes
     </button>
-    <button type="button" [class.active]="activeTab() === 'users'" (click)="setTab('users')">
+        <button type="button" [class.active]="activeTab() === 'users'" (click)="setTab('users')">
       Usuarios pendientes
     </button>
-    <button type="button" [class.active]="activeTab() === 'history'" (click)="setTab('history')">
+        <button type="button" [class.active]="activeTab() === 'history'" (click)="setTab('history')">
       Historial
     </button>
-  </div>
+    </div>
 
-  <div class="tab-content">
-    @if (loading()) {
-      <p class="loading-text">Cargando reportes...</p>
-    } @else if (activeTab() === 'articles') {
-      @if (pendingArticles().length === 0) {
+    <div class="tab-content">
+        @if (loading()) {
+        <p class="loading-text">Cargando reportes...</p>
+        } @else if (activeTab() === 'articles') { @if (pendingArticles().length === 0) {
         <p class="loading-text">No hay reportes de artículos pendientes.</p>
-      } @else {
+        } @else {
         <table class="moderator-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Artículo</th>
-              <th>Precio</th>
-              <th>Reportado por</th>
-              <th>Motivo</th>
-              <th>Fecha</th>
-              <th class="col-actions">Ver</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (report of pendingArticles(); track report.report_id) {
-              <tr>
-                <td>{{ report.report_id }}</td>
-                <td>{{ report.article_title }}</td>
-                <td>{{ report.article_price }} €</td>
-                <td>{{ report.reporter_username }}</td>
-                <td>{{ report.report_reason }}</td>
-                <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
-                <td class="col-actions">
-                  <button
-                    type="button"
-                    class="btn-icon btn-view"
-                    title="Ver detalle del reporte"
-                    aria-label="Ver detalle del reporte"
-                    (click)="openArticleDetail(report)"
-                  >
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Artículo</th>
+                    <th>Precio</th>
+                    <th>Reportado por</th>
+                    <th>Motivo</th>
+                    <th>Fecha</th>
+                    <th class="col-actions">Ver</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (report of pendingArticles(); track report.report_id) {
+                <tr>
+                    <td>{{ report.report_id }}</td>
+                    <td>{{ report.article_title }}</td>
+                    <td>{{ report.article_price }} €</td>
+                    <td>{{ report.reporter_username }}</td>
+                    <td>{{ report.report_reason }}</td>
+                    <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="col-actions">
+                        <button type="button" class="btn-icon btn-view" title="Ver detalle del reporte" aria-label="Ver detalle del reporte" (click)="openArticleDetail(report)">
                     <i class="bi bi-eye"></i>
                   </button>
-                </td>
-              </tr>
-            }
-          </tbody>
+                    </td>
+                </tr>
+                }
+            </tbody>
         </table>
-      }
-    } @else if (activeTab() === 'users') {
-      @if (pendingUsers().length === 0) {
+        } } @else if (activeTab() === 'users') { @if (pendingUsers().length === 0) {
         <p class="loading-text">No hay reportes de usuarios pendientes.</p>
-      } @else {
+        } @else {
         <table class="moderator-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Usuario reportado</th>
-              <th>Reportado por</th>
-              <th>Motivo</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (report of pendingUsers(); track report.report_id) {
-              <tr class="clickable-row" (click)="openUserDetail(report)">
-                <td>{{ report.report_id }}</td>
-                <td>{{ report.reported_username }}</td>
-                <td>{{ report.reporter_username }}</td>
-                <td>{{ report.report_reason }}</td>
-                <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
-              </tr>
-            }
-          </tbody>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario reportado</th>
+                    <th>Reportado por</th>
+                    <th>Motivo</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (report of pendingUsers(); track report.report_id) {
+                <tr class="clickable-row" (click)="openUserDetail(report)">
+                    <td>{{ report.report_id }}</td>
+                    <td>{{ report.reported_username }}</td>
+                    <td>{{ report.reporter_username }}</td>
+                    <td>{{ report.report_reason }}</td>
+                    <td>{{ report.report_created_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                }
+            </tbody>
         </table>
-      }
-    } @else {
-      @if (history().length === 0) {
+        } } @else { @if (history().length === 0) {
         <p class="loading-text">No hay reportes resueltos.</p>
-      } @else {
+        } @else {
         <div class="history-filters">
-          <label class="history-filter">
+            <label class="history-filter">
             <input
               type="checkbox"
               [checked]="historyShowArticles()"
@@ -107,7 +99,7 @@
             />
             Artículos
           </label>
-          <label class="history-filter">
+            <label class="history-filter">
             <input
               type="checkbox"
               [checked]="historyShowUsers()"
@@ -118,130 +110,105 @@
         </div>
 
         @if (filteredHistory().length === 0) {
-          <p class="loading-text">No hay reportes con los filtros seleccionados.</p>
+        <p class="loading-text">No hay reportes con los filtros seleccionados.</p>
         } @else {
         <table class="moderator-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Tipo</th>
-              <th>Motivo</th>
-              <th>Resolución</th>
-              <th>Moderador</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (report of filteredHistory(); track report.report_id) {
-              <tr>
-                <td>{{ report.report_id }}</td>
-                <td><span class="badge">{{ report.report_type }}</span></td>
-                <td>{{ report.report_reason }}</td>
-                <td>{{ report.resolution_note }}</td>
-                <td>{{ report.moderator_username }}</td>
-                <td>{{ report.resolution_date | date: 'dd/MM/yyyy HH:mm' }}</td>
-              </tr>
-            }
-          </tbody>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Motivo</th>
+                    <th>Resolución</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (report of filteredHistory(); track report.report_id) {
+                <tr>
+                    <td>{{ report.report_id }}</td>
+                    <td><span class="badge">{{ report.report_type }}</span></td>
+                    <td>{{ report.report_reason }}</td>
+                    <td>{{ report.resolution_note }}</td>
+                    <td>{{ report.moderator_username }}</td>
+                    <td>{{ report.resolution_date | date: 'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+                }
+            </tbody>
         </table>
-        }
-      }
+        } } }
+    </div>
+
+    @if (selectedArticleReport(); as report) {
+    <div class="modal-overlay" (click)="closeDetail()">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+            <h3>Reporte de artículo #{{ report.report_id }}</h3>
+            <p><strong>Artículo:</strong> {{ report.title }}</p>
+            <p><strong>Precio:</strong> {{ report.price }} €</p>
+            <p><strong>Estado:</strong> {{ report.status }} (anterior: {{ report.previous_status }})</p>
+            <p><strong>Vendedor:</strong> {{ report.seller_username }}</p>
+            <p><strong>Ubicación:</strong> {{ report.location }}</p>
+            <p><strong>Motivo:</strong> {{ report.reason }}</p>
+            <p><strong>Fecha:</strong> {{ report.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+
+            @if (report.photos.length) {
+            <img class="report-photo" [src]="report.photos[0].url" [alt]="report.title" /> }
+
+            <div class="resolution-form">
+                <label class="form-label">Nota del moderador</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="moderatorNote" placeholder="Explica por qué aceptas o rechazas el reporte..."></textarea>
+            </div>
+
+            <div class="modal-actions modal-actions--split">
+                <button type="button" class="btn-cancel" (click)="closeDetail()">Cancelar</button>
+                <button type="button" class="btn-reject" [disabled]="resolving() || !moderatorNote.trim()" (click)="resolveArticleReport('reject')">
+            {{ resolving() ? 'Procesando...' : 'Rechazar reporte' }}
+          </button>
+                <button type="button" class="btn-accept" [disabled]="resolving() || !moderatorNote.trim()" (click)="resolveArticleReport('accept')">
+            {{ resolving() ? 'Procesando...' : 'Aceptar reporte' }}
+          </button>
+            </div>
+        </div>
+    </div>
+    } @if (selectedUserReport(); as report) {
+    <div class="modal-overlay" (click)="closeDetail()">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+
+            <h3>Reporte de usuario #{{ report.report_id }}</h3>
+
+            <div class="user-detail">
+                <img class="report-avatar" [src]="report.reported_user_avatar || '/assets/imagenes/sin_foto.png'" [alt]="report.reported_user_username" />
+
+                <div>
+                    <p>
+                        <strong>Usuario reportado:</strong> {{ report.reported_user_username }}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong> {{ report.reported_user_email }}
+                    </p>
+                </div>
+            </div>
+
+            <p>
+                <strong>Reportado por:</strong> {{ report.reporter_user_username }}
+            </p>
+
+            <p>
+                <strong>Motivo:</strong> {{ report.reason }}
+            </p>
+
+            <p>
+                <strong>Fecha:</strong> {{ report.created_at | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" (click)="closeDetail()">
+                      Cerrar
+                  </button>
+            </div>
+
+        </div>
+    </div>
     }
-  </div>
-
-  @if (selectedArticleReport(); as report) {
-    <div class="modal-overlay" (click)="closeDetail()">
-      <div class="modal-box" (click)="$event.stopPropagation()">
-        <h3>Reporte de artículo #{{ report.report_id }}</h3>
-        <p><strong>Artículo:</strong> {{ report.title }}</p>
-        <p><strong>Precio:</strong> {{ report.price }} €</p>
-        <p><strong>Estado:</strong> {{ report.status }} (anterior: {{ report.previous_status }})</p>
-        <p><strong>Vendedor:</strong> {{ report.seller_username }}</p>
-        <p><strong>Ubicación:</strong> {{ report.location }}</p>
-        <p><strong>Motivo:</strong> {{ report.reason }}</p>
-        <p><strong>Fecha:</strong> {{ report.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
-
-        @if (report.photos.length) {
-          <img class="report-photo" [src]="report.photos[0].url" [alt]="report.title" />
-        }
-
-        <div class="resolution-form">
-          <label class="form-label">Nota del moderador</label>
-          <textarea
-            class="form-control"
-            rows="3"
-            [(ngModel)]="moderatorNote"
-            placeholder="Explica por qué aceptas o rechazas el reporte..."
-          ></textarea>
-        </div>
-
-        <div class="modal-actions modal-actions--split">
-          <button type="button" class="btn-cancel" (click)="closeDetail()">Cancelar</button>
-          <button
-            type="button"
-            class="btn-reject"
-            [disabled]="resolving() || !moderatorNote.trim()"
-            (click)="resolveArticleReport('reject')"
-          >
-            {{ resolving() ? 'Procesando...' : 'Rechazar reporte' }}
-          </button>
-          <button
-            type="button"
-            class="btn-accept"
-            [disabled]="resolving() || !moderatorNote.trim()"
-            (click)="resolveArticleReport('accept')"
-          >
-            {{ resolving() ? 'Procesando...' : 'Aceptar reporte' }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
-
-  @if (selectedUserReport(); as report) {
-    <div class="modal-overlay" (click)="closeDetail()">
-      <div class="modal-box" (click)="$event.stopPropagation()">
-        <h3>Reporte de usuario #{{ report.report_id }}</h3>
-        <div class="user-detail">
-          <img
-            class="report-avatar"
-            [src]="report.reported_user_avatar || '/assets/imagenes/sin_foto.png'"
-            [alt]="report.reported_user_username"
-          />
-          <div>
-            <p><strong>Usuario reportado:</strong> {{ report.reported_user_username }}</p>
-            <p><strong>Email:</strong> {{ report.reported_user_email }}</p>
-          </div>
-        </div>
-        <p><strong>Reportado por:</strong> {{ report.reporter_user_username }}</p>
-        <p><strong>Motivo:</strong> {{ report.reason }}</p>
-        <p><strong>Fecha:</strong> {{ report.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
-
-        <div class="resolution-form">
-          <label class="form-label">Nota del moderador</label>
-          <textarea class="form-control" rows="3" [(ngModel)]="moderatorNote" placeholder="Explica la decisión..."></textarea>
-        </div>
-
-        <div class="modal-actions modal-actions--split">
-          <button type="button" class="btn-cancel" (click)="closeDetail()">Cancelar</button>
-          <button
-            type="button"
-            class="btn-reject"
-            [disabled]="resolving() || !moderatorNote.trim()"
-            (click)="resolveUserReport('reject')"
-          >
-            {{ resolving() ? 'Procesando...' : 'Rechazar reporte' }}
-          </button>
-          <button
-            type="button"
-            class="btn-accept"
-            [disabled]="resolving() || !moderatorNote.trim()"
-            (click)="resolveUserReport('accept')"
-          >
-            {{ resolving() ? 'Procesando...' : 'Aceptar reporte' }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
 </div>

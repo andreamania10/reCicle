@@ -1,6 +1,9 @@
 <div class="sell-page">
     <div class="sell-container">
         <header class="sell-header">
+            <a [routerLink]="['/articles']" class="btn btn-outline-secondary">
+                ← Volver a artículos
+              </a>
             <h1>Publicar producto</h1>
             <p class="sell-subtitle">Completa la información de tu artículo para publicarlo en Recycle.</p>
         </header>
@@ -13,41 +16,18 @@
 
                     <div class="form-group">
                         <label for="title">Nombre del producto</label>
-                        <input
-                            id="title"
-                            type="text"
-                            name="title"
-                            [(ngModel)]="product.title"
-                            placeholder="Ej. Bicicleta de montaña"
-                            [class.error]="formSubmitted && !product.title.trim()"
-                            required
-                        />
+                        <input id="title" type="text" name="title" [(ngModel)]="product.title" placeholder="Ej. Bicicleta de montaña" [class.error]="formSubmitted && !product.title.trim()" required />
                     </div>
 
                     <div class="form-group">
                         <label for="description">Descripción</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            [(ngModel)]="product.description"
-                            rows="5"
-                            placeholder="Describe el estado, características y detalles del producto..."
-                            [class.error]="formSubmitted && !product.description.trim()"
-                            required
-                        ></textarea>
+                        <textarea id="description" name="description" [(ngModel)]="product.description" rows="5" placeholder="Describe el estado, características y detalles del producto..." [class.error]="formSubmitted && !product.description.trim()" required></textarea>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="category">Categoría</label>
-                            <select
-                                id="category"
-                                name="category_id"
-                                [(ngModel)]="product.category_id"
-                                [class.error]="formSubmitted && !product.category_id"
-                                [disabled]="loadingCategories"
-                                required
-                            >
+                            <select id="category" name="category_id" [(ngModel)]="product.category_id" [class.error]="formSubmitted && !product.category_id" [disabled]="loadingCategories" required>
                                 <option [ngValue]="null">Selecciona categoría</option>
                                 @if (loadingCategories) {
                                 <option disabled>Cargando categorías...</option>
@@ -63,59 +43,29 @@
 
                         <div class="form-group">
                             <label for="price">Precio (€)</label>
-                            <input
-                                id="price"
-                                type="number"
-                                name="price"
-                                [(ngModel)]="product.price"
-                                step="0.01"
-                                min="0"
-                                placeholder="0.00"
-                                [class.error]="formSubmitted && (product.price === null || product.price < 0)"
-                                required
-                            />
+                            <input id="price" type="number" name="price" [(ngModel)]="product.price" step="0.01" min="0" placeholder="0.00" [class.error]="formSubmitted && (product.price === null || product.price < 0)" required />
                         </div>
                     </div>
 
                     <div class="form-group form-group--condition">
                         <span class="field-label" id="condition-label">Condición</span>
-                        <div
-                            class="condition-options"
-                            role="radiogroup"
-                            aria-labelledby="condition-label"
-                        >
+                        <div class="condition-options" role="radiogroup" aria-labelledby="condition-label">
                             @for (option of conditionOptions; track option) {
-                            <button
-                                type="button"
-                                class="condition-option"
-                                [class.condition-option--active]="isConditionSelected(option)"
-                                [attr.aria-checked]="isConditionSelected(option)"
-                                role="radio"
-                                (click)="selectCondition(option)"
-                            >
+                            <button type="button" class="condition-option" [class.condition-option--active]="isConditionSelected(option)" [attr.aria-checked]="isConditionSelected(option)" role="radio" (click)="selectCondition(option)">
                                 <i
                                     class="bi"
                                     [class.bi-check-circle-fill]="isConditionSelected(option)"
                                     [class.bi-circle]="!isConditionSelected(option)"
                                 ></i>
                                 <span>{{ option }}</span>
-                            </button>
-                            }
+                            </button> }
                         </div>
                         <input type="hidden" name="condition" [(ngModel)]="product.condition" />
                     </div>
 
                     <div class="form-group">
                         <label for="location">Locación</label>
-                        <input
-                            id="location"
-                            type="text"
-                            name="location"
-                            [(ngModel)]="product.location"
-                            placeholder="Ciudad, país"
-                            [class.error]="formSubmitted && !product.location.trim()"
-                            required
-                        />
+                        <input id="location" type="text" name="location" [(ngModel)]="product.location" placeholder="Ciudad, país" [class.error]="formSubmitted && !product.location.trim()" required />
                     </div>
                 </section>
 
@@ -131,20 +81,8 @@
                     </p>
 
                     <div class="file-upload-area" [class.file-upload-area--error]="formSubmitted && !hasImages()">
-                        <input
-                            id="productImages"
-                            type="file"
-                            class="file-input-hidden"
-                            [accept]="acceptedImageTypes"
-                            [multiple]="remainingSlots > 1"
-                            [disabled]="!canAddImage || isPublishing"
-                            (change)="onFileSelected($event)"
-                        />
-                        <label
-                            for="productImages"
-                            class="file-upload-label"
-                            [class.file-upload-label--disabled]="!canAddImage || isPublishing"
-                        >
+                        <input id="productImages" type="file" class="file-input-hidden" [accept]="acceptedImageTypes" [multiple]="remainingSlots > 1" [disabled]="!canAddImage || isPublishing" (change)="onFileSelected($event)" />
+                        <label for="productImages" class="file-upload-label" [class.file-upload-label--disabled]="!canAddImage || isPublishing">
                             <i class="bi bi-cloud-arrow-up"></i>
                             <span>
                                 @if (canAddImage) {
@@ -163,8 +101,7 @@
 
             @if (errorMessage) {
             <p class="error-message">{{ errorMessage }}</p>
-            }
-            @if (successMessage) {
+            } @if (successMessage) {
             <p class="success-message">{{ successMessage }}</p>
             }
 
@@ -181,12 +118,7 @@
                     @for (image of attachedImages; track image.previewUrl; let i = $index) {
                     <div class="image-thumbnail">
                         <img [src]="image.previewUrl" [alt]="'Imagen ' + (i + 1)" />
-                        <button
-                            type="button"
-                            class="image-thumbnail-remove"
-                            (click)="removeImage(i)"
-                            [attr.aria-label]="'Eliminar imagen ' + (i + 1)"
-                        >
+                        <button type="button" class="image-thumbnail-remove" (click)="removeImage(i)" [attr.aria-label]="'Eliminar imagen ' + (i + 1)">
                             <i class="bi bi-x-lg"></i>
                         </button>
                     </div>

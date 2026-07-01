@@ -16,11 +16,9 @@
 }
 
 .brand-logo {
-    width: 70px;
-    height: 70px;
-    margin-top: -20px; margin-bottom: -20px;
-    /* object-fit: contain;
-    display: block; */
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
 }
 
 .brand-name {
@@ -104,7 +102,7 @@
     padding: 0 18px;
     border: none;
     border-radius: 10px;
-    background: #111827;
+    background: #00a082;
     color: #ffffff;
     font-size: 14px;
     font-weight: 500;
@@ -125,7 +123,6 @@
         border-top: 1px solid #e8e8e8;
         margin-top: 8px;
     }
-
     .navbar-actions--guest .btn-login {
         width: 100%;
     }

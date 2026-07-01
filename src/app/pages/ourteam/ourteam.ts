@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import {RouterLink } from '@angular/router';
 
 interface TeamMember {
   name: string;
@@ -10,7 +11,7 @@ interface TeamMember {
 
 @Component({
   selector: 'app-ourteam',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './ourteam.html',
   styleUrl: './ourteam.css',
 })
