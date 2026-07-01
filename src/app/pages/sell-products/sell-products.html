@@ -1,81 +1,199 @@
-<div class="container">
-    <h1>Publicar producto</h1>
-    <form (ngSubmit)="submitProduct()">
-        <div class="form-group">
-            <label>Nombre del producto</label>
-            <input type="text" [(ngModel)]="product.name" name="name" [class.error]="formSubmitted && !product.name" required />
-        </div>
-        <div class="form-group">
-            <label>Descripción</label>
-            <textarea [(ngModel)]="product.description" name="description" [class.error]="formSubmitted && !product.name" required></textarea>
-        </div>
+<div class="sell-page">
+    <div class="sell-container">
+        <header class="sell-header">
+            <h1>Publicar producto</h1>
+            <p class="sell-subtitle">Completa la información de tu artículo para publicarlo en Recycle.</p>
+        </header>
 
-        <div class="form-group">
-            <label>Precio</label>
-            <input type="number" [(ngModel)]="product.price" name="price" [class.error]="formSubmitted && !product.name" required />
-        </div>
+        <form class="sell-form" (ngSubmit)="submitProduct()" novalidate>
+            <div class="sell-layout">
+                <!-- Columna izquierda: datos del producto -->
+                <section class="sell-panel sell-panel--info">
+                    <h2 class="panel-title">Información del producto</h2>
 
-        <div class="form-group">
-            <label>Categoría</label>
-            <select [(ngModel)]="product.category_id" name="category_id" [class.error]="formSubmitted && !product.name" required>
-          <option [ngValue]="null">Selecciona categoría</option>
-          <option [ngValue]="1">Tecnología</option>
-          <option [ngValue]="2">Ropa</option>
-          <option [ngValue]="3">Hogar</option>
-          <option [ngValue]="4">Deporte</option>
-          <option [ngValue]="5">Vehículos</option>
-        </select>
-        </div>
+                    <div class="form-group">
+                        <label for="title">Nombre del producto</label>
+                        <input
+                            id="title"
+                            type="text"
+                            name="title"
+                            [(ngModel)]="product.title"
+                            placeholder="Ej. Bicicleta de montaña"
+                            [class.error]="formSubmitted && !product.title.trim()"
+                            required
+                        />
+                    </div>
 
-        <div class="form-group">
-            <label>Estado</label>
-            <select [(ngModel)]="product.condition" name="condition" [class.error]="formSubmitted && !product.name" required>
-          <option value="">Selecciona estado</option>
-          <option value="Nuevo">Nuevo</option>
-          <option value="Como nuevo">Como nuevo</option>
-          <option value="Buen estado">Buen estado</option>
-        </select>
-        </div>
+                    <div class="form-group">
+                        <label for="description">Descripción</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            [(ngModel)]="product.description"
+                            rows="5"
+                            placeholder="Describe el estado, características y detalles del producto..."
+                            [class.error]="formSubmitted && !product.description.trim()"
+                            required
+                        ></textarea>
+                    </div>
 
-        <div class="form-group">
-            <label>Ubicación</label>
-            <input type="text" [(ngModel)]="product.location" name="location" [class.error]="formSubmitted && !product.name" required />
-        </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Categoría</label>
+                            <select
+                                id="category"
+                                name="category_id"
+                                [(ngModel)]="product.category_id"
+                                [class.error]="formSubmitted && !product.category_id"
+                                [disabled]="loadingCategories"
+                                required
+                            >
+                                <option [ngValue]="null">Selecciona categoría</option>
+                                @if (loadingCategories) {
+                                <option disabled>Cargando categorías...</option>
+                                } @else if (categoriesError) {
+                                <option disabled>No se pudieron cargar las categorías</option>
+                                } @else {
+                                @for (category of categories; track category.id) {
+                                <option [ngValue]="category.id">{{ category.name }}</option>
+                                }
+                                }
+                            </select>
+                        </div>
 
-        <div class="form-group">
-            <label>Fotografía o vídeo</label>
-            <input type="file" accept="image/*,video/*" (change)="onFileSelected($event)" />
-            <small>Puedes subir una imagen o un vídeo del artículo.</small>
-        </div>
+                        <div class="form-group">
+                            <label for="price">Precio (€)</label>
+                            <input
+                                id="price"
+                                type="number"
+                                name="price"
+                                [(ngModel)]="product.price"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                [class.error]="formSubmitted && (product.price === null || product.price < 0)"
+                                required
+                            />
+                        </div>
+                    </div>
 
-        <div class="preview" *ngIf="previewUrl">
-            <img *ngIf="isImage" [src]="previewUrl" alt="Vista previa del producto" />
+                    <div class="form-group form-group--condition">
+                        <span class="field-label" id="condition-label">Condición</span>
+                        <div
+                            class="condition-options"
+                            role="radiogroup"
+                            aria-labelledby="condition-label"
+                        >
+                            @for (option of conditionOptions; track option) {
+                            <button
+                                type="button"
+                                class="condition-option"
+                                [class.condition-option--active]="isConditionSelected(option)"
+                                [attr.aria-checked]="isConditionSelected(option)"
+                                role="radio"
+                                (click)="selectCondition(option)"
+                            >
+                                <i
+                                    class="bi"
+                                    [class.bi-check-circle-fill]="isConditionSelected(option)"
+                                    [class.bi-circle]="!isConditionSelected(option)"
+                                ></i>
+                                <span>{{ option }}</span>
+                            </button>
+                            }
+                        </div>
+                        <input type="hidden" name="condition" [(ngModel)]="product.condition" />
+                    </div>
 
-            <video *ngIf="isVideo" [src]="previewUrl" controls></video>
-        </div>
+                    <div class="form-group">
+                        <label for="location">Locación</label>
+                        <input
+                            id="location"
+                            type="text"
+                            name="location"
+                            [(ngModel)]="product.location"
+                            placeholder="Ciudad, país"
+                            [class.error]="formSubmitted && !product.location.trim()"
+                            required
+                        />
+                    </div>
+                </section>
 
+                <!-- Columna derecha: adjuntar imágenes -->
+                <section class="sell-panel sell-panel--images">
+                    <div class="panel-title-row">
+                        <h2 class="panel-title">Imágenes del producto</h2>
+                        <span class="panel-hint">{{ attachedImages.length }}/{{ maxImages }}</span>
+                    </div>
 
-        <div class="buttons">
-            <button type="submit" [disabled]="isPublishing">
-                {{ buttonText }}
-            </button>
-            <p class="success-message" *ngIf="successMessage">
-                {{ successMessage }}
-            </p>
-            <button type="button" class="secondary" (click)="resetForm()">
-              Restablecer
-            </button>
-        </div>
+                    <p class="panel-description">
+                        Adjunta fotos desde tu dispositivo. Puedes subir hasta {{ maxImages }} imágenes (JPG, PNG, WEBP o GIF).
+                    </p>
 
-    </form>
-    <p class="error-message" *ngIf="formSubmitted && (
-  !product.name ||
-  !product.description ||
-  !product.price ||
-  !product.category_id ||
-  !product.condition ||
-  !product.location
-)">
-        ⚠️ Por favor, completa todos los campos obligatorios.
-    </p>
+                    <div class="file-upload-area" [class.file-upload-area--error]="formSubmitted && !hasImages()">
+                        <input
+                            id="productImages"
+                            type="file"
+                            class="file-input-hidden"
+                            [accept]="acceptedImageTypes"
+                            [multiple]="remainingSlots > 1"
+                            [disabled]="!canAddImage || isPublishing"
+                            (change)="onFileSelected($event)"
+                        />
+                        <label
+                            for="productImages"
+                            class="file-upload-label"
+                            [class.file-upload-label--disabled]="!canAddImage || isPublishing"
+                        >
+                            <i class="bi bi-cloud-arrow-up"></i>
+                            <span>
+                                @if (canAddImage) {
+                                Seleccionar {{ remainingSlots === maxImages ? 'imágenes' : 'más imágenes' }}
+                                } @else {
+                                Límite de {{ maxImages }} imágenes alcanzado
+                                }
+                            </span>
+                            @if (canAddImage) {
+                            <small>Puedes elegir una o varias a la vez</small>
+                            }
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            @if (errorMessage) {
+            <p class="error-message">{{ errorMessage }}</p>
+            }
+            @if (successMessage) {
+            <p class="success-message">{{ successMessage }}</p>
+            }
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save" [disabled]="isPublishing">
+                    {{ buttonText }}
+                </button>
+            </div>
+
+            @if (attachedImages.length > 0) {
+            <div class="image-thumbnails">
+                <p class="image-thumbnails-label">Imágenes adjuntas ({{ attachedImages.length }})</p>
+                <div class="image-thumbnails-row">
+                    @for (image of attachedImages; track image.previewUrl; let i = $index) {
+                    <div class="image-thumbnail">
+                        <img [src]="image.previewUrl" [alt]="'Imagen ' + (i + 1)" />
+                        <button
+                            type="button"
+                            class="image-thumbnail-remove"
+                            (click)="removeImage(i)"
+                            [attr.aria-label]="'Eliminar imagen ' + (i + 1)"
+                        >
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </form>
+    </div>
 </div>

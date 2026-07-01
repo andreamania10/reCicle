@@ -28,19 +28,17 @@ export const adminGuard: CanActivateFn = () => {
   return true;
 };
 
-export const profileGuard: CanActivateFn = (route) => {
+export const moderatorGuard: CanActivateFn = () => {
   const auth = inject(Auth);
   const router = inject(Router);
+  const role = auth.currentUser()?.role;
 
   if (!auth.isLoggedIn()) {
     return router.createUrlTree(['/']);
   }
 
-  const user = auth.currentUser();
-  const profileId = Number(route.paramMap.get('id'));
-
-  if (!user?.id || !profileId || profileId !== user.id) {
-    return user?.id ? router.createUrlTree(['/profile', user.id]) : router.createUrlTree(['/']);
+  if (role !== 'Moderador' && role !== 'Administrador') {
+    return router.createUrlTree(['/']);
   }
 
   return true;

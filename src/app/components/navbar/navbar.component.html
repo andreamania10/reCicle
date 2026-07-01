@@ -3,18 +3,13 @@
 
         <!-- Logo: siempre visible -->
         <a class="navbar-brand" (click)="goHome(); $event.preventDefault()">
-            <img class="brand-logo" src="https://www.freepnglogos.com/uploads/recycle-png/recycle-recycling-symbol-png-transparent-clipart-best-23.png" alt="Recycle" />
-            <span class="brand-name">Recycle</span>
+            <img class="brand-logo" src="assets/imagenes/logo-recycle.png" alt="Recycle" />
         </a>
 
         <!-- Barra de búsqueda: SOLO MÓVIL (fuera del collapse) -->
-        <form class="navbar-search-form d-flex d-lg-none" role="search">
-            <input class="form-control" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..." />
+        <form class="navbar-search-form d-flex d-lg-none" role="search" (ngSubmit)="onSearch($event)">
+            <input class="form-control" type="search" name="search-mobile" placeholder="Buscar artículos..." aria-label="Buscar artículos" [(ngModel)]="searchTerm" />
         </form>
-
-        <!-- Botón Login visible en móvil cuando NO hay sesión -->
-        @if (!auth.currentUser()) {
-        <button class="btn-login d-lg-none" type="button" (click)="openLoginModal()">Login</button> }
 
         <!-- Botón hamburguesa: solo móvil -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,53 +22,60 @@
             <!-- Links de navegación -->
             <ul class="navbar-nav me-auto my-2 my-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/article/{article.id}">Descubre</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/ourteam">Quienes somos</a>
                 </li>
             </ul>
 
-            @if (auth.currentUser(); as user) {
-            <!-- Barra de búsqueda: SOLO DESKTOP (dentro del collapse) -->
-            <form class="navbar-search-form d-none d-lg-flex" role="search">
-                <input class="form-control" type="search" placeholder="Buscar artículos..." aria-label="Buscar artículos..." />
+            @if (auth.currentUser()?.role === 'Usuario') {
+            <form class="navbar-search-form d-none d-lg-flex" role="search" (ngSubmit)="onSearch($event)">
+                <input class="form-control" type="search" name="search-desktop" placeholder="Buscar artículos..." aria-label="Buscar artículos" [(ngModel)]="searchTerm" />
             </form>
-
+            } @if (auth.currentUser(); as user) {
             <!-- Botones de usuario (en hamburguesa en móvil, inline en desktop) -->
             <div class="navbar-actions">
+
                 @if (user.role === 'Administrador') {
                 <a class="btn-admin" routerLink="/admin">
                     <i class="bi bi-shield-check"></i> Panel Admin
                 </a>
-                }
-                @if (user.role === 'Moderador') {
+
                 <a class="btn-admin" routerLink="/moderator">
                     <i class="bi bi-clipboard-check"></i> Panel Moderador
                 </a>
-                }
+                } @if (user.role === 'Moderador') {
+                <a class="btn-admin" routerLink="/moderator">
+                    <i class="bi bi-clipboard-check"></i> Panel Moderador
+                </a>
+                } @if (user.role === 'Usuario') {
 
                 <button class="btn-favorites" (click)="goToFavorites()">
                     <img src="assets/imagenes/heart.png" class="heart-icon" />
-                    <img src="assets/imagenes/heart hover.png" class="heart-icon heart-hover" />
+                    <img src="assets/imagenes/heart hover.png"
+                         class="heart-icon heart-hover" />
                 </button>
+
+                <app-notification-bell></app-notification-bell>
 
                 <button class="btn-messages" type="button" (click)="goToMessages()" title="Mensajes">
                     <i class="bi bi-chat-dots"></i>
                 </button>
 
-                <button class="btn-role" type="button" (click)="goToProfile(user.id)">
-                    <i class="bi bi-person"></i>
-                    Mi perfil
-                </button>
                 <button class="btn-sell" (click)="sellProducts()">
                     <i class="bi bi-plus-lg"></i>
                     <span class="sell-text">Vender</span>
+                </button> }
+
+                <button class="btn-role" type="button" (click)="goToProfile()">
+                    <i class="bi bi-person"></i>
+                    Mi perfil
                 </button>
+
             </div>
             } @else {
-            <!-- Login SOLO DESKTOP (en móvil ya está fuera del collapse) -->
-            <button class="btn-login d-none d-lg-inline-block" type="button" (click)="openLoginModal()">Login</button> }
+            <div class="navbar-actions navbar-actions--guest">
+                <button class="btn-login" type="button" (click)="openLoginModal()">Login</button>
+            </div>
+            }
 
         </div>
     </div>

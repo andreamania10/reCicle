@@ -2,7 +2,6 @@
   max-width: 1100px;
   margin: 2rem auto;
   padding: 0 1rem;
-  font-family: Arial, sans-serif;
 }
 
 .admin-header h1 {
@@ -314,6 +313,30 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+}
+
+.btn-accept {
+  background: #198754;
+  color: #fff;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: #fff;
+}
+
+.btn-accept:disabled,
+.btn-reject:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.report-photo {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 0.5rem;
 }
 
 .modal-field {

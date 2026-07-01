@@ -1,5 +1,4 @@
 .register-subtitle {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     color: #888;
     margin: 0;
@@ -54,7 +53,6 @@
 }
 
 .form-label {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;
     color: #444;
@@ -74,7 +72,6 @@
 }
 
 .form-control {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -116,7 +113,6 @@
 }
 
 .form-check-label {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     color: #555;
     line-height: 1.5;
@@ -132,7 +128,6 @@
     border: 1px solid #fecaca;
     color: #c0392b;
     font-size: 0.83rem;
-    font-family: 'DM Sans', sans-serif;
     padding: 0.55rem 0.85rem;
     border-radius: 8px;
     display: flex;
@@ -145,7 +140,6 @@
     border: 1px solid #bbf7d0;
     color: #166534;
     font-size: 0.83rem;
-    font-family: 'DM Sans', sans-serif;
     padding: 0.55rem 0.85rem;
     border-radius: 8px;
     display: flex;
@@ -154,7 +148,6 @@
 }
 
 .btn-submit {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.92rem;
     font-weight: 500;
     background-color: #1a1a1a;
@@ -179,7 +172,6 @@
 }
 
 .login-redirect {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.87rem;
     color: #888;
     text-align: center;
@@ -190,7 +182,6 @@
     background: none;
     border: none;
     padding: 0;
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.87rem;
     font-weight: 500;
     color: #1a1a1a;

@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ArticleCardComponent } from '../../components/article-card/article-card';
 import { Article } from '../../interfaces/article';
 import { Category } from '../../interfaces/category';
 import { ArticleService } from '../../services/article';
-import { CategoryService } from '../../services/category';
-import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
-import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
+import { CategoryService } from '../../services/category';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +20,7 @@ import { ChangeDetectorRef } from '@angular/core';
 export class Home implements OnInit {
   private articleService = inject(ArticleService);
   private categoryService = inject(CategoryService);
+  private route = inject(ActivatedRoute);
 
   constructor(private router: Router, public auth: Auth, private cdr: ChangeDetectorRef) {}
 
@@ -34,18 +34,9 @@ export class Home implements OnInit {
   location: string = '';
 
   slides = [
-    {
-      image: '/assets/imagenes/tablet.jpg',
-      action: 'sell'
-    },
-    {
-      image: '/assets/imagenes/hogar.jpg',
-      action: 'home'
-    },
-    {
-      image: '/assets/imagenes/buy.jpg',
-      action: 'search'
-    }
+    { image: '/assets/imagenes/banner-tablet.jpg' },
+    { image: '/assets/imagenes/banner-home.jpg' },
+    { image: '/assets/imagenes/banner-buy.jpg' },
   ];
 
   currentIndex = 0;
@@ -58,9 +49,25 @@ export class Home implements OnInit {
   isLoadingArticles = signal(true);
   categoriesError = signal(false);
   articlesError = signal(false);
+  activeSearch = signal('');
 
   ngOnInit(): void {
-    this.loadRecentArticles();
+    this.route.queryParams.subscribe((params) => {
+      const search = ((params['search'] as string) ?? '').trim();
+      this.activeSearch.set(search);
+      this.searchTitle = search;
+
+      if (search) {
+        this.selectedCategoryId.set(null);
+        this.selectedCategoryName.set('');
+        this.loadSearchResults(search);
+        return;
+      }
+
+      if (this.selectedCategoryId() === null) {
+        this.loadRecentArticles();
+      }
+    });
 
     
     setInterval(() => {
@@ -73,6 +80,7 @@ export class Home implements OnInit {
       next: (categories) => {
         this.categories.set(categories);
         this.isLoadingCategories.set(false);
+        this.cdr.detectChanges();
       },
       error: () => {
         this.categoriesError.set(true);
@@ -94,6 +102,7 @@ export class Home implements OnInit {
       }
   
       if (
+        !this.activeSearch() &&
         this.searchTitle &&
         !a.title.toLowerCase().includes(this.searchTitle.toLowerCase())
       ) {
@@ -124,22 +133,17 @@ export class Home implements OnInit {
     this.isFiltersOpen = !this.isFiltersOpen;
   }
 
-  onSlideClick(slide: any) {
-    if (slide.action === 'sell') {
-      this.router.navigate(['/sellProduct']);
-    }
-  }
-
   selectCategory(categoryId: number | null): void {
     if (categoryId === null) {
       this.selectedCategoryId.set(null);
       this.selectedCategoryName.set('');
-      this.loadRecentArticles(); // reset a tots els articles
+      this.router.navigate(['/'], { queryParams: { search: null } });
+      this.loadRecentArticles();
       return;
     }
 
     const id = Number(categoryId);
-    
+
     if (!Number.isInteger(id) || id <= 0) {
       return;
     }
@@ -149,12 +153,14 @@ export class Home implements OnInit {
       this.categories().find((category) => category.id === id)?.name ?? ''
     );
 
+    this.router.navigate(['/'], { queryParams: { search: null } });
     this.loadArticlesByCategory(id);
   }
 
   private loadRecentArticles(): void {
     this.isLoadingArticles.set(true);
     this.articlesError.set(false);
+    this.cdr.detectChanges();
 
     this.articleService
       .getArticles()
@@ -162,7 +168,27 @@ export class Home implements OnInit {
       .subscribe({
         next: (articles) => {
           this.allArticles.set(articles);
-          this.applyFilters();
+          this.items.set(articles);
+        },
+        error: () => {
+          this.articlesError.set(true);
+        },
+      });
+  }
+
+  private loadSearchResults(term: string): void {
+    this.isLoadingArticles.set(true);
+    this.articlesError.set(false);
+    this.items.set([]);
+    this.cdr.detectChanges();
+
+    this.articleService
+      .searchArticles(term)
+      .pipe(finalize(() => this.isLoadingArticles.set(false)))
+      .subscribe({
+        next: (articles) => {
+          this.allArticles.set(articles);
+          this.items.set(articles);
         },
         error: () => {
           this.articlesError.set(true);
@@ -188,7 +214,7 @@ export class Home implements OnInit {
       .subscribe({
         next: (articles) => {
           this.allArticles.set(articles);
-          this.applyFilters();
+          this.items.set(articles);
         },
         error: () => {
           this.articlesError.set(true);
@@ -201,8 +227,13 @@ export class Home implements OnInit {
     this.maxPrice = 1000;
     this.selectedCondition = '';
     this.location = '';
-  
-    this.applyFilters();
+
+    if (this.activeSearch()) {
+      this.router.navigate(['/'], { queryParams: { search: null } });
+      return;
+    }
+
+    this.items.set(this.allArticles());
   }
 
   getCategoryIcon(category: Category): string {

@@ -16,15 +16,16 @@
 }
 
 .brand-logo {
-    width: 34px;
-    height: 34px;
-    object-fit: contain;
+    width: 70px;
+    height: 70px;
+    margin-top: -20px; margin-bottom: -20px;
+    /* object-fit: contain;
+    display: block; */
 }
 
 .brand-name {
     font-size: 20px;
     color: #9a9b9d;
-    font-family: fantasy;
 }
 
 .nav-link {
@@ -117,7 +118,20 @@
 }
 
 @media (max-width: 991px) {
-    /* El login fuera del collapse no necesita margen extra */
+    .navbar-actions--guest {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 0 8px;
+        border-top: 1px solid #e8e8e8;
+        margin-top: 8px;
+    }
+
+    .navbar-actions--guest .btn-login {
+        width: 100%;
+    }
+}
+
+@media (max-width: 991px) {
     .btn-login {
         padding: 0 14px;
     }
@@ -164,25 +178,27 @@
 }
 
 
-/* Botón Panel Admin */
+/* Botón Panel Admin / Moderador */
 
 .btn-admin {
-    height: 36px;
-    padding: 0 14px 0 11px;
+    height: 40px;
+    padding: 0 16px;
     border: 1.5px solid #00a082;
-    border-radius: 20px;
+    border-radius: 999px;
     background: transparent;
     color: #00a082;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     letter-spacing: 0.01em;
-    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    flex-shrink: 0;
     white-space: nowrap;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
 }
 
 .btn-admin:hover {
@@ -288,6 +304,7 @@
         height: 40px;
         padding: 0;
         font-size: 16px;
+        font-weight: bold;
     }
     .sell-text {
         display: none;

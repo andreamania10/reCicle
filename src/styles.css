@@ -1,7 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
 /* Reset y base */
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+:root {
+  --font-body: 'DM Sans', sans-serif;
+  --font-heading: 'Syne', sans-serif;
 }
 
 html, body {
@@ -10,8 +14,12 @@ html, body {
   height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   color: #1a1a1a;
   background-color: #fff;
@@ -19,19 +27,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scroll suave */
-html {
-  scroll-behavior: smooth;
+app-root {
+  font-family: var(--font-body);
 }
 
-/* Tipografía base */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.brand-name,
+.footer-brand-name {
+  font-family: var(--font-heading);
 }
 
 a {
   color: inherit;
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
 }
 
 /* Utilidad de contenedor si no se usa el de Bootstrap */

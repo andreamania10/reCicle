@@ -1,18 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { User } from '../../interfaces/user';
 // import { UserService } from '../../services/user';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { Auth } from '../../services/auth';
 import { RegisterComponent } from '../register/register.component';
+import { NotificationBellComponent } from '../notification-bell/notification-bell';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, RegisterComponent],
+  imports: [CommonModule, RouterModule, RegisterComponent, FormsModule, NotificationBellComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
@@ -21,15 +23,21 @@ export class NavbarComponent implements OnInit{
   @Input() showLoginButton = false;
   isMenuOpen = false;
   profile: User | null = null;
+  searchTerm = '';
 
   constructor(
     // private userService: UserService,
     readonly auth: Auth,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.auth.isLoggedIn();
+
+    this.route.queryParams.subscribe((params) => {
+      this.searchTerm = (params['search'] as string) ?? '';
+    });
   
     const userId = this.auth.currentUser()?.id;
     if (!userId) return;
@@ -63,8 +71,8 @@ goHome() {
     }
   }
 
-  goToProfile(userId: number): void {
-    this.router.navigate(['/profile', userId]);
+  goToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 
   sellProducts(){
@@ -77,6 +85,15 @@ goToFavorites() {
 
 goToMessages() {
   this.router.navigate(['/messages']);
+}
+
+onSearch(event: Event): void {
+  event.preventDefault();
+  const term = this.searchTerm.trim();
+
+  this.router.navigate(['/'], {
+    queryParams: { search: term || null },
+  });
 }
 
 }
