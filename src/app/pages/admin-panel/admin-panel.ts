@@ -115,19 +115,39 @@ export class AdminPanel implements OnInit {
   saveEditUser(): void {
     const user = this.editingUser();
     if (!user) return;
-    const body: any = {
+
+    const body = {
       username: this.editUserData.username,
       email: this.editUserData.email,
       location: this.editUserData.location,
     };
-    if (this.editUserData.password.trim()) {
-      body.password = this.editUserData.password.trim();
-    }
+    const newPassword = this.editUserData.password.trim();
+
     this.adminService.updateUser(user.id, body).subscribe({
       next: () => {
-        this.showSuccess('Usuario actualizado');
-        this.editingUser.set(null);
-        this.loadUsers();
+        if (!newPassword) {
+          this.showSuccess('Usuario actualizado');
+          this.editingUser.set(null);
+          this.loadUsers();
+          return;
+        }
+
+        // La contraseña se gestiona en un endpoint independiente,
+        // solo accesible para Administrador, sin necesidad de la contraseña actual.
+        this.adminService.changeUserPassword(user.id, newPassword).subscribe({
+          next: () => {
+            this.showSuccess('Usuario y contraseña actualizados');
+            this.editingUser.set(null);
+            this.loadUsers();
+          },
+          error: (err) => {
+            this.showError(
+              err?.error?.message || 'Los datos se guardaron, pero no se pudo cambiar la contraseña',
+            );
+            this.editingUser.set(null);
+            this.loadUsers();
+          },
+        });
       },
       error: () => this.showError('Error al actualizar usuario'),
     });

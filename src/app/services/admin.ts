@@ -49,6 +49,14 @@ export class AdminService {
     return this.http.put(`${this.apiUrl}/api/admin/users/${userId}`, data, { headers: this.getHeaders() });
   }
 
+  changeUserPassword(userId: number, newPassword: string): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/api/admin/users/${userId}/password`,
+      { newPassword },
+      { headers: this.getHeaders() },
+    );
+  }
+
   updateUserRole(userId: number, role: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/api/admin/users/${userId}/role`, { role }, { headers: this.getHeaders() });
   }
