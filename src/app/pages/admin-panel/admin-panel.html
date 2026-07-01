@@ -1,4 +1,7 @@
 <div class="admin-wrapper">
+    <a [routerLink]="['/articles']" class="btn btn-outline-secondary">
+        ← Volver a artículos
+      </a>
     <div class="admin-header">
         <h1>Panel de Administrador</h1>
     </div>
@@ -270,41 +273,22 @@
                 <p><strong>Vendedor:</strong> {{ article.seller_username }}</p>
                 <p><strong>Ubicación:</strong> {{ article.location }}</p>
                 @if (article.photos.length) {
-                <img class="report-photo" [src]="article.photos[0].url" [alt]="article.title" />
-                }
-                }
-                } @else {
+                <img class="report-photo" [src]="article.photos[0].url" [alt]="article.title" /> } } } @else {
                 <p><strong>Usuario reportado:</strong> {{ report.reported_username }}</p>
                 <p><strong>Usuario ID:</strong> {{ report.reported_user_id }}</p>
                 }
 
                 <div class="modal-field">
                     <label for="moderatorNote">Nota del moderador</label>
-                    <textarea
-                        id="moderatorNote"
-                        class="form-input"
-                        rows="3"
-                        [(ngModel)]="moderatorNote"
-                        placeholder="Explica por qué aceptas o rechazas el reporte..."
-                    ></textarea>
+                    <textarea id="moderatorNote" class="form-input" rows="3" [(ngModel)]="moderatorNote" placeholder="Explica por qué aceptas o rechazas el reporte..."></textarea>
                 </div>
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" (click)="closeReportDetail()">Cancelar</button>
-                    <button
-                        type="button"
-                        class="btn-reject"
-                        [disabled]="resolvingReport() || !moderatorNote.trim()"
-                        (click)="resolveSelectedReport('reject')"
-                    >
+                    <button type="button" class="btn-reject" [disabled]="resolvingReport() || !moderatorNote.trim()" (click)="resolveSelectedReport('reject')">
                         {{ resolvingReport() ? 'Procesando...' : 'Rechazar reporte' }}
                     </button>
-                    <button
-                        type="button"
-                        class="btn-accept"
-                        [disabled]="resolvingReport() || !moderatorNote.trim()"
-                        (click)="resolveSelectedReport('accept')"
-                    >
+                    <button type="button" class="btn-accept" [disabled]="resolvingReport() || !moderatorNote.trim()" (click)="resolveSelectedReport('accept')">
                         {{ resolvingReport() ? 'Procesando...' : 'Aceptar reporte' }}
                     </button>
                 </div>
