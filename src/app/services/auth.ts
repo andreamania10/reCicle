@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   JwtPayload,
@@ -47,8 +47,9 @@ export class Auth {
       password: data.password,
     };
 
-    if (data.location?.trim()) {
-      body.location = data.location.trim();
+    const location = data.location?.trim();
+    if (location) {
+      body.location = location;
     }
 
     return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, body).pipe(
@@ -58,16 +59,37 @@ export class Auth {
         }
 
         return this.login({ email: body.email, password: body.password }).pipe(
-          tap((user) => {
-            if (body.location) {
-              this.setUser({ ...user, location: body.location });
-            }
-          }),
+          switchMap((user) => (location ? this.persistLocation(user, location) : of(user))),
         );
       }),
       catchError((error: HttpErrorResponse | Error) =>
         throwError(() => new Error(this.getErrorMessage(error, 'Error al registrarse'))),
       ),
+    );
+  }
+
+  /**
+   * El endpoint de registro no acepta/guarda la localización, así que en
+   * cuanto tenemos el token (tras el login automático) la persistimos con el
+   * endpoint de edición de perfil, que sí soporta este campo.
+   */
+  private persistLocation(user: User, location: string): Observable<User> {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${user.token}` });
+    const payload = {
+      username: user.username ?? '',
+      email: user.email ?? '',
+      location,
+      avatar_url: user.avatar_url ?? '',
+    };
+
+    return this.http.put(`${this.apiUrl}/profile`, payload, { headers }).pipe(
+      map(() => ({ ...user, location })),
+      tap((updatedUser) => this.setUser(updatedUser)),
+      catchError(() => {
+        const fallbackUser = { ...user, location };
+        this.setUser(fallbackUser);
+        return of(fallbackUser);
+      }),
     );
   }
 
