@@ -30,6 +30,15 @@ export class ArticleService {
     );
   }
 
+  getFiltered(filters: { condition?: string; location?: string; search?: string; category_id?: string }): Observable<Article[]> {
+    const params = this.buildListParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v)) as Record<string, string>
+    );
+    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
+      map((response) => response.results ?? [])
+    );
+  }
+
   createArticle(article: Partial<Article>): void {
     console.warn('createArticle pendiente de implementar con API', article);
   }
@@ -75,22 +84,19 @@ export class ArticleService {
   }
 
   update(id: number, article: Article, token: string) {
-  const headers = { Authorization: `Bearer ${token}` };
-  return this.http.put<Article>(`${this.apiUrl}/${id}`, article, { headers });
-}
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.put<Article>(`${this.apiUrl}/${id}`, article, { headers });
+  }
   
   updateStatus(id: number, status: string, token: string) {
-  const headers = { Authorization: `Bearer ${token}` };
-  return this.http.patch<Article>(`${this.apiUrl}/${id}/status`, { status }, { headers });
-}
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.patch<Article>(`${this.apiUrl}/${id}/status`, { status }, { headers });
+  }
 
   delete(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  
-
-  
   createWithMedia(formData: FormData, token: string): Observable<Article> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.post<Article>(this.apiUrl, formData, { headers });
