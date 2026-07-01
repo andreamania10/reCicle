@@ -21,7 +21,7 @@
         </div>
         } @else { @if (profileError) {
         <p class="profile-error profile-error--banner">{{ profileError }}</p>
-        }
+        }}
         <form class="profile-grid-container" #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)" novalidate>
             <div class="profile-grid">
 
