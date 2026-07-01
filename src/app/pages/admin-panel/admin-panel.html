@@ -15,7 +15,6 @@
         <button [class.active]="activeTab() === 'stats'" (click)="setTab('stats')">Estadísticas</button>
         <button [class.active]="activeTab() === 'users'" (click)="setTab('users')">Usuarios</button>
         <button [class.active]="activeTab() === 'categories'" (click)="setTab('categories')">Categorías</button>
-        <button [class.active]="activeTab() === 'reports'" (click)="setTab('reports')">Reportes</button>
     </div>
 
     <!-- ===== ESTADÍSTICAS ===== -->
@@ -34,12 +33,6 @@
                 <span class="stat-number">{{ stats()!.usuariosActivos }}</span>
                 <span class="stat-label">Usuarios activos</span>
                 <span class="stat-cta">Ver usuarios <i class="bi bi-arrow-right"></i></span>
-            </div>
-            <div class="stat-card stat-card--link" (click)="goToStat('reports')" title="Ir a reportes">
-                <div class="stat-icon"><i class="bi bi-flag"></i></div>
-                <span class="stat-number">{{ stats()!.reportesGestionados }}</span>
-                <span class="stat-label">Reportes gestionados</span>
-                <span class="stat-cta">Ver reportes <i class="bi bi-arrow-right"></i></span>
             </div>
             <div class="stat-card stat-card--link" (click)="goToStat('sold')" title="Ver artículos vendidos">
                 <div class="stat-icon"><i class="bi bi-bag-check"></i></div>
@@ -217,100 +210,4 @@
     </div>
     }
 
-    <!-- ===== REPORTES ===== -->
-    @if (activeTab() === 'reports') {
-    <div class="tab-content">
-        @if (loading()) {
-        <p class="loading-text">Cargando reportes...</p>
-        } @else if (reports().length === 0) {
-        <p class="loading-text">No hay reportes pendientes.</p>
-        } @else {
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tipo</th>
-                    <th>Elemento</th>
-                    <th>Motivo</th>
-                    <th>Reportado por</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (report of reports(); track report.report_id) {
-                <tr (click)="openReportDetail(report)" class="clickable-row">
-                    <td>{{ report.report_id }}</td>
-                    <td><span class="badge badge-role">{{ report.kind }}</span></td>
-                    <td>{{ getReportLabel(report) }}</td>
-                    <td>{{ report.report_reason }}</td>
-                    <td>{{ report.reporter_username }}</td>
-                    <td>{{ report.report_created_at | date:'dd/MM/yyyy HH:mm' }}</td>
-                </tr>
-                }
-            </tbody>
-        </table>
-        } @if (selectedReport(); as report) {
-        <div class="modal-overlay" (click)="closeReportDetail()">
-            <div class="modal-box" (click)="$event.stopPropagation()">
-                <h3>Detalle del reporte #{{ report.report_id }}</h3>
-                <p><strong>Tipo:</strong> {{ report.kind }}</p>
-                <p><strong>Motivo:</strong> {{ report.report_reason }}</p>
-                <p><strong>Reportado por:</strong> {{ report.reporter_username }}</p>
-                <p><strong>Fecha:</strong> {{ report.report_created_at | date:'dd/MM/yyyy HH:mm' }}</p>
-
-                @if (report.kind === 'Articulo') {
-                <p><strong>Artículo ID:</strong> {{ report.article_id }}</p>
-                <p><strong>Título:</strong> {{ report.article_title }}</p>
-                <p><strong>Precio:</strong> {{ report.article_price }} €</p>
-
-                @if (loadingReportDetail()) {
-                <p class="loading-text">Cargando detalle del artículo...</p>
-                } @else if (selectedArticleDetail(); as article) {
-                <p><strong>Estado:</strong> {{ article.status }} (anterior: {{ article.previous_status }})</p>
-                <p><strong>Vendedor:</strong> {{ article.seller_username }}</p>
-                <p><strong>Ubicación:</strong> {{ article.location }}</p>
-                @if (article.photos.length) {
-                <img class="report-photo" [src]="article.photos[0].url" [alt]="article.title" />
-                }
-                }
-                } @else {
-                <p><strong>Usuario reportado:</strong> {{ report.reported_username }}</p>
-                <p><strong>Usuario ID:</strong> {{ report.reported_user_id }}</p>
-                }
-
-                <div class="modal-field">
-                    <label for="moderatorNote">Nota del moderador</label>
-                    <textarea
-                        id="moderatorNote"
-                        class="form-input"
-                        rows="3"
-                        [(ngModel)]="moderatorNote"
-                        placeholder="Explica por qué aceptas o rechazas el reporte..."
-                    ></textarea>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" (click)="closeReportDetail()">Cancelar</button>
-                    <button
-                        type="button"
-                        class="btn-reject"
-                        [disabled]="resolvingReport() || !moderatorNote.trim()"
-                        (click)="resolveSelectedReport('reject')"
-                    >
-                        {{ resolvingReport() ? 'Procesando...' : 'Rechazar reporte' }}
-                    </button>
-                    <button
-                        type="button"
-                        class="btn-accept"
-                        [disabled]="resolvingReport() || !moderatorNote.trim()"
-                        (click)="resolveSelectedReport('accept')"
-                    >
-                        {{ resolvingReport() ? 'Procesando...' : 'Aceptar reporte' }}
-                    </button>
-                </div>
-            </div>
-        </div>
-        }
-    </div>
-    }
 </div>

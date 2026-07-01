@@ -2,19 +2,7 @@ import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { forkJoin } from 'rxjs';
 import { AdminService, AdminStats, AdminUser } from '../../services/admin';
-import { ReportService } from '../../services/report';
-import { Auth } from '../../services/auth';
-import {
-  ArticleReportDetail,
-  PendingArticleReport,
-  PendingUserReport,
-} from '../../interfaces/report';
-
-type AdminReportItem =
-  | (PendingArticleReport & { kind: 'Articulo' })
-  | (PendingUserReport & { kind: 'Usuario' });
 
 @Component({
   selector: 'app-admin-panel',
@@ -24,11 +12,9 @@ type AdminReportItem =
   styleUrl: './admin-panel.css',
 })
 export class AdminPanel implements OnInit {
-  private reportService = inject(ReportService);
-  private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
 
-  activeTab = signal<'stats' | 'users' | 'categories' | 'reports'>('stats');
+  activeTab = signal<'stats' | 'users' | 'categories'>('stats');
 
   // Estadísticas
   stats = signal<AdminStats | null>(null);
@@ -49,14 +35,6 @@ export class AdminPanel implements OnInit {
   editCategoryName = '';
   editCategorySlug = '';
 
-  // Reportes
-  reports = signal<AdminReportItem[]>([]);
-  selectedReport = signal<AdminReportItem | null>(null);
-  selectedArticleDetail = signal<ArticleReportDetail | null>(null);
-  moderatorNote = '';
-  resolvingReport = signal(false);
-  loadingReportDetail = signal(false);
-
   // UI
   loading = signal(false);
   successMsg = signal('');
@@ -66,9 +44,8 @@ export class AdminPanel implements OnInit {
 
   constructor(private adminService: AdminService, private router: Router) {}
 
-  goToStat(stat: 'articles' | 'users' | 'reports' | 'sold'): void {
+  goToStat(stat: 'articles' | 'users' | 'sold'): void {
     if (stat === 'users') { this.setTab('users'); return; }
-    if (stat === 'reports') { this.setTab('reports'); return; }
     this.router.navigate(['/home']);
   }
 
@@ -76,13 +53,12 @@ export class AdminPanel implements OnInit {
     this.loadStats();
   }
 
-  setTab(tab: 'stats' | 'users' | 'categories' | 'reports'): void {
+  setTab(tab: 'stats' | 'users' | 'categories'): void {
     this.activeTab.set(tab);
     this.clearMessages();
     if (tab === 'stats') this.loadStats();
     if (tab === 'users') this.loadUsers();
     if (tab === 'categories') this.loadCategories();
-    if (tab === 'reports') this.loadReports();
   }
 
   // --- Estadísticas ---
@@ -245,107 +221,6 @@ export class AdminPanel implements OnInit {
       next: () => { this.showSuccess('Categoría eliminada'); this.loadCategories(); },
       error: () => this.showError('Error al eliminar categoría'),
     });
-  }
-
-  // --- Reportes ---
-  loadReports(): void {
-    const token = this.auth.currentUser()?.token;
-    if (!token) {
-      this.showError('Debes iniciar sesión como administrador.');
-      return;
-    }
-
-    this.loading.set(true);
-
-    forkJoin({
-      articles: this.reportService.getPendingArticles(token),
-      users: this.reportService.getPendingUsers(token),
-    }).subscribe({
-      next: ({ articles, users }) => {
-        const merged: AdminReportItem[] = [
-          ...articles.map((item) => ({ ...item, kind: 'Articulo' as const })),
-          ...users.map((item) => ({ ...item, kind: 'Usuario' as const })),
-        ];
-        this.reports.set(merged);
-        this.loading.set(false);
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.showError('Error al cargar reportes');
-        this.loading.set(false);
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
-  openReportDetail(report: AdminReportItem): void {
-    this.selectedReport.set(report);
-    this.selectedArticleDetail.set(null);
-    this.moderatorNote = '';
-
-    if (report.kind !== 'Articulo') return;
-
-    const token = this.auth.currentUser()?.token;
-    if (!token) return;
-
-    this.loadingReportDetail.set(true);
-
-    this.reportService.getPendingArticleDetail(report.report_id, token).subscribe({
-      next: (detail) => {
-        this.selectedArticleDetail.set(detail);
-        this.loadingReportDetail.set(false);
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.showError('No se pudo cargar el detalle del artículo reportado.');
-        this.loadingReportDetail.set(false);
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
-  closeReportDetail(): void {
-    this.selectedReport.set(null);
-    this.selectedArticleDetail.set(null);
-    this.moderatorNote = '';
-  }
-
-  resolveSelectedReport(action: 'accept' | 'reject'): void {
-    const token = this.auth.currentUser()?.token;
-    const report = this.selectedReport();
-    if (!token || !report || !this.moderatorNote.trim()) return;
-
-    this.resolvingReport.set(true);
-
-    const request =
-      action === 'accept'
-        ? this.reportService.acceptReport(report.report_id, this.moderatorNote.trim(), token)
-        : this.reportService.rejectReport(report.report_id, this.moderatorNote.trim(), token);
-
-    request.subscribe({
-      next: () => {
-        this.showSuccess(
-          action === 'accept'
-            ? 'Reporte aceptado. El producto ha sido retirado.'
-            : 'Reporte rechazado. El producto mantiene su estado.',
-        );
-        this.resolvingReport.set(false);
-        this.closeReportDetail();
-        this.loadReports();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.showError(err?.error?.message || 'Error al resolver el reporte');
-        this.resolvingReport.set(false);
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
-  getReportLabel(report: AdminReportItem): string {
-    return report.kind === 'Articulo'
-      ? report.article_title
-      : report.reported_username;
   }
 
   // --- Helpers ---
