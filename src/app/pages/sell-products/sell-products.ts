@@ -71,7 +71,7 @@ export class SellProducts implements OnInit, OnDestroy {
   }
 
   get buttonText(): string {
-    return this.isPublishing ? 'Guardando...' : 'Guardar';
+    return this.isPublishing ? 'Publicando artículo...' : 'Publicar artículo';
   }
 
   get canAddImage(): boolean {

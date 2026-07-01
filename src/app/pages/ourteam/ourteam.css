@@ -10,6 +10,7 @@
     margin: 0 auto;
 }
 
+
 /* ── Header ── */
 
 .about-header {
@@ -59,6 +60,7 @@
     line-height: 1.6;
     padding: 0 0.25rem;
 }
+
 
 /* ── Info cards ── */
 
@@ -139,6 +141,7 @@
     flex-shrink: 0;
 }
 
+
 /* ── Team section ── */
 
 .team-section__header {
@@ -180,7 +183,6 @@
         transform: translateY(-5px);
         box-shadow: 0 14px 32px rgba(0, 160, 130, 0.12);
     }
-
     .member-card:hover .member-card__photo-wrap img {
         transform: scale(1.04);
     }
@@ -239,64 +241,87 @@
     line-height: 1.4;
 }
 
-/* ── Portátil (≤ 1199px) ── */
-
-@media (max-width: 1199px) {
-    .team-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+.btn-contact {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1.5px solid #dee2e6;
+    background-color: white;
+    color: #00bfa5;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-/* ── Tablet (≤ 991px) ── */
+.btn-contact,
+.btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border-color: #00bfa5;
+    color: #00a082;
+    margin-bottom: 15px;
+}
+
+.btn-contact:hover {
+    background-color: #f8f9fa;
+    border-color: #17b8a2;
+}
+
+.btn-contact:active {
+    transform: scale(0.97);
+}
+
+
+/* Desktop */
+
+.team-grid {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+
+/* Tablet */
 
 @media (max-width: 991px) {
     .info-cards {
         grid-template-columns: repeat(2, 1fr);
     }
-
     .info-cards .info-card:last-child {
         grid-column: 1 / -1;
         max-width: 520px;
         justify-self: center;
         width: 100%;
     }
+    /* 4 tarjetas por fila */
+    .team-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
-/* ── Tablet pequeña / móvil grande (≤ 767px) ── */
+
+/* Móvil */
 
 @media (max-width: 767px) {
     .info-cards {
         grid-template-columns: 1fr;
     }
-
     .info-cards .info-card:last-child {
         grid-column: auto;
         max-width: none;
     }
-
     .team-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-/* ── Móvil (≤ 479px) ── */
+
+/* Móvil pequeño */
 
 @media (max-width: 479px) {
     .about-header__logos {
         align-items: center;
     }
-
     .team-grid {
         grid-template-columns: 1fr;
         max-width: 340px;
         margin: 0 auto;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .info-card,
-    .member-card,
-    .member-card__photo-wrap img {
-        transition: none;
     }
 }
