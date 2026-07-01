@@ -28,8 +28,9 @@
                 <section class="profile-card profile-card--avatar">
                     <h2 class="card-title">Foto de perfil</h2>
                     <div class="avatar-wrapper">
-                        @if (avatarPreviewUrl && !avatarPreviewError) { <img class="avatar-image" [src]="avatarPreviewUrl" [alt]="'Avatar de ' + editData.username" (error)="onAvatarPreviewError()" /> } @else { ======= @if (editData.avatar_url) {
-                        <img class="avatar-image" [src]="editData.avatar_url" [alt]="'Avatar de ' + editData.username" (error)="$any($event.target).style.display='none'" /> } @else { >>>>>>> andrea
+                        @if (avatarPreviewUrl && !avatarPreviewError) {
+                        <img class="avatar-image" [src]="avatarPreviewUrl" [alt]="'Avatar de ' + editData.username" (error)="onAvatarPreviewError()" />
+                        } @else {
                         <div class="avatar-placeholder">
                             <i class="bi bi-person-circle"></i>
                         </div>
@@ -179,7 +180,7 @@
 
         </section>
 
-        } }
+        }
 
     </div>
 </div>
