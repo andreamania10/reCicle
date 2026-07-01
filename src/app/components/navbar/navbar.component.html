@@ -8,14 +8,7 @@
 
         <!-- Barra de búsqueda: SOLO MÓVIL (fuera del collapse) -->
         <form class="navbar-search-form d-flex d-lg-none" role="search" (ngSubmit)="onSearch($event)">
-            <input
-                class="form-control"
-                type="search"
-                name="search-mobile"
-                placeholder="Buscar artículos..."
-                aria-label="Buscar artículos"
-                [(ngModel)]="searchTerm"
-            />
+            <input class="form-control" type="search" name="search-mobile" placeholder="Buscar artículos..." aria-label="Buscar artículos" [(ngModel)]="searchTerm" />
         </form>
 
         <!-- Botón hamburguesa: solo móvil -->
@@ -29,43 +22,36 @@
             <!-- Links de navegación -->
             <ul class="navbar-nav me-auto my-2 my-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Inicio</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/ourteam">Quienes somos</a>
                 </li>
             </ul>
 
-            <!-- Barra de búsqueda: SOLO DESKTOP -->
+            @if (auth.currentUser()?.role === 'Usuario') {
             <form class="navbar-search-form d-none d-lg-flex" role="search" (ngSubmit)="onSearch($event)">
-                <input
-                    class="form-control"
-                    type="search"
-                    name="search-desktop"
-                    placeholder="Buscar artículos..."
-                    aria-label="Buscar artículos"
-                    [(ngModel)]="searchTerm"
-                />
+                <input class="form-control" type="search" name="search-desktop" placeholder="Buscar artículos..." aria-label="Buscar artículos" [(ngModel)]="searchTerm" />
             </form>
-
-            @if (auth.currentUser(); as user) {
+            } @if (auth.currentUser(); as user) {
             <!-- Botones de usuario (en hamburguesa en móvil, inline en desktop) -->
             <div class="navbar-actions">
+
                 @if (user.role === 'Administrador') {
                 <a class="btn-admin" routerLink="/admin">
                     <i class="bi bi-shield-check"></i> Panel Admin
                 </a>
-                }
-                @if (user.role === 'Moderador') {
+
                 <a class="btn-admin" routerLink="/moderator">
                     <i class="bi bi-clipboard-check"></i> Panel Moderador
                 </a>
-                }
+                } @if (user.role === 'Moderador') {
+                <a class="btn-admin" routerLink="/moderator">
+                    <i class="bi bi-clipboard-check"></i> Panel Moderador
+                </a>
+                } @if (user.role === 'Usuario') {
 
-                @if (user.role !== 'Moderador') {
                 <button class="btn-favorites" (click)="goToFavorites()">
                     <img src="assets/imagenes/heart.png" class="heart-icon" />
-                    <img src="assets/imagenes/heart hover.png" class="heart-icon heart-hover" />
+                    <img src="assets/imagenes/heart hover.png"
+                         class="heart-icon heart-hover" />
                 </button>
 
                 <app-notification-bell></app-notification-bell>
@@ -77,13 +63,13 @@
                 <button class="btn-sell" (click)="sellProducts()">
                     <i class="bi bi-plus-lg"></i>
                     <span class="sell-text">Vender</span>
-                </button>
-                }
+                </button> }
 
                 <button class="btn-role" type="button" (click)="goToProfile()">
                     <i class="bi bi-person"></i>
                     Mi perfil
                 </button>
+
             </div>
             } @else {
             <div class="navbar-actions navbar-actions--guest">
