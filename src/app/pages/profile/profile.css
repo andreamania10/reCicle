@@ -587,14 +587,22 @@
          /* Modales de contraseña */
          
          .modal-password .modal-content {
+             position: relative;
              border-radius: 14px;
              border: none;
              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
          }
-         
+
          .modal-password {
              border-radius: 14px;
              border: none;
+         }
+
+         .modal-password .modal-header {
+             display: flex;
+             align-items: flex-start;
+             justify-content: space-between;
+             padding-right: 2.5rem;
          }
          
          .confirm-text {
@@ -638,6 +646,9 @@
          }
          
          .btn-close-modal {
+             position: absolute;
+             top: 1.1rem;
+             right: 1.1rem;
              background: none;
              border: none;
              color: #888;
@@ -1185,14 +1196,22 @@
          /* Modales de contraseña */
          
          .modal-password .modal-content {
+             position: relative;
              border-radius: 14px;
              border: none;
              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
          }
-         
+
          .modal-password {
              border-radius: 14px;
              border: none;
+         }
+
+         .modal-password .modal-header {
+             display: flex;
+             align-items: flex-start;
+             justify-content: space-between;
+             padding-right: 2.5rem;
          }
          
          .confirm-text {
@@ -1238,6 +1257,9 @@
          }
          
          .btn-close-modal {
+             position: absolute;
+             top: 1.1rem;
+             right: 1.1rem;
              background: none;
              border: none;
              color: #888;
