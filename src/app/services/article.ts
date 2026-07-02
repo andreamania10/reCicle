@@ -39,6 +39,13 @@ export class ArticleService {
     );
   }
 
+  getByStatus(status: string, pageSize = 100): Observable<Article[]> {
+    const params = this.buildListParams({ filterStatus: status, pageSize: String(pageSize) });
+    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
+      map((response) => response.results ?? [])
+    );
+  }
+
   createArticle(article: Partial<Article>): void {
     console.warn('createArticle pendiente de implementar con API', article);
   }

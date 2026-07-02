@@ -1,0 +1,64 @@
+<div class="sold-wrapper">
+    <a [routerLink]="['/admin']" class="btn btn-outline-secondary">
+      ← Volver al panel de administrador
+    </a>
+
+    <div class="sold-header">
+        <h1>Artículos vendidos</h1>
+        <p class="sold-subtitle">Listado de todos los artículos vendidos en la aplicación, de cualquier usuario.</p>
+    </div>
+
+    <div class="sold-toolbar">
+        <input
+          class="form-input"
+          [(ngModel)]="search"
+          placeholder="Buscar por título..."
+        />
+        <span class="sold-count">{{ filteredArticles().length }} de {{ soldArticles().length }} vendidos</span>
+    </div>
+
+    @if (loading()) {
+    <p class="loading-text">Cargando artículos vendidos...</p>
+    } @else if (error()) {
+    <p class="sold-error">Error al cargar los artículos vendidos.</p>
+    } @else if (soldArticles().length === 0) {
+    <p class="loading-text">Todavía no hay artículos vendidos en la aplicación.</p>
+    } @else {
+    <table class="sold-table">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Título</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Vendedor</th>
+                <th>Fecha venta</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (article of filteredArticles(); track article.id) {
+            <tr>
+                <td>
+                    @if (article.main_photo) {
+                    <img [src]="article.main_photo" class="sold-thumb" alt="{{ article.title }}" />
+                    } @else {
+                    <span class="text-muted">—</span>
+                    }
+                </td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.category || '—' }}</td>
+                <td>{{ article.price }} €</td>
+                <td>#{{ article.user_id }}</td>
+                <td>{{ (article.updated_at ?? article.created_at) | date:'dd/MM/yyyy' }}</td>
+                <td class="actions">
+                    <a [routerLink]="['/articles', article.id]" class="btn-icon btn-view" title="Ver artículo">
+                <i class="bi bi-eye"></i>
+              </a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>

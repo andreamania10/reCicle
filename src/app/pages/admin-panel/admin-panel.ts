@@ -46,6 +46,7 @@ export class AdminPanel implements OnInit {
 
   goToStat(stat: 'articles' | 'users' | 'sold'): void {
     if (stat === 'users') { this.setTab('users'); return; }
+    if (stat === 'sold') { this.router.navigate(['/admin/sold']); return; }
     this.router.navigate(['/home']);
   }
 
