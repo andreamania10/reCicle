@@ -26,22 +26,15 @@
     margin-bottom: clamp(1rem, 3vw, 1.5rem);
 }
 
-.about-header__logo {
-    width: auto;
-    object-fit: contain;
-    display: block;
-    flex-shrink: 1;
-    min-width: 0;
+.about-header__logo--recycle {
+    height: clamp(80px, 12vw, 120px);
+    max-width: min(150px, 35vw);
+    margin-left: auto;
 }
 
 .about-header__logo--unir {
     height: clamp(40px, 6vw, 56px);
     max-width: min(220px, 48vw);
-}
-
-.about-header__logo--recycle {
-    height: clamp(64px, 10vw, 92px);
-    max-width: min(110px, 26vw);
 }
 
 .about-header h1 {

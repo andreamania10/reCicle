@@ -1,24 +1,30 @@
+/* ===== NAVBAR BASE ===== */
 .navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
     background: #ffffff;
     border-bottom: 1px solid #e8e8e8;
+    min-height: 70px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     text-decoration: none;
     flex-shrink: 0;
     cursor: pointer;
+    padding: 0;
 }
 
 .brand-logo {
-    width: 30px;
-    height: 30px;
+    height: 65px;
+    width: auto;
     margin-left: 10px;
+    object-fit: contain;
 }
 
 .brand-name {
@@ -30,9 +36,7 @@
     color: rgb(46, 46, 46);
 }
 
-
-/* Barra de búsqueda */
-
+/* ===== BARRA DE BÚSQUEDA ===== */
 .navbar-search-form {
     flex: 1;
     min-width: 0;
@@ -57,22 +61,7 @@
     background: #ffffff;
 }
 
-
-/* En móvil la búsqueda fuera del collapse ocupa el espacio disponible */
-
-@media (max-width: 991px) {
-    .navbar-search-form {
-        flex: 1;
-        margin: 0 8px;
-    }
-    .navbar-search-form input {
-        max-width: 100%;
-    }
-}
-
-
-/* Contenedor de botones de usuario */
-
+/* ===== ACCIONES DE USUARIO ===== */
 .navbar-actions {
     display: flex;
     align-items: center;
@@ -80,23 +69,7 @@
     flex-shrink: 0;
 }
 
-
-/* En móvil los botones se apilan verticalmente dentro del collapse */
-
-@media (max-width: 991px) {
-    .navbar-actions {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 12px 0 8px;
-        border-top: 1px solid #e8e8e8;
-        margin-top: 8px;
-    }
-}
-
-
-/* Botón Login */
-
+/* ===== BOTÓN LOGIN ===== */
 .btn-login {
     height: 40px;
     padding: 0 18px;
@@ -115,28 +88,7 @@
     background: #1f2937;
 }
 
-@media (max-width: 991px) {
-    .navbar-actions--guest {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px 0 8px;
-        border-top: 1px solid #e8e8e8;
-        margin-top: 8px;
-    }
-    .navbar-actions--guest .btn-login {
-        width: 100%;
-    }
-}
-
-@media (max-width: 991px) {
-    .btn-login {
-        padding: 0 14px;
-    }
-}
-
-
-/* Botones Mi perfil y Vender (misma apariencia) */
-
+/* ===== BOTONES MI PERFIL Y VENDER ===== */
 .btn-role,
 .btn-sell {
     height: 40px;
@@ -166,17 +118,7 @@
     box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
 }
 
-@media (max-width: 991px) {
-    .btn-role,
-    .btn-sell {
-        width: 100%;
-        border-radius: 10px;
-    }
-}
-
-
-/* Botón Panel Admin / Moderador */
-
+/* ===== BOTÓN PANEL ADMIN / MODERADOR ===== */
 .btn-admin {
     height: 40px;
     padding: 0 16px;
@@ -206,15 +148,7 @@
     text-decoration: none;
 }
 
-.navbar-toggler {
-    border-color: #00a082;
-    flex-shrink: 0;
-}
-
-.navbar-toggler:focus {
-    box-shadow: 0 0 0 2px rgba(0, 160, 130, 0.25);
-}
-
+/* ===== BOTÓN FAVORITOS ===== */
 .btn-favorites {
     position: relative;
     width: 40px;
@@ -246,6 +180,7 @@
     opacity: 0;
 }
 
+/* ===== BOTÓN MENSAJES ===== */
 .btn-messages {
     width: 40px;
     height: 40px;
@@ -267,16 +202,32 @@
     box-shadow: 0 2px 10px rgba(0, 160, 130, 0.28);
 }
 
+/* ===== BOTÓN HAMBURGUESA ===== */
+.navbar-toggler {
+    border-color: #00a082;
+    flex-shrink: 0;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px rgba(0, 160, 130, 0.25);
+}
+
+/* ===== SELL TEXT ===== */
 .sell-text {
     display: inline;
 }
 
+/* ===== RESPONSIVE MÓVIL ===== */
 @media (max-width: 991px) {
-    .btn-admin {
-        justify-content: center;
-        border-radius: 10px;
-        height: 40px;
+    .navbar-search-form {
+        flex: 1;
+        margin: 0 8px;
     }
+
+    .navbar-search-form input {
+        max-width: 100%;
+    }
+
     .navbar-actions {
         display: flex;
         flex-direction: row;
@@ -287,15 +238,36 @@
         border-top: 1px solid #e8e8e8;
         margin-top: 8px;
     }
+
+    .navbar-actions--guest {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 0 8px;
+        border-top: 1px solid #e8e8e8;
+        margin-top: 8px;
+    }
+
+    .navbar-actions--guest .btn-login {
+        width: 100%;
+    }
+
+    .btn-login {
+        padding: 0 14px;
+    }
+
     .btn-role {
         flex: unset;
         padding: 0 12px;
         font-size: 13px;
         white-space: nowrap;
     }
-    .btn-favorites {
-        flex-shrink: 0;
+
+    .btn-role,
+    .btn-sell {
+        width: 100%;
+        border-radius: 10px;
     }
+
     .btn-sell {
         width: 40px;
         height: 40px;
@@ -303,7 +275,18 @@
         font-size: 16px;
         font-weight: bold;
     }
+
     .sell-text {
         display: none;
+    }
+
+    .btn-admin {
+        justify-content: center;
+        border-radius: 10px;
+        height: 40px;
+    }
+
+    .btn-favorites {
+        flex-shrink: 0;
     }
 }
