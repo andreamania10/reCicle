@@ -18,6 +18,7 @@ export const routes: Routes = [
   { path: 'favorites', loadComponent: () => import('./pages/favorites/favorites').then(m => m.Favorites) },
   { path: 'moderator', loadComponent: () => import('./pages/moderator-panel/moderator-panel').then(m => m.ModeratorPanel), canActivate: [moderatorGuard] },
   { path: 'admin', loadComponent: () => import('./pages/admin-panel/admin-panel').then(m => m.AdminPanel), canActivate: [adminGuard] },
+  { path: 'admin/sold', loadComponent: () => import('./pages/admin-sold-articles/admin-sold-articles').then(m => m.AdminSoldArticles), canActivate: [adminGuard] },
   {
     path: 'sellProduct',
     loadComponent: () => import('./pages/sell-products/sell-products').then(m => m.SellProducts),

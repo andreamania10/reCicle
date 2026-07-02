@@ -1,0 +1,120 @@
+.sold-wrapper {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.sold-header {
+    margin: 1.25rem 0 1.5rem;
+}
+
+.sold-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.35rem;
+}
+
+.sold-subtitle {
+    color: #666;
+    font-size: 0.92rem;
+    margin: 0;
+}
+
+.sold-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.form-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    min-width: 220px;
+}
+
+.sold-count {
+    font-size: 0.85rem;
+    color: #777;
+    white-space: nowrap;
+}
+
+.loading-text {
+    color: #888;
+    text-align: center;
+    padding: 2rem;
+}
+
+.sold-error {
+    color: #c0392b;
+    text-align: center;
+    padding: 2rem;
+}
+
+.sold-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.sold-table th {
+    background: #f1f3f5;
+    padding: 0.6rem 0.85rem;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.sold-table td {
+    padding: 0.5rem 0.85rem;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.sold-table tr:hover {
+    background: #f9f9f9;
+}
+
+.sold-thumb {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.actions {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.btn-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+}
+
+.btn-view {
+    color: #00a082;
+    border-color: #00a082;
+}
+
+.btn-view:hover {
+    background: #00a082;
+    color: #fff;
+}
