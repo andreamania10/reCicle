@@ -21,29 +21,16 @@
 
                 <div class="categories-scroll">
                     <div class="categories-grid">
-                        <button
-                            type="button"
-                            class="category-btn"
-                            [class.category-btn--active]="!selectedCategoryId()"
-                            (click)="selectCategory(null)"
-                        >
+                        <button type="button" class="category-btn" [class.category-btn--active]="!selectedCategoryId()" (click)="selectCategory(null)">
                             <span class="category-btn__icon"><i class="bi bi-grid-fill"></i></span>
                             <span class="category-btn__label">Todos</span>
-                        </button>
-
-                        @for (category of categories(); track category.id) {
-                            <button
-                                type="button"
-                                class="category-btn"
-                                [class.category-btn--active]="selectedCategoryId() === category.id"
-                                (click)="selectCategory(category.id)"
-                            >
+                        </button> @for (category of categories(); track category.id) {
+                        <button type="button" class="category-btn" [class.category-btn--active]="selectedCategoryId() === category.id" (click)="selectCategory(category.id)">
                                 <span class="category-btn__icon">
                                     <i class="bi" [ngClass]="getCategoryIcon(category)"></i>
                                 </span>
                                 <span class="category-btn__label">{{ category.name }}</span>
-                            </button>
-                        }
+                            </button> }
                     </div>
                 </div>
             </div>
@@ -100,6 +87,7 @@
                               <option value="nuevo">Nuevo</option>
                               <option value="como nuevo">Como Nuevo</option>
                               <option value="buen estado">Buen Estado</option>
+                              <option value="buen estado">Aceptable</option>
                             </select>
                         </div>
 
