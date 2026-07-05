@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, viewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
+import { LegalModalsComponent } from '../../components/legal-modals/legal-modals';
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, LegalModalsComponent],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -27,6 +28,7 @@ export class Register {
   errorMessage = signal('');
   successMessage = signal('');
   isDetectingLocation = signal(false);
+  legalModals = viewChild.required(LegalModalsComponent);
 
   constructor(
     private router: Router,
@@ -68,6 +70,14 @@ export class Register {
 
   goToLogin(): void {
     this.router.navigate(['/']);
+  }
+
+  openTermsModal(event: Event): void {
+    this.legalModals().openTermsModal(event);
+  }
+
+  openPrivacyModal(event: Event): void {
+    this.legalModals().openPrivacyModal(event);
   }
 
   detectLocation(): void {

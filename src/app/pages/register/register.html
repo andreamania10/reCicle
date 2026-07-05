@@ -123,10 +123,12 @@
                     #termsField="ngModel"
                     required
                     [class.is-invalid]="termsField.invalid && termsField.touched">
-                <label for="acceptTerms" class="form-check-label">
-                    Acepto los <a href="#" class="terms-link">términos y condiciones</a> y la
-                    <a href="#" class="terms-link">política de privacidad</a>.
-                </label>
+                <span class="form-check-label">
+                    <label for="acceptTerms">Acepto los</label>
+                    <button type="button" class="terms-link" (click)="openTermsModal($event)">términos y condiciones</button>
+                    <label for="acceptTerms"> y la </label>
+                    <button type="button" class="terms-link" (click)="openPrivacyModal($event)">política de privacidad</button><label for="acceptTerms">.</label>
+                </span>
             </div>
             <div class="invalid-feedback d-block" *ngIf="termsField.invalid && termsField.touched" style="margin-top: -8px; margin-bottom: 8px;">
                 Debes aceptar los términos para continuar.
@@ -162,3 +164,5 @@
 
     </div>
 </div>
+
+<app-legal-modals />
