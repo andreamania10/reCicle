@@ -1,15 +1,22 @@
 <div class="container py-4">
     <h2>Artículos</h2>
 
-    @if (selectedCategory) {
-    <p class="text-muted">Categoría: {{ selectedCategory }}</p>
+    @if (selectedCategory()) {
+    <p class="text-muted">Categoría: {{ selectedCategory() }}</p>
     }
 
+    @if (isLoading()) {
+    <p class="text-muted">Cargando artículos...</p>
+    } @else if (loadError()) {
+    <p class="text-danger">No se pudieron cargar los artículos.</p>
+    } @else if (items().length === 0) {
+    <p class="text-muted">No hay artículos para mostrar.</p>
+    } @else {
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @for (item of items; track item.id) {
+        @for (item of items(); track item.id) {
         <div class="col">
             <div class="card h-100 shadow-sm border-0">
-                <img [src]="item.image || 'https://placehold.co/300x200'" class="card-img-top" [alt]="item.title" style="height: 200px; object-fit: cover;">
+                <img [src]="item.image || item.main_photo || 'https://placehold.co/300x200'" class="card-img-top" [alt]="item.title" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title fw-bold">{{ item.title }}</h5>
                     <p class="card-text text-success fw-bold">{{ item.price }} €</p>
@@ -18,4 +25,17 @@
         </div>
         }
     </div>
+
+    @if (hasMore()) {
+    <div #loadMoreSentinel class="load-more-sentinel" aria-hidden="true"></div>
+    }
+
+    @if (isLoadingMore()) {
+    <p class="text-muted text-center mt-4">Cargando más artículos...</p>
+    }
+
+    @if (!hasMore() && !isLoadingMore()) {
+    <p class="articles-end-message">Has visto todos los artículos disponibles.</p>
+    }
+    }
 </div>

@@ -14,29 +14,46 @@ export class ArticleService {
   constructor(private http: HttpClient) {}
 
   getArticles(): Observable<Article[]> {
-    return this.http
-      .get<ArticleResponse | Article[]>(this.apiUrl, { params: this.buildListParams() })
-      .pipe(
-        map((response) => (Array.isArray(response) ? response : response.results ?? [])),
-      );
-  }
-
-  searchArticles(search: string): Observable<Article[]> {
-    const term = search.trim();
-    const params = this.buildListParams(term ? { search: term } : undefined);
-
-    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
+    return this.getArticlesPage(1).pipe(
       map((response) => response.results ?? []),
     );
   }
 
-  getFiltered(filters: { condition?: string; location?: string; search?: string; category_id?: string }): Observable<Article[]> {
-    const params = this.buildListParams(
-      Object.fromEntries(Object.entries(filters).filter(([, v]) => v)) as Record<string, string>
-    );
-    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
-      map((response) => response.results ?? [])
-    );
+  getArticlesPage(page: number, filters?: Record<string, string>, pageSize = this.defaultPageSize): Observable<ArticleResponse> {
+    let params = new HttpParams()
+      .set('page', String(page))
+      .set('pageSize', String(pageSize));
+
+    if (filters) {
+      for (const [key, value] of Object.entries(filters)) {
+        if (value) {
+          params = params.set(key, value);
+        }
+      }
+    }
+
+    return this.http.get<ArticleResponse>(this.apiUrl, { params });
+  }
+
+  hasMorePages(resultsLength: number, pageSize = this.defaultPageSize): boolean {
+    return resultsLength >= pageSize;
+  }
+
+  searchArticles(search: string, page = 1): Observable<ArticleResponse> {
+    const term = search.trim();
+    const filters = term ? { search: term } : undefined;
+    return this.getArticlesPage(page, filters);
+  }
+
+  getFiltered(
+    filters: { condition?: string; location?: string; search?: string; category_id?: string; max_price?: string },
+    page = 1,
+  ): Observable<ArticleResponse> {
+    const params = Object.fromEntries(
+      Object.entries(filters).filter(([, value]) => value),
+    ) as Record<string, string>;
+
+    return this.getArticlesPage(page, params);
   }
 
   getByStatus(status: string, pageSize = 100): Observable<Article[]> {
@@ -54,18 +71,14 @@ export class ArticleService {
     return this.http.get<ArticleResponse>(this.apiUrl);
   }
 
-  getByCategoryId(categoryId: number): Observable<Article[]> {
+  getByCategoryId(categoryId: number, page = 1): Observable<ArticleResponse> {
     const id = Number(categoryId);
 
     if (!Number.isInteger(id) || id <= 0) {
       throw new Error('category_id debe ser un número entero válido');
     }
 
-    const params = this.buildListParams({ category_id: String(id) });
-
-    return this.http.get<ArticleResponse>(this.apiUrl, { params }).pipe(
-      map((response) => response.results ?? []),
-    );
+    return this.getArticlesPage(page, { category_id: String(id) });
   }
 
   private buildListParams(filters?: Record<string, string>): HttpParams {

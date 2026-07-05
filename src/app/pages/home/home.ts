@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -15,14 +26,20 @@ import { CategoryService } from '../../services/category';
   standalone: true,
   imports: [CommonModule, ArticleCardComponent, FormsModule],
   templateUrl: './home.html',
-  styleUrls: ['./home.css']
+  styleUrls: ['./home.css'],
 })
-export class Home implements OnInit {
+export class Home implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('loadMoreSentinel') loadMoreSentinel?: ElementRef<HTMLDivElement>;
+
   private articleService = inject(ArticleService);
   private categoryService = inject(CategoryService);
   private route = inject(ActivatedRoute);
 
   constructor(private router: Router, public auth: Auth, private cdr: ChangeDetectorRef) {}
+
+  private currentPage = 1;
+  private currentFilters: Record<string, string> = {};
+  private loadMoreObserver?: IntersectionObserver;
 
   isFiltersOpen = false;
 
@@ -47,6 +64,8 @@ export class Home implements OnInit {
   selectedCategoryName = signal('');
   isLoadingCategories = signal(true);
   isLoadingArticles = signal(true);
+  isLoadingMore = signal(false);
+  hasMore = signal(false);
   categoriesError = signal(false);
   articlesError = signal(false);
   activeSearch = signal('');
@@ -60,12 +79,14 @@ export class Home implements OnInit {
       if (search) {
         this.selectedCategoryId.set(null);
         this.selectedCategoryName.set('');
-        this.loadSearchResults(search);
+        this.currentFilters = { search };
+        this.fetchArticles(true);
         return;
       }
 
       if (this.selectedCategoryId() === null) {
-        this.loadRecentArticles();
+        this.currentFilters = {};
+        this.fetchArticles(true);
       }
     });
 
@@ -87,74 +108,54 @@ export class Home implements OnInit {
     });
   }
 
-  applyFilters(): void {
-    const hasBackendFilters = this.selectedCondition;
+  ngAfterViewInit(): void {
+    this.loadMoreObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          this.loadMoreArticles();
+        }
+      },
+      { root: null, rootMargin: '300px', threshold: 0 },
+    );
 
-    if (hasBackendFilters) {
-      this.isLoadingArticles.set(true);
-      this.articlesError.set(false);
+    setTimeout(() => this.observeLoadMoreSentinel());
+  }
 
-      const filters: any = {};
-      if (this.selectedCondition) filters.condition = this.selectedCondition;
-      if (this.searchTitle) filters.search = this.searchTitle;
-      if (this.selectedCategoryId()) filters.category_id = String(this.selectedCategoryId());
-      if (this.maxPrice < 1000) filters.max_price = String(this.maxPrice);
-
-      this.articleService.getFiltered(filters)
-        .pipe(finalize(() => this.isLoadingArticles.set(false)))
-        .subscribe({
-          next: (articles) => {
-            // Filtro local por localización y precio
-            const filtered = articles.filter((a) => {
-              if (this.location && !a.location?.toLowerCase().includes(this.location.toLowerCase())) {
-                return false;
-              }
-              if (Number(a.price) > this.maxPrice) {
-                return false;
-              }
-              return true;
-            });
-            this.items.set(filtered);
-            this.cdr.detectChanges();
-          },
-          error: () => {
-            this.articlesError.set(true);
-          }
-        });
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (!this.hasMore() || this.isLoadingArticles() || this.isLoadingMore()) {
       return;
     }
 
-    // Sin filtros de backend, filtrar localmente
-    const filtered = this.allArticles().filter((a) => {
-      const price = Number(a.price);
+    const scrollBottom = window.scrollY + window.innerHeight;
+    const documentBottom = document.documentElement.scrollHeight - 300;
 
-      if (this.selectedCategoryId() !== null && a.category_id !== this.selectedCategoryId()) {
-        return false;
+    if (scrollBottom >= documentBottom) {
+      this.loadMoreArticles();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.loadMoreObserver?.disconnect();
+  }
+
+  applyFilters(): void {
+    const hasBackendFilters = !!this.selectedCondition;
+
+    if (hasBackendFilters) {
+      this.currentFilters = {};
+      if (this.selectedCondition) this.currentFilters['condition'] = this.selectedCondition;
+      if (this.searchTitle) this.currentFilters['search'] = this.searchTitle;
+      if (this.selectedCategoryId()) {
+        this.currentFilters['category_id'] = String(this.selectedCategoryId());
       }
+      if (this.maxPrice < 1000) this.currentFilters['max_price'] = String(this.maxPrice);
 
-      if (price < this.minPrice || price > this.maxPrice) {
-        return false;
-      }
+      this.fetchArticles(true, { applyLocalFilters: true });
+      return;
+    }
 
-      if (
-        !this.activeSearch() &&
-        this.searchTitle &&
-        !a.title.toLowerCase().includes(this.searchTitle.toLowerCase())
-      ) {
-        return false;
-      }
-
-      if (
-        this.location &&
-        !a.location?.toLowerCase().includes(this.location.toLowerCase())
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-
-    this.items.set(filtered);
+    this.updateVisibleItems();
   }
 
   toggleFilters() {
@@ -165,8 +166,9 @@ export class Home implements OnInit {
     if (categoryId === null) {
       this.selectedCategoryId.set(null);
       this.selectedCategoryName.set('');
+      this.currentFilters = {};
       this.router.navigate(['/'], { queryParams: { search: null } });
-      this.loadRecentArticles();
+      this.fetchArticles(true);
       return;
     }
 
@@ -178,76 +180,123 @@ export class Home implements OnInit {
 
     this.selectedCategoryId.set(id);
     this.selectedCategoryName.set(
-      this.categories().find((category) => category.id === id)?.name ?? ''
+      this.categories().find((category) => category.id === id)?.name ?? '',
     );
 
+    this.currentFilters = { category_id: String(id) };
     this.router.navigate(['/'], { queryParams: { search: null } });
-    this.loadArticlesByCategory(id);
+    this.fetchArticles(true);
   }
 
-  private loadRecentArticles(): void {
-    this.isLoadingArticles.set(true);
-    this.articlesError.set(false);
-    this.cdr.detectChanges();
-
-    this.articleService
-      .getArticles()
-      .pipe(finalize(() => this.isLoadingArticles.set(false)))
-      .subscribe({
-        next: (articles) => {
-          this.allArticles.set(articles);
-          this.items.set(articles);
-        },
-        error: () => {
-          this.articlesError.set(true);
-        },
-      });
-  }
-
-  private loadSearchResults(term: string): void {
-    this.isLoadingArticles.set(true);
-    this.articlesError.set(false);
-    this.items.set([]);
-    this.cdr.detectChanges();
-
-    this.articleService
-      .searchArticles(term)
-      .pipe(finalize(() => this.isLoadingArticles.set(false)))
-      .subscribe({
-        next: (articles) => {
-          this.allArticles.set(articles);
-          this.items.set(articles);
-        },
-        error: () => {
-          this.articlesError.set(true);
-        },
-      });
-  }
-
-  private loadArticlesByCategory(categoryId: number): void {
-    const id = Number(categoryId);
-
-    if (!Number.isInteger(id) || id <= 0) {
-      this.articlesError.set(true);
+  loadMoreArticles(): void {
+    if (this.isLoadingArticles() || this.isLoadingMore() || !this.hasMore()) {
       return;
     }
 
-    this.isLoadingArticles.set(true);
+    this.isLoadingMore.set(true);
+    this.fetchArticles(false);
+  }
+
+  private fetchArticles(reset: boolean, options?: { applyLocalFilters?: boolean }): void {
+    const page = reset ? 1 : this.currentPage + 1;
+
+    if (reset) {
+      this.currentPage = 1;
+      this.isLoadingArticles.set(true);
+      this.isLoadingMore.set(false);
+      this.hasMore.set(false);
+      this.allArticles.set([]);
+      this.items.set([]);
+    }
+
     this.articlesError.set(false);
-    this.items.set([]);
+    this.cdr.detectChanges();
 
     this.articleService
-      .getByCategoryId(id)
-      .pipe(finalize(() => this.isLoadingArticles.set(false)))
+      .getArticlesPage(page, this.currentFilters)
+      .pipe(
+        finalize(() => {
+          this.isLoadingArticles.set(false);
+          this.isLoadingMore.set(false);
+          setTimeout(() => this.observeLoadMoreSentinel());
+          this.cdr.detectChanges();
+        }),
+      )
       .subscribe({
-        next: (articles) => {
-          this.allArticles.set(articles);
-          this.items.set(articles);
+        next: (response) => {
+          const articles = response.results ?? [];
+
+          if (reset) {
+            this.allArticles.set(articles);
+            this.currentPage = 1;
+          } else {
+            this.allArticles.update((current) => [...current, ...articles]);
+            this.currentPage = page;
+          }
+
+          this.hasMore.set(
+            this.articleService.hasMorePages(articles.length),
+          );
+
+          if (options?.applyLocalFilters || this.hasLocalFilters()) {
+            this.updateVisibleItems();
+          } else {
+            this.items.set(this.allArticles());
+          }
         },
         error: () => {
           this.articlesError.set(true);
         },
       });
+  }
+
+  private hasLocalFilters(): boolean {
+    return (
+      this.minPrice > 0 ||
+      this.maxPrice < 1000 ||
+      (!this.activeSearch() && !!this.searchTitle) ||
+      !!this.location
+    );
+  }
+
+  private updateVisibleItems(): void {
+    const filtered = this.allArticles().filter((article) => this.matchesLocalFilters(article));
+    this.items.set(filtered);
+  }
+
+  private matchesLocalFilters(article: Article): boolean {
+    const price = Number(article.price);
+
+    if (this.selectedCategoryId() !== null && article.category_id !== this.selectedCategoryId()) {
+      return false;
+    }
+
+    if (price < this.minPrice || price > this.maxPrice) {
+      return false;
+    }
+
+    if (
+      !this.activeSearch() &&
+      this.searchTitle &&
+      !article.title.toLowerCase().includes(this.searchTitle.toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (this.location && !article.location?.toLowerCase().includes(this.location.toLowerCase())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private observeLoadMoreSentinel(): void {
+    this.loadMoreObserver?.disconnect();
+
+    const sentinel = this.loadMoreSentinel?.nativeElement;
+    if (sentinel && this.hasMore()) {
+      this.loadMoreObserver?.observe(sentinel);
+    }
   }
 
   resetFilters() {
@@ -261,7 +310,7 @@ export class Home implements OnInit {
       return;
     }
 
-    this.items.set(this.allArticles());
+    this.updateVisibleItems();
   }
 
   getCategoryIcon(category: Category): string {

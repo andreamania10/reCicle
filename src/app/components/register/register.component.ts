@@ -29,7 +29,10 @@ export class RegisterComponent {
   errorMessage = signal('');
   successMessage = signal('');
   isDetectingLocation = signal(false);
+  showPassword = false;
+  showConfirmPassword = false;
   legalModals = viewChild.required(LegalModalsComponent);
+  registerForm = viewChild<NgForm>('registerForm');
 
   constructor(
     private router: Router,
@@ -76,6 +79,18 @@ export class RegisterComponent {
 
   openPrivacyModal(event: Event): void {
     this.legalModals().openPrivacyModal(event);
+  }
+
+  onModalShown(): void {
+    this.resetForm();
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   detectLocation(): void {
@@ -130,6 +145,9 @@ export class RegisterComponent {
     this.errorMessage.set('');
     this.successMessage.set('');
     this.isDetectingLocation.set(false);
+    this.showPassword = false;
+    this.showConfirmPassword = false;
+    this.registerForm()?.resetForm(this.registerData);
   }
 
   private closeModal(): void {
