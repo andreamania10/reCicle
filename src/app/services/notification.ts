@@ -12,25 +12,35 @@ export class NotificationService {
   private http = inject(HttpClient);
   private socketService = inject(SocketService);
   private apiUrl = `${environment.apiUrl}/api/notifications`;
+  private readonly pollIntervalMs = 30_000;
 
   private activeUserId: number | null = null;
   private activeToken: string | null = null;
+  private pollTimer: ReturnType<typeof setInterval> | null = null;
 
   notifications = signal<NotificationItem[]>([]);
   loading = signal(false);
   loadError = signal('');
   unreadCount = computed(() => this.notifications().filter((item) => !item.read).length);
 
-  private readonly onSocketNotification = () => {
-    this.refresh();
+  private readonly onSocketNotification = (payload?: unknown) => {
+    const item = this.normalizeSocketPayload(payload);
+    if (item) {
+      this.upsertNotification(item);
+      return;
+    }
+
+    this.refresh({ silent: true });
   };
 
-  refresh(): void {
+  refresh(options: { silent?: boolean } = {}): void {
     const token = this.activeToken;
     if (!token) return;
 
-    this.loading.set(true);
-    this.loadError.set('');
+    if (!options.silent) {
+      this.loading.set(true);
+      this.loadError.set('');
+    }
 
     this.getUnread(token).subscribe({
       next: (items) => {
@@ -38,10 +48,12 @@ export class NotificationService {
         this.loading.set(false);
       },
       error: (err) => {
-        this.notifications.set([]);
-        this.loadError.set(
-          err?.error?.message || 'No se pudieron cargar las notificaciones.',
-        );
+        if (!options.silent) {
+          this.notifications.set([]);
+          this.loadError.set(
+            err?.error?.message || 'No se pudieron cargar las notificaciones.',
+          );
+        }
         this.loading.set(false);
       },
     });
@@ -60,18 +72,63 @@ export class NotificationService {
       this.socketService.connect();
       this.socketService.joinUserRoom(normalizedUserId);
       this.socketService.onNewNotification(this.onSocketNotification);
+      this.startPolling();
     }
 
     this.refresh();
   }
 
   stop(): void {
+    this.stopPolling();
     this.disconnectSocket();
+    this.socketService.leaveUserRoom();
     this.activeUserId = null;
     this.activeToken = null;
     this.notifications.set([]);
     this.loading.set(false);
     this.loadError.set('');
+  }
+
+  private startPolling(): void {
+    this.stopPolling();
+    this.pollTimer = setInterval(() => this.refresh({ silent: true }), this.pollIntervalMs);
+  }
+
+  private stopPolling(): void {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
+    }
+  }
+
+  private upsertNotification(item: NotificationItem): void {
+    this.notifications.update((current) => {
+      const withoutDuplicate = current.filter((entry) => entry.id !== item.id);
+      return [item, ...withoutDuplicate];
+    });
+    this.loadError.set('');
+  }
+
+  private normalizeSocketPayload(payload: unknown): NotificationItem | null {
+    if (!payload) return null;
+
+    if (Array.isArray(payload)) {
+      const first = payload.find(
+        (item): item is Record<string, unknown> => !!item && typeof item === 'object',
+      );
+      return first ? this.normalizeNotification(first) : null;
+    }
+
+    if (typeof payload !== 'object') return null;
+
+    const raw = payload as Record<string, unknown>;
+    const nested = raw['notification'] ?? raw['notificacion'] ?? raw['data'];
+
+    if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+      return this.normalizeNotification(nested as Record<string, unknown>);
+    }
+
+    return this.normalizeNotification(raw);
   }
 
   private disconnectSocket(): void {
