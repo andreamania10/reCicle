@@ -1,0 +1,97 @@
+@if (showTermsModal()) {
+  <div class="legal-modal-backdrop" role="presentation">
+    <div class="legal-modal-panel" role="dialog" aria-modal="true" aria-labelledby="termsModalLabel">
+      <div class="legal-modal-header">
+        <h5 id="termsModalLabel">Términos y Condiciones</h5>
+        <button type="button" class="btn-close-custom" (click)="closeTermsModal()" aria-label="Cerrar">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="legal-modal-body">
+        <p class="legal-updated">Última actualización: julio de 2026</p>
+
+        <h6>1. Aceptación de los términos</h6>
+        <p>Al registrarte en Recycle aceptas estos términos y condiciones. Si no estás de acuerdo, no utilices la plataforma.</p>
+
+        <h6>2. Descripción del servicio</h6>
+        <p>Recycle es una plataforma digital de compraventa de artículos de segunda mano que conecta a compradores y vendedores particulares, fomentando la reutilización y la economía circular.</p>
+
+        <h6>3. Registro y cuenta de usuario</h6>
+        <p>Debes proporcionar información veraz y mantener la confidencialidad de tus credenciales. Eres responsable de toda actividad realizada desde tu cuenta.</p>
+
+        <h6>4. Publicación de artículos</h6>
+        <p>Los vendedores deben describir con exactitud el estado, precio y características de los productos. Queda prohibida la publicación de artículos ilegales, robados, falsificados o que infrinjan derechos de terceros.</p>
+
+        <h6>5. Transacciones entre usuarios</h6>
+        <p>Recycle actúa como intermediario tecnológico. Los acuerdos de compraventa se realizan directamente entre usuarios. La plataforma no garantiza la calidad, entrega ni pago de los artículos publicados.</p>
+
+        <h6>6. Conducta prohibida</h6>
+        <p>Está prohibido el acoso, fraude, spam, suplantación de identidad, manipulación de precios y cualquier uso que perjudique a otros usuarios o a la plataforma.</p>
+
+        <h6>7. Moderación y reportes</h6>
+        <p>Recycle se reserva el derecho de revisar contenido reportado, suspender cuentas o eliminar publicaciones que incumplan estas condiciones.</p>
+
+        <h6>8. Limitación de responsabilidad</h6>
+        <p>Recycle no se hace responsable de disputas entre usuarios, daños derivados del uso de la plataforma ni de interrupciones temporales del servicio.</p>
+
+        <h6>9. Modificaciones</h6>
+        <p>Podemos actualizar estos términos. El uso continuado de la plataforma tras los cambios implica su aceptación.</p>
+
+        <h6>10. Legislación aplicable</h6>
+        <p>Estos términos se rigen por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales competentes.</p>
+      </div>
+      <div class="legal-modal-footer">
+        <button type="button" class="btn-legal-accept" (click)="closeTermsModal()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showPrivacyModal()) {
+  <div class="legal-modal-backdrop" role="presentation">
+    <div class="legal-modal-panel" role="dialog" aria-modal="true" aria-labelledby="privacyModalLabel">
+      <div class="legal-modal-header">
+        <h5 id="privacyModalLabel">Política de Privacidad</h5>
+        <button type="button" class="btn-close-custom" (click)="closePrivacyModal()" aria-label="Cerrar">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="legal-modal-body">
+        <p class="legal-updated">Última actualización: julio de 2026</p>
+
+        <h6>1. Responsable del tratamiento</h6>
+        <p>El responsable del tratamiento de tus datos personales es el equipo de Recycle, en el marco del proyecto académico del Máster en Desarrollo de Aplicaciones Web de UNIR.</p>
+
+        <h6>2. Datos que recopilamos</h6>
+        <p>Recopilamos nombre de usuario, correo electrónico, contraseña (almacenada de forma segura), localización opcional, artículos publicados, mensajes, favoritos y datos de uso de la plataforma.</p>
+
+        <h6>3. Finalidad del tratamiento</h6>
+        <p>Utilizamos tus datos para gestionar tu cuenta, facilitar la compraventa entre usuarios, enviar notificaciones, moderar contenidos y mejorar el servicio.</p>
+
+        <h6>4. Base legal</h6>
+        <p>El tratamiento se basa en la ejecución del contrato de uso de la plataforma, el consentimiento del usuario y el interés legítimo en garantizar la seguridad del servicio.</p>
+
+        <h6>5. Conservación de datos</h6>
+        <p>Conservamos tus datos mientras mantengas una cuenta activa. Tras la baja, se eliminarán o anonimizarán en un plazo razonable, salvo obligación legal de conservación.</p>
+
+        <h6>6. Comunicación de datos</h6>
+        <p>No vendemos tus datos personales. Podemos compartirlos con proveedores de hosting y servicios técnicos necesarios para el funcionamiento de la plataforma, siempre bajo acuerdos de confidencialidad.</p>
+
+        <h6>7. Derechos del usuario</h6>
+        <p>Puedes acceder, rectificar, suprimir, limitar u oponerte al tratamiento de tus datos, así como solicitar la portabilidad. Para ejercer estos derechos, contacta con el equipo de Recycle.</p>
+
+        <h6>8. Seguridad</h6>
+        <p>Aplicamos medidas técnicas y organizativas para proteger tus datos, incluyendo autenticación segura, control de acceso por roles y comunicaciones cifradas cuando corresponda.</p>
+
+        <h6>9. Cookies y tecnologías similares</h6>
+        <p>Utilizamos almacenamiento local y cookies técnicas necesarias para mantener la sesión y las preferencias del usuario.</p>
+
+        <h6>10. Cambios en esta política</h6>
+        <p>Podemos actualizar esta política de privacidad. Te informaremos de cambios significativos a través de la plataforma.</p>
+      </div>
+      <div class="legal-modal-footer">
+        <button type="button" class="btn-legal-accept" (click)="closePrivacyModal()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+}

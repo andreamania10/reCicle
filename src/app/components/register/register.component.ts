@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, viewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { LegalModalsComponent } from '../legal-modals/legal-modals';
 import { Auth } from '../../services/auth';
 
 declare var bootstrap: any;
@@ -10,7 +11,7 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-register-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LegalModalsComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -28,6 +29,7 @@ export class RegisterComponent {
   errorMessage = signal('');
   successMessage = signal('');
   isDetectingLocation = signal(false);
+  legalModals = viewChild.required(LegalModalsComponent);
 
   constructor(
     private router: Router,
@@ -66,6 +68,14 @@ export class RegisterComponent {
     if (loginEl) {
       new bootstrap.Modal(loginEl).show();
     }
+  }
+
+  openTermsModal(event: Event): void {
+    this.legalModals().openTermsModal(event);
+  }
+
+  openPrivacyModal(event: Event): void {
+    this.legalModals().openPrivacyModal(event);
   }
 
   detectLocation(): void {

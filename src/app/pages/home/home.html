@@ -3,9 +3,16 @@
         <div class="container">
             <div class="hero-banner">
                 <div class="slides">
-                    <div class="slide" *ngFor="let slide of slides; let i = index" [class.active]="i === currentIndex">
-                        <img [src]="slide.image" alt="banner" />
+                    @for (slide of slides; track slide.image; let i = $index) {
+                    <div class="slide" [class.active]="i === currentIndex">
+                        <img
+                            [src]="slide.image"
+                            alt="Banner promocional"
+                            [loading]="i === 0 ? 'eager' : 'lazy'"
+                            (error)="onSlideImageError(i)"
+                        />
                     </div>
+                    }
                 </div>
             </div>
             @if (isLoadingCategories()) {
