@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChatContext, ConversationInbox } from '../../interfaces/conversation';
 import { ChatMessage } from '../../interfaces/message';
@@ -22,7 +22,7 @@ import { UserService } from '../../services/user';
 
 @Component({
   selector: 'app-messages',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './messages.html',
   styleUrl: './messages.css',
 })

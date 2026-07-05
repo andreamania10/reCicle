@@ -121,6 +121,18 @@
                         <app-article-card [item]="item"></app-article-card>
                         }
                     </div>
+
+                    @if (hasMore()) {
+                    <div #loadMoreSentinel class="load-more-sentinel" aria-hidden="true"></div>
+                    }
+
+                    @if (isLoadingMore()) {
+                    <p class="articles-status load-more-status">Cargando más artículos...</p>
+                    }
+
+                    @if (!hasMore() && !isLoadingMore()) {
+                    <p class="articles-end-message">Has visto todos los artículos disponibles.</p>
+                    }
                     }
 
                 </div>
