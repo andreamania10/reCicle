@@ -45,45 +45,70 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
-              ],
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+            },
+            "root": "",
+
+            "sourceRoot": "src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "@angular/build:application",
+                    "options": {
+                        "browser": "src/main.ts",
+                        "tsConfig": "tsconfig.app.json",
+                        "inlineStyleLanguage": "css",
+                        "assets": [{
+                            "glob": "**/*",
+                            "input": "public",
+                            "output": "/"
+                        }],
+                        "styles": ["src/material-theme.scss", "src/styles.css"]
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.prod.ts"
+                            }],
+                            "budgets": [{
+                                    "type": "initial",
+                                    "maximumWarning": "500kB",
+                                    "maximumError": "1MB"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "10kB",
+                                    "maximumError": "15kB"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "development": {
+                            "optimization": false,
+                            "extractLicenses": false,
+                            "sourceMap": true
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "@angular/build:dev-server",
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "mi-proyecto-angular:build:production"
+                        },
+                        "development": {
+                            "buildTarget": "mi-proyecto-angular:build:development"
+                        }
+                    },
+                    "defaultConfiguration": "development"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "8kB",
                   "maximumError": "12kB"
                 }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
             }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular/build:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "mi-proyecto-angular:build:production"
-            },
-            "development": {
-              "buildTarget": "mi-proyecto-angular:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "test": {
-          "builder": "@angular/build:unit-test"
         }
-      }
     }
-  }
 }

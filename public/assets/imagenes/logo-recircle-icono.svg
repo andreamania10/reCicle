@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#00a082" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#00c2a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#008f74" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <circle cx="100" cy="100" r="52" fill="#38bdf8"/>
+  <ellipse cx="100" cy="100" rx="24" ry="52" fill="none" stroke="white" stroke-width="1" opacity="0.3"/>
+  <line x1="48" y1="100" x2="152" y2="100" stroke="white" stroke-width="1" opacity="0.3"/>
+  <path d="M52,78 Q100,86 148,78" fill="none" stroke="white" stroke-width="1" opacity="0.3"/>
+  <path d="M52,122 Q100,114 148,122" fill="none" stroke="white" stroke-width="1" opacity="0.3"/>
+
+  <path d="M78,72 C86,64 100,67 104,76 C108,85 105,98 97,100 C89,102 74,96 72,86 C70,80 72,76 78,72 Z" fill="#00c2a8"/>
+  <path d="M107,87 C112,84 119,87 120,93 C121,99 117,105 111,105 C105,105 102,99 104,93 C104,90 105,88 107,87 Z" fill="#00c2a8"/>
+  <path d="M82,108 C87,104 95,106 97,114 C99,122 94,128 88,127 C82,126 79,118 81,112 C81,110 81,109 82,108 Z" fill="#00c2a8"/>
+  <path d="M114,68 C119,65 126,67 127,73 C128,79 124,84 118,83 C112,82 110,76 112,72 C112,70 113,69 114,68 Z" fill="#00c2a8"/>
+
+  <path d="M100,40 A64,64 0 0,1 155,132" fill="none" stroke="#00a082" stroke-width="4" stroke-linecap="round" marker-end="url(#arr1)"/>
+  <path d="M155,132 A64,64 0 0,1 45,132" fill="none" stroke="#00c2a8" stroke-width="4" stroke-linecap="round" marker-end="url(#arr2)"/>
+  <path d="M45,132 A64,64 0 0,1 100,40" fill="none" stroke="#008f74" stroke-width="4" stroke-linecap="round" marker-end="url(#arr3)"/>
+</svg>

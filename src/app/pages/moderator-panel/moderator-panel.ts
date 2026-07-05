@@ -29,7 +29,6 @@ export class ModeratorPanel implements OnInit {
   resolving = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
-
   pendingArticles = signal<PendingArticleReport[]>([]);
   pendingUsers = signal<PendingUserReport[]>([]);
   history = signal<ReportHistoryItem[]>([]);
@@ -37,14 +36,64 @@ export class ModeratorPanel implements OnInit {
   historyShowArticles = signal(true);
   historyShowUsers = signal(true);
 
+  getHistoryTypeLabel(reportType: string): string {
+    const type = this.normalizeReportType(reportType);
+  
+    if (type === 'article') {
+      return 'Artículo';
+    }
+  
+    if (type === 'user') {
+      return 'Usuario';
+    }
+  
+    return reportType || '—';
+  }
+  
+  private normalizeReportType(reportType: string | null | undefined): 'article' | 'user' | 'unknown' {
+    const value = (reportType || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  
+    if (
+      value === 'articulo' ||
+      value === 'article' ||
+      value === 'articles' ||
+      value === 'report_article'
+    ) {
+      return 'article';
+    }
+  
+    if (
+      value === 'usuario' ||
+      value === 'user' ||
+      value === 'users' ||
+      value === 'report_user'
+    ) {
+      return 'user';
+    }
+  
+    return 'unknown';
+  }
+
   filteredHistory = computed(() => {
     const showArticles = this.historyShowArticles();
     const showUsers = this.historyShowUsers();
-
+  
     return this.history().filter((item) => {
-      if (item.report_type === 'Articulo') return showArticles;
-      if (item.report_type === 'Usuario') return showUsers;
-      return showArticles || showUsers;
+      const type = this.normalizeReportType(item.report_type);
+  
+      if (type === 'article') {
+        return showArticles;
+      }
+  
+      if (type === 'user') {
+        return showUsers;
+      }
+  
+      return false;
     });
   });
 
@@ -78,8 +127,7 @@ export class ModeratorPanel implements OnInit {
   openArticleDetail(report: PendingArticleReport): void {
     const token = this.auth.currentUser()?.token;
     if (!token) return;
-
-    this.loading.set(true);
+    
     this.errorMessage.set('');
 
     this.reportService.getPendingArticleDetail(report.report_id, token).subscribe({
@@ -87,7 +135,6 @@ export class ModeratorPanel implements OnInit {
         this.selectedArticleReport.set(detail);
         this.selectedUserReport.set(null);
         this.moderatorNote = '';
-        this.loading.set(false);
         this.cdr.detectChanges();
       },
       error: () => {
@@ -101,8 +148,6 @@ export class ModeratorPanel implements OnInit {
   openUserDetail(report: PendingUserReport): void {
     const token = this.auth.currentUser()?.token;
     if (!token) return;
-
-    this.loading.set(true);
     this.errorMessage.set('');
 
     this.reportService.getPendingUserDetail(report.report_id, token).subscribe({
@@ -110,7 +155,6 @@ export class ModeratorPanel implements OnInit {
         this.selectedUserReport.set(detail);
         this.selectedArticleReport.set(null);
         this.moderatorNote = '';
-        this.loading.set(false);
         this.cdr.detectChanges();
       },
       error: () => {
@@ -129,11 +173,6 @@ export class ModeratorPanel implements OnInit {
 
   resolveArticleReport(action: 'accept' | 'reject'): void {
     const report = this.selectedArticleReport();
-    this.resolveReportById(report?.report_id, action);
-  }
-
-  resolveUserReport(action: 'accept' | 'reject'): void {
-    const report = this.selectedUserReport();
     this.resolveReportById(report?.report_id, action);
   }
 
@@ -213,6 +252,11 @@ export class ModeratorPanel implements OnInit {
         this.history.set(reports);
         this.loading.set(false);
         this.cdr.detectChanges();
+        
+console.table(
+  reports.map(r => r.report_type)
+);
+
       },
       error: (err) =>
         this.handleLoadError(err?.error?.message || 'No se pudo cargar el historial de reportes.'),

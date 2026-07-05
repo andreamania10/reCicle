@@ -69,12 +69,10 @@ export class Home implements OnInit {
       }
     });
 
-    
     setInterval(() => {
       this.currentIndex = (this.currentIndex + 1) % this.slides.length;
       this.cdr.detectChanges();
     }, 3500);
-
 
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
@@ -90,17 +88,54 @@ export class Home implements OnInit {
   }
 
   applyFilters(): void {
+    const hasBackendFilters = this.selectedCondition;
+
+    if (hasBackendFilters) {
+      this.isLoadingArticles.set(true);
+      this.articlesError.set(false);
+
+      const filters: any = {};
+      if (this.selectedCondition) filters.condition = this.selectedCondition;
+      if (this.searchTitle) filters.search = this.searchTitle;
+      if (this.selectedCategoryId()) filters.category_id = String(this.selectedCategoryId());
+      if (this.maxPrice < 1000) filters.max_price = String(this.maxPrice);
+
+      this.articleService.getFiltered(filters)
+        .pipe(finalize(() => this.isLoadingArticles.set(false)))
+        .subscribe({
+          next: (articles) => {
+            // Filtro local por localización y precio
+            const filtered = articles.filter((a) => {
+              if (this.location && !a.location?.toLowerCase().includes(this.location.toLowerCase())) {
+                return false;
+              }
+              if (Number(a.price) > this.maxPrice) {
+                return false;
+              }
+              return true;
+            });
+            this.items.set(filtered);
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.articlesError.set(true);
+          }
+        });
+      return;
+    }
+
+    // Sin filtros de backend, filtrar localmente
     const filtered = this.allArticles().filter((a) => {
       const price = Number(a.price);
-  
+
       if (this.selectedCategoryId() !== null && a.category_id !== this.selectedCategoryId()) {
         return false;
       }
-  
+
       if (price < this.minPrice || price > this.maxPrice) {
         return false;
       }
-  
+
       if (
         !this.activeSearch() &&
         this.searchTitle &&
@@ -108,24 +143,17 @@ export class Home implements OnInit {
       ) {
         return false;
       }
-  
-      if (
-        this.selectedCondition &&
-        a.condition?.toLowerCase() !== this.selectedCondition.toLowerCase()
-      ) {
-        return false;
-      }
-  
+
       if (
         this.location &&
-        !a.location?.toLowerCase()?.includes(this.location.toLowerCase())
+        !a.location?.toLowerCase().includes(this.location.toLowerCase())
       ) {
         return false;
       }
-  
+
       return true;
     });
-  
+
     this.items.set(filtered);
   }
 
@@ -221,7 +249,7 @@ export class Home implements OnInit {
         },
       });
   }
-  
+
   resetFilters() {
     this.searchTitle = '';
     this.maxPrice = 1000;

@@ -34,7 +34,6 @@ export class ArticleDetail implements OnInit {
   private favoriteService = inject(FavoriteService);
   private conversationService = inject(ConversationService);
   private cdr = inject(ChangeDetectorRef);
-  
 
   article: Article | null = null;
   seller: User | null = null;
@@ -87,26 +86,22 @@ export class ArticleDetail implements OnInit {
   }
 
   loadSeller(userId: number) {
-  this.userService.getById(userId).subscribe({
-    next: (user) => {
-      this.seller = user;
-      this.cdr.detectChanges();
-    },
-    error: () => {
-      this.seller = null;
-      this.cdr.detectChanges();
-    }
-  });
+    this.userService.getById(userId).subscribe({
+      next: (user) => {
+        this.seller = user;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.seller = null;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   canEditStatus(): boolean {
     const currentUser = this.auth.currentUser();
     if (!currentUser || !this.article) return false;
-
-    const isOwner = currentUser.id === this.article.user_id;
-    const isStaff = currentUser.role === 'Moderador' || currentUser.role === 'Administrador';
-
-    return isOwner || isStaff;
+    return currentUser.id === this.article.user_id;
   }
 
   isOwner(): boolean {
@@ -121,13 +116,13 @@ export class ArticleDetail implements OnInit {
   }
 
   isModeratorOrAdmin(): boolean {
-  const currentUser = this.auth.currentUser();
-  return currentUser?.role === 'Moderador' || currentUser?.role === 'Administrador';
+    const currentUser = this.auth.currentUser();
+    return currentUser?.role === 'Moderador' || currentUser?.role === 'Administrador';
   }
 
   goToModeratorPanel(): void {
-  this.router.navigate(['/moderator']);
-  }   
+    this.router.navigate(['/moderator']);
+  }
 
   isLoggedIn(): boolean {
     return this.auth.currentUser() !== null;
@@ -318,66 +313,64 @@ export class ArticleDetail implements OnInit {
     });
   }
 
-handleFavoriteClick() {
-  const currentUser = this.auth.currentUser();
+  handleFavoriteClick() {
+    const currentUser = this.auth.currentUser();
 
-  if (!currentUser?.token) {
-    this.openLoginModal();
-    return;
+    if (!currentUser?.token) {
+      this.openLoginModal();
+      return;
+    }
+
+    this.toggleFavorite();
   }
 
-  this.toggleFavorite();
-}
+  handleContactClick() {
+    const currentUser = this.auth.currentUser();
 
+    if (!currentUser?.token) {
+      this.openLoginModal();
+      return;
+    }
 
-handleContactClick() {
-  const currentUser = this.auth.currentUser();
+    if (!this.article) return;
 
-  if (!currentUser?.token) {
-    this.openLoginModal();
-    return;
-  }
-
-  if (!this.article) return;
-
-  if (currentUser.id === this.article.user_id) {
-    this.contactError = 'No puedes iniciar un chat contigo mismo.';
-    this.cdr.detectChanges();
-    return;
-  }
-
-  this.contactLoading = true;
-  this.contactError = '';
-
-  this.conversationService.startOrGet(this.article.id, currentUser.token).subscribe({
-    next: (conversation) => {
-      this.contactLoading = false;
-      this.router.navigate(['/messages', conversation.id], {
-        state: {
-          chatContext: {
-            partnerName: this.seller?.username?.trim() || '',
-            articleTitle: this.article!.title,
-            articlePrice: Number(this.article!.price),
-            partnerId: this.seller?.id ?? conversation.seller_id,
-          },
-        },
-      });
-    },
-    error: (err) => {
-      this.contactLoading = false;
-      this.contactError = err?.error?.message || 'No se pudo iniciar la conversación.';
+    if (currentUser.id === this.article.user_id) {
+      this.contactError = 'No puedes iniciar un chat contigo mismo.';
       this.cdr.detectChanges();
-    },
-  });
-}
+      return;
+    }
 
-openLoginModal(): void {
-  const modalEl = document.getElementById('loginModal');
-  if (modalEl) {
-    new bootstrap.Modal(modalEl).show();
+    this.contactLoading = true;
+    this.contactError = '';
+
+    this.conversationService.startOrGet(this.article.id, currentUser.token).subscribe({
+      next: (conversation) => {
+        this.contactLoading = false;
+        this.router.navigate(['/messages', conversation.id], {
+          state: {
+            chatContext: {
+              partnerName: this.seller?.username?.trim() || '',
+              articleTitle: this.article!.title,
+              articlePrice: Number(this.article!.price),
+              partnerId: this.seller?.id ?? conversation.seller_id,
+            },
+          },
+        });
+      },
+      error: (err) => {
+        this.contactLoading = false;
+        this.contactError = err?.error?.message || 'No se pudo iniciar la conversación.';
+        this.cdr.detectChanges();
+      },
+    });
   }
-}
 
+  openLoginModal(): void {
+    const modalEl = document.getElementById('loginModal');
+    if (modalEl) {
+      new bootstrap.Modal(modalEl).show();
+    }
+  }
 
   openReportArticle() {
     this.showReportArticleForm = true;

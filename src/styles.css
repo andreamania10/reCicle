@@ -1,61 +1,70 @@
-/* Reset y base */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-:root {
-  --font-body: 'DM Sans', sans-serif;
-  --font-heading: 'Syne', sans-serif;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: var(--font-body);
-  font-size: 16px;
-  color: #1a1a1a;
-  background-color: #fff;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-app-root {
-  font-family: var(--font-body);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-}
-
-.brand-name,
-.footer-brand-name {
-  font-family: var(--font-heading);
-}
-
-a {
-  color: inherit;
-}
-
-input,
-textarea,
-select,
-button {
-  font-family: inherit;
-}
-
-/* Utilidad de contenedor si no se usa el de Bootstrap */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
-}
+    /* Reset y base */
+    
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+    
+     :root {
+        --font-body: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        font-family: var(--font-body);
+        font-size: 16px;
+        color: #1a1a1a;
+        background-color: #fff;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    app-root {
+        font-family: var(--font-body);
+    }
+    
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+    }
+    
+    .brand-name,
+    .footer-brand-name {
+        font-family: var(--font-heading);
+    }
+    
+    a {
+        color: inherit;
+    }
+    
+    input,
+    textarea,
+    select,
+    button {
+        font-family: inherit;
+    }
+    /* Utilidad de contenedor si no se usa el de Bootstrap */
+    
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.25rem;
+    }
