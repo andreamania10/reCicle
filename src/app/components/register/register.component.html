@@ -4,6 +4,9 @@
   tabindex="-1"
   aria-labelledby="registerModalLabel"
   aria-hidden="true"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  (shown.bs.modal)="onModalShown()"
   (hidden.bs.modal)="resetForm()"
 >
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -90,18 +93,29 @@
           <div class="form-row mt-3">
             <div class="form-group">
               <label for="regPassword" class="form-label">Contraseña</label>
-              <input
-                type="password"
-                id="regPassword"
-                name="password"
-                class="form-control"
-                [(ngModel)]="registerData.password"
-                #regPasswordField="ngModel"
-                required
-                minlength="6"
-                placeholder="Mínimo 6 caracteres"
-                [class.is-invalid]="regPasswordField.invalid && regPasswordField.touched"
-              />
+              <div class="password-input-wrapper">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="regPassword"
+                  name="password"
+                  class="form-control"
+                  [(ngModel)]="registerData.password"
+                  #regPasswordField="ngModel"
+                  required
+                  minlength="6"
+                  placeholder="Mínimo 6 caracteres"
+                  [class.is-invalid]="regPasswordField.invalid && regPasswordField.touched"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  [attr.aria-pressed]="showPassword"
+                >
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
               <div class="invalid-feedback" *ngIf="regPasswordField.invalid && regPasswordField.touched">
                 <span *ngIf="regPasswordField.errors?.['required']">La contraseña es obligatoria.</span>
                 <span *ngIf="regPasswordField.errors?.['minlength']">Mínimo 6 caracteres.</span>
@@ -110,17 +124,28 @@
 
             <div class="form-group">
               <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                class="form-control"
-                [(ngModel)]="registerData.confirmPassword"
-                #confirmField="ngModel"
-                required
-                placeholder="Repite la contraseña"
-                [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
-              />
+              <div class="password-input-wrapper">
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  class="form-control"
+                  [(ngModel)]="registerData.confirmPassword"
+                  #confirmField="ngModel"
+                  required
+                  placeholder="Repite la contraseña"
+                  [class.is-invalid]="(confirmField.touched && confirmField.invalid) || passwordMismatch"
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  (click)="toggleConfirmPasswordVisibility()"
+                  [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  [attr.aria-pressed]="showConfirmPassword"
+                >
+                  <i class="bi" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
               <div class="invalid-feedback" *ngIf="passwordMismatch">Las contraseñas no coinciden.</div>
             </div>
           </div>

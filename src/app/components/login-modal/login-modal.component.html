@@ -4,6 +4,9 @@
   tabindex="-1"
   aria-labelledby="loginModalLabel"
   aria-hidden="true"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  (shown.bs.modal)="onModalShown()"
   (hidden.bs.modal)="resetForm()"
 >
   <div class="modal-dialog modal-dialog-centered">

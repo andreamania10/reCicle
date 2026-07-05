@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -15,6 +15,8 @@ declare var bootstrap: any;
   styleUrl: './login-modal.component.css',
 })
 export class LoginModalComponent {
+  @ViewChild('loginForm') loginForm?: NgForm;
+
   loginData = { email: '', password: '' };
   errorMessage = signal('');
   isLoading = signal(false);
@@ -70,10 +72,15 @@ export class LoginModalComponent {
     }
   }
 
+  onModalShown(): void {
+    this.resetForm();
+  }
+
   resetForm(): void {
     this.loginData = { email: '', password: '' };
     this.errorMessage.set('');
     this.isLoading.set(false);
     this.showPassword = false;
+    this.loginForm?.resetForm(this.loginData);
   }
 }
