@@ -4,6 +4,27 @@
     margin: 0;
 }
 
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.brand-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+}
+
 .modal-footer-custom {
     padding: 1rem 1.5rem 1.5rem;
     border-top: 1px solid #eee;
@@ -146,20 +167,20 @@
     font-size: 0.85rem;
     color: #555;
     line-height: 1.5;
+    cursor: pointer;
 }
 
 .terms-link {
     background: none;
     border: none;
     padding: 0;
+    margin: 0 0.2em;
     font: inherit;
     color: #1a1a1a;
     text-decoration: underline;
     cursor: pointer;
-}
-
-.form-check-label label {
-    cursor: pointer;
+    display: inline;
+    vertical-align: baseline;
 }
 
 .alert-error {

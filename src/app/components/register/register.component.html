@@ -13,6 +13,10 @@
     <div class="modal-content">
       <div class="modal-header d-flex justify-content-between">
         <div class="modal-brand">
+          <div class="brand">
+            <img class="brand-logo" src="assets/imagenes/logo-recircle-icono.svg" alt="ReCycle" />
+            <span class="brand-name">ReCycle</span>
+          </div>
           <h5 class="modal-title" id="registerModalLabel">Crea tu cuenta</h5>
           <p class="register-subtitle mb-0">
             Únete y empieza a comprar y vender artículos de segunda mano.
@@ -161,12 +165,12 @@
               required
               [class.is-invalid]="termsField.invalid && termsField.touched"
             />
-            <span class="form-check-label">
-              <label for="acceptTerms">Acepto los </label>
-              <button type="button" class="terms-link" (click)="openTermsModal($event)"> Términos y Condiciones </button>
-              <label for="acceptTerms"> y la </label>
-              <button type="button" class="terms-link" (click)="openPrivacyModal($event)"> Política de Privacidad </button><label for="acceptTerms">.</label>
-            </span>
+            <label for="acceptTerms" class="form-check-label">
+              Acepto los
+              <button type="button" class="terms-link" (click)="openTermsModal($event)">Términos y Condiciones</button>
+              y la
+              <button type="button" class="terms-link" (click)="openPrivacyModal($event)">Política de Privacidad</button>.
+            </label>
           </div>
 
           <div
